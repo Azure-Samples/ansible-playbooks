@@ -1,4 +1,4 @@
-# Ansible-playbooks
+# Ansible Playbooks for Azure
 
 This repository contains examples and best practices for building Ansible Playbooks for Azure. 
 

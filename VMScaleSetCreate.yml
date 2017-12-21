@@ -1,4 +1,7 @@
 ---
+# This playbook create an Azure Virtual Machine Scale Set
+# Change variables below to customize your VM deployment
+
 - hosts: localhost
   connection: local
   vars:
