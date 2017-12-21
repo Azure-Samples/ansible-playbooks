@@ -13,7 +13,6 @@ This repository contains examples and best practices for building Ansible Playbo
 ### Prerequisites
 
 Azure Account. If you don't have it, get a [free one](https://azure.microsoft.com/en-us/free/).
-Create a Service Principal
 
 To authenticate with Azure, generate [service principal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) and expose them as environment variables or store them as a file. 
 
@@ -24,7 +23,7 @@ To run samples in your local environment, please ensure [Ansible](http://docs.an
     2. cd ansible-playbooks
     3. ansible-playbook xx.yml
 
-You also could develop your Ansible playook and run it in [Visual Sutdio Code] (https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
+You also could develop your Ansible playook and run it in [Visual Sutdio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
 
 ## Resources
 
