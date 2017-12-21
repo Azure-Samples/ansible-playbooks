@@ -21,9 +21,9 @@ To run samples in your local environment, please ensure [Ansible](http://docs.an
 
     1. git clone https://github.com/Azure-Samples/ansible-playbooks.git
     2. cd ansible-playbooks
-    3. ansible-playbook xx.yml
+    3. ansible-playbook <sample>.yml
 
-You also could develop your Ansible playook and run it in [Visual Sutdio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
+You also could develop your Ansible playbook and run it in [Visual Sutdio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
 
 ## Resources
 
