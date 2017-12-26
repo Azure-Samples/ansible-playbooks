@@ -1,4 +1,4 @@
-# This playbook create a SQL server and a instance of SQL Database in existing resource group
+# This playbook create a SQL server and an instance of SQL Database in existing resource group
 # Change variables below to customize environment
 # run "ansible-playbook AddSQLtoResourcegroup.yml --extra-vars "resource_group=xxx"
 ---
