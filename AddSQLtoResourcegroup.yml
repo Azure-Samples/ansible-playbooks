@@ -1,0 +1,26 @@
+# This playbook create a SQL server and a instance of SQL Database in existing resource group
+# Change variables below to customize environment
+# run "ansible-playbook AddSQLtoResourcegroup.yml --extra-vars "resource_group=xxx"
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    resource_group: "{{resource_group}}"
+    sqlserver_name: sqlansible
+    sqldb_name: sqldbtest
+    admin_username: admxyz
+    admin_password: Abcpasswordxyz12!
+  tasks:
+    - name: Create SQL Server
+      azure_rm_sqlserver:
+        name: "{{sqlserver_name}}"
+        resource_group: "{{resource_group}}"
+        version: 12.0
+        admin_username: "{{admin_username}}"
+        admin_password: "{{admin_password}}"
+    - name: Create instance of SQL Database
+      azure_rm_sqldatabase:
+        resource_group: "{{resource_group}}"
+        server_name: "{{sqlserver_name}}"
+        name: "{{sqldb_name}}"
