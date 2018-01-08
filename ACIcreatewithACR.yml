@@ -1,0 +1,60 @@
+# This playbook uploads a docker image to Azure container registry and then uses that image create an Azure instance.
+# The module of Azure container registry is not available in either v2.4 or devel branch, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible module.
+# You may also need to run "pip install -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt" to install requried python SDKs. 
+# Change variables below to customize environment.
+# Run "ansible-playbook ACICreatewithACR.yml" to execute this playbook.
+- name: demo
+  hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    resource_group: ansibledemoaci
+    location: eastus
+    registry_name: ansibledemoacr
+    repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"
+    workspace: ~/src/aci-helloworld
+    image_name: aci-helloworld
+    http_port: 80
+    email: test@email.com
+  tasks:
+    - name: Git Clone
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ workspace }}"
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+    - name: Create Azure Container Registry
+      azure_rm_containerregistry:
+        resource_group: "{{ resource_group }}"
+        name: "{{ registry_name}}"
+        admin_user_enabled: True
+        sku: Standard
+      register: acr_result
+    - name: Login docker registry
+      docker_login:
+        registry: "{{ registry_name }}.azurecr.io"
+        username: "{{ registry_name }}"
+        password: "{{ acr_result.credentials.password }}"
+        email: "{{ email }}"
+    - name: Docker Build and Push
+      docker_image:
+        path: "{{ workspace }}"
+        name: "{{ registry_name }}.azurecr.io/{{ image_name }}"
+        push: yes
+    - name: Create Azure Container Instance
+      azure_rm_containerinstance:
+        resource_group: "{{ resource_group }}"
+        name: "{{ image_name }}"
+        ip_address: public
+        ports:
+          - "{{ http_port }}"
+        registry_login_server: "{{ registry_name }}.azurecr.io"
+        registry_username: "{{ registry_name }}"
+        registry_password: "{{ acr_result.credentials.password }}"
+        containers:
+          - name: "{{ image_name }}"
+            ports:
+              - "{{ http_port }}"
+            image: "{{ registry_name }}.azurecr.io/{{ image_name }}"
