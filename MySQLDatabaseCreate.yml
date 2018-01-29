@@ -1,0 +1,39 @@
+# This playbook create a MySQL server and an instance of MySQL Database which is not available in v2.4, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+# Change variables below to customize environment.
+# Run "ansible-playbook MySQLDatabaseCreate.yml" to execute this playbook
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    resource_group: ansibledemosql
+    location: eastus
+    mysqlserver_name: sqlansible
+    mysqldb_name: sqldbtest
+    admin_username: admxyz
+    admin_password: Abcpasswordxyz12!
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create MySQL Server
+      azure_rm_mysqlserver:
+        resource_group: "{{ resource_group }}"
+        name: "{{ mysqlserver_name }}"
+        sku:
+          name: MYSQLB50
+          tier: basic
+        location: "{{ location }}"
+        version: 5.6
+        enforce_ssl: True
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        storage_mb: 51200
+
+    - name: Create instance of MySQL Database
+      azure_rm_mysqldatabase:
+        resource_group: "{{ resource_group }}"
+        server_name: "{{ mysqlserver_name }}"
+        name: "{{ mysqldb_name }}"
