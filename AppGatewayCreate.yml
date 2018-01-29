@@ -10,6 +10,7 @@
     location: eastus
     vnet_name: ansiblevnetname
     subnet_name: ansiblesubnetname
+    appgw_name: appgatewayname
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -64,16 +65,16 @@
             name: sample_appgateway_http_settings
         http_listeners:
           - frontend_ip_configuration:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/appgateway{{ rpfx }}/frontendIPConfigurations/sample_gateway_frontend_ip_config
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/frontendIPConfigurations/sample_gateway_frontend_ip_config
             frontend_port:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/appgateway{{ rpfx }}/frontendPorts/ag_frontend_port
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/frontendPorts/ag_frontend_port
             name: sample_http_listener
         request_routing_rules:
           - rule_type: Basic
             backend_address_pool:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/appgateway{{ rpfx }}/backendAddressPools/test_backend_address_pool
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/backendAddressPools/test_backend_address_pool
             backend_http_settings:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/appgateway{{ rpfx }}/backendHttpSettingsCollection/sample_appgateway_http_settings
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/backendHttpSettingsCollection/sample_appgateway_http_settings
             http_listener:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/appgateway{{ rpfx }}/httpListeners/sample_http_listener
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/httpListeners/sample_http_listener
             name: rule1
