@@ -1,0 +1,38 @@
+# This playbook create a PostgreSQL server and an instance of PostgreSQL Database which is not available in v2.4, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+# Change variables below to customize environment.
+# Run "ansible-playbook PostgreSQLDatabaseCreate.yml" to execute this playbook
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    resource_group: ansibledemosql
+    location: eastus
+    postgresqlserver_name: sqlansible
+    postgresqldb_name: sqldbtest
+    admin_username: admxyz
+    admin_password: Abcpasswordxyz12!
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create PostgreSQL Server
+      azure_rm_postgresqlserver:
+        resource_group: "{{ resource_group }}"
+        name: "{{ postgresqlserver_name }}"
+        sku:
+          name: PGSQLS100
+          tier: basic
+        location: "{{ location }}"
+        enforce_ssl: True
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        storage_mb: 51200
+
+    - name: Create instance of PostgreSQL Database
+      azure_rm_postgresqldatabase:
+        resource_group: "{{ resource_group }}"
+        server_name: "{{ postgresqlserver_name }}"
+        name: "{{ postgresqldb_name }}"

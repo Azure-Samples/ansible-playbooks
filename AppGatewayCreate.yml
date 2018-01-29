@@ -1,0 +1,80 @@
+# This playbook creates a Application Gateway which is not available in v2.4, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+# Change variables below to customize environment.
+# Run "ansible-playbook AppGatewayCreate.yml" to execute this playbook
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    resource_group: ansibledemosql
+    location: eastus
+    vnet_name: ansiblevnetname
+    subnet_name: ansiblesubnetname
+    appgw_name: appgatewayname
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create a virtual network
+      azure_rm_virtualnetwork:
+        name: "{{ vnet_name }}"
+        resource_group: "{{ resource_group }}"
+        address_prefixes_cidr:
+            - 10.1.0.0/16
+            - 172.100.0.0/16
+        dns_servers:
+            - 127.0.0.1
+            - 127.0.0.2
+
+    - name: Create a subnet
+      azure_rm_subnet:
+        name: "{{ subnet_name }}"
+        virtual_network_name: "{{ vnet_name }}"
+        resource_group: "{{ resource_group }}"
+        address_prefix_cidr: 10.1.0.0/24
+
+    - name: Create instance of Application Gateway
+      azure_rm_applicationgateway:
+        resource_group: "{{ resource_group }}"
+        name: "{{ appgw_name }}"
+        sku:
+          name: Standard_Small
+          tier: Standard
+          capacity: 2
+        gateway_ip_configurations:
+          - subnet:
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/"{{ vnet_name }}"/subnets/"{{ subnet_name }}"
+            name: app_gateway_ip_config
+        frontend_ip_configurations:
+          - subnet:
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/"{{ vnet_name }}"/subnets/"{{ subnet_name }}"
+            name: sample_gateway_frontend_ip_config
+        frontend_ports:
+          - port: 90
+            name: ag_frontend_port
+        backend_address_pools:
+          - backend_addresses:
+              - ip_address: 10.0.0.4
+            name: test_backend_address_pool
+        backend_http_settings_collection:
+          - port: 80
+            protocol: Http
+            cookie_based_affinity: Enabled
+            name: sample_appgateway_http_settings
+        http_listeners:
+          - frontend_ip_configuration:
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/frontendIPConfigurations/sample_gateway_frontend_ip_config
+            frontend_port:
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/frontendPorts/ag_frontend_port
+            name: sample_http_listener
+        request_routing_rules:
+          - rule_type: Basic
+            backend_address_pool:
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/backendAddressPools/test_backend_address_pool
+            backend_http_settings:
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/backendHttpSettingsCollection/sample_appgateway_http_settings
+            http_listener:
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/httpListeners/sample_http_listener
+            name: rule1
