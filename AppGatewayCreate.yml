@@ -36,7 +36,7 @@
         address_prefix_cidr: 10.1.0.0/24
 
     - name: Create instance of Application Gateway
-      azure_rm_applicationgateway:
+      azure_rm_appgw:
         resource_group: "{{ resource_group }}"
         name: "{{ appgw_name }}"
         sku:
