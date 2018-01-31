@@ -11,6 +11,7 @@
     vnet_name: ansiblevnetname
     subnet_name: ansiblesubnetname
     appgw_name: appgatewayname
+    azure_subscription_id: "{{ lookup('env','ENV_VAR') }}"
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
