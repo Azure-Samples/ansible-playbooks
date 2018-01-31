@@ -46,11 +46,11 @@
           capacity: 2
         gateway_ip_configurations:
           - subnet:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/"{{ vnet_name }}"/subnets/"{{ subnet_name }}"
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/{{ vnet_name }}/subnets/{{ subnet_name }}
             name: app_gateway_ip_config
         frontend_ip_configurations:
           - subnet:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/"{{ vnet_name }}"/subnets/"{{ subnet_name }}"
+              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/{{ vnet_name }}/subnets/{{ subnet_name }}
             name: sample_gateway_frontend_ip_config
         frontend_ports:
           - port: 90
