@@ -9,7 +9,7 @@
     resource_group: ansibledemokeyvault
     location: eastus
     keyvault_name: keyvaultansible
-    object_id: 97567bfa-cf13-4217-8fa3-cc56bc1867fe
+    object_id: 00000000-00000000-0000-0000-000000000000
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
