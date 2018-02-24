@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  vars:
+    resource_group: ansible-testnic001
+    resource_group_secondary: ansible-testnic002
+    location: eastus
+  roles:
+    - Azure.azure_modules
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create secondary resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group_secondary }}"
+        location: "{{ location }}"
+
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group_secondary }}"
+        name: testnic001
+        address_prefixes: "10.10.0.0/16"
+      register: vn
+
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group_secondary }}"
+        name: testnic001
+        address_prefix: "10.10.0.0/24"
+        virtual_network: testnic001
+
+    - name: Create NIC
+      azure_rm_networkinterface:
+        resource_group: "{{ resource_group }}"
+        name: testnic001
+        virtual_network: "{{ vn.state.id }}"
+        subnet: testnic001
+        public_ip_name: testnic001
+        public_ip_allocation_method: Static
+        security_group: testnic001
