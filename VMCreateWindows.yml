@@ -1,0 +1,82 @@
+---
+# This playbook creates an Azure Windows VM with public IP. It also cobnfigures the machine to be accessible via Ansible using WinRM.
+# This playbook originally comes from @jborean93 (https://github.com/jborean93/ansible-win-demos)
+# Change variables below to customize your VM deployment
+
+- name: provision new azure host
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: zimswindemorg
+    vm_name: zimswintestvm
+    vm_user: azureuser
+    vm_password: MyPassword123!!!
+    location: eastus
+
+    # Below is UTF-16 Base64 encoding for:
+    #   Invoke-Expression -Command ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1')); Enable-WSManCredSSP -Role Server -Force
+    winrm_enable_script: SQBuAHYAbwBrAGUALQBFAHgAcAByAGUAcwBzAGkAbwBuACAALQBDAG8AbQBtAGEAbgBkACAAKAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAE4AZQB0AC4AVwBlAGIAQwBsAGkAZQBuAHQAKQAuAEQAbwB3AG4AbABvAGEAZABTAHQAcgBpAG4AZwAoACcAaAB0AHQAcABzADoALwAvAHIAYQB3AC4AZwBpAHQAaAB1AGIAdQBzAGUAcgBjAG8AbgB0AGUAbgB0AC4AYwBvAG0ALwBhAG4AcwBpAGIAbABlAC8AYQBuAHMAaQBiAGwAZQAvAGQAZQB2AGUAbAAvAGUAeABhAG0AcABsAGUAcwAvAHMAYwByAGkAcAB0AHMALwBDAG8AbgBmAGkAZwB1AHIAZQBSAGUAbQBvAHQAaQBuAGcARgBvAHIAQQBuAHMAaQBiAGwAZQAuAHAAcwAxACcAKQApADsAIABFAG4AYQBiAGwAZQAtAFcAUwBNAGEAbgBDAHIAZQBkAFMAUwBQACAALQBSAG8AbABlACAAUwBlAHIAdgBlAHIAIAAtAEYAbwByAGMAZQA=
+
+  tasks:
+  - name: create Azure resource group
+    azure_rm_resourcegroup:
+      name: '{{resource_group}}'
+      location: '{{ location }}'
+      state: present
+
+  - name: create Azure virtual network in resource group
+    azure_rm_virtualnetwork:
+      name: '{{vm_name}}'
+      resource_group: '{{resource_group}}'
+      address_prefixes_cidr:
+      - 10.1.0.0/16
+      state: present
+  
+  - name: create Azure subnet in virtualnetwork
+    azure_rm_subnet:
+      name: '{{vm_name}}'
+      state: present
+      virtual_network_name: '{{vm_name}}'
+      resource_group: '{{resource_group}}'
+      address_prefix_cidr: 10.1.0.0/24
+
+  - name: create Azure storage account
+    azure_rm_storageaccount:
+      name: '{{vm_name}}'
+      resource_group: '{{resource_group}}'
+      account_type: Standard_LRS
+
+  - name: provision new Azure virtual host
+    azure_rm_virtualmachine:
+      admin_username: '{{ vm_user }}'
+      admin_password: '{{vm_password}}'
+      os_type: Windows
+      image:
+        offer: WindowsServer
+        publisher: MicrosoftWindowsServer
+        sku: 2016-Datacenter
+        version: latest
+      name: '{{vm_name}}'
+      resource_group: '{{resource_group}}'
+      state: present
+      vm_size: Standard_D1
+      storage_account_name: '{{vm_name}}'
+      virtual_network_name: '{{vm_name}}'
+      subnet_name: '{{vm_name}}'
+
+  - name: create Azure vm extension to enable HTTPS WinRM listener
+    azure_rm_virtualmachine_extension:
+      name: winrm-extension
+      resource_group: '{{resource_group}}'
+      virtual_machine_name: '{{vm_name}}'
+      publisher: Microsoft.Compute
+      virtual_machine_extension_type: CustomScriptExtension
+      type_handler_version: 1.9
+      settings: '{"commandToExecute": "powershell.exe -ExecutionPolicy ByPass -EncodedCommand {{winrm_enable_script}}"}'
+      auto_upgrade_minor_version: true
+
+  - name: wait for the WinRM port to come online
+    wait_for:
+      port: 5986
+      host: '{{azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress}}'
+      timeout: 600
