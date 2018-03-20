@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_modules
+  vars:
+    resource_group: ansible-nsg
+    resource_group_secondary: ansible-nsg
+    resource_name: subnsg
+    location: eastus
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create security group
+      azure_rm_securitygroup:
+        resource_group: "{{ resource_group_secondary }}"
+        name: "{{ resource_name }}"
+        purge_rules: yes
+        rules:
+          - name: ALLOW_SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 100
+            direction: Inbound
+      register: nsg
+
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group }}"
+        name: "{{ resource_name }}"
+        address_prefixes: "10.10.0.0/16"
+
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group }}"
+        name: "{{ resource_name }}"
+        address_prefix: "10.10.0.0/24"
+        virtual_network: "{{ resource_name }}"
+        security_group_name: "{{ nsg.state.id }}"
