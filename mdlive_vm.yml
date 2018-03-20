@@ -1,0 +1,57 @@
+---
+# This playbook create an Azure VM with public IP
+# Change variables below to customize your VM deployment
+
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: demomdlive
+    resource_group_secondary: demomdlive2
+    vm_name: testvm3
+    location: eastus
+  roles:
+    - azure_preview_modules
+  tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+  - name: Create secondary resource group
+    azure_rm_resourcegroup:
+        name: "{{ resource_group_secondary }}"
+        location: "{{ location }}"
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: "{{ resource_group_secondary }}"
+      name: "{{ vm_name }}"
+      address_prefixes: "10.0.0.0/16"
+  - name: Add subnet
+    azure_rm_subnet:
+      resource_group: "{{ resource_group_secondary }}"
+      name: "{{ vm_name }}"
+      address_prefix: "10.0.1.0/24"
+      virtual_network: "{{ vm_name }}"
+  - name: Add Network interface
+    azure_rm_networkinterface:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      virtual_network: "{{ vm_name }}"
+      virtual_network_resource_group: "{{ resource_group_secondary }}"
+      subnet: "{{ vm_name }}"
+      ip_configurations:
+        - name: "{{ vm_name }}"
+          private_ip_address: 10.0.1.18
+          private_ip_allocation_method: Static
+  - name: Create VM
+    azure_rm_virtualmachine:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      vm_size: Standard_DS1_v2
+      admin_username: azureuser
+      admin_password: Password@123
+      virtual_network_resource_group: "{{ resource_group_secondary }}"
+      virtual_network_name: "{{ vm_name }}"
+      subnet_name: "{{ vm_name }}"
+      network_interfaces: "{{ vm_name }}"
+      image: testvm
