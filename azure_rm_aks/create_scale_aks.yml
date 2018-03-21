@@ -1,5 +1,7 @@
 ---
 - hosts: localhost
+  roles:
+    - Azure.azure_preview_modules 
   vars:
     resource_group: ansible-aks
     name: ansible-aks
