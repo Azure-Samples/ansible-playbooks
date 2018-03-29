@@ -1,6 +1,6 @@
 ## Install requirement before using Ansible AKS module
 ```bash
-pip install azure-mgmt-containerservice>=3.0.1
+pip install azure-mgmt-containerservice==3.0.1
 ```
 
 ## Use ansible to create AKS
