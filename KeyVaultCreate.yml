@@ -1,6 +1,9 @@
-# This playbook create a Key Vault which is not available in v2.4, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
-# Change variables below to customize environment.
-# Run "ansible-playbook KeyVaultCreate.yml" to execute this playbook
+# Description
+# ===========
+# This playbook create a Key Vault , then add key and secret in it.
+# azure_rm_keyvault module is not available in v2.4, but in azure_preview_module role,
+# so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+
 ---
 - hosts: localhost
   roles:

@@ -1,19 +1,25 @@
-# This playbook uploads a docker image to Azure container registry and then uses that image create an Azure instance.
-# The module of Azure container registry is not available in either v2.4 or devel branch, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible module.
-# You may also need to run "pip install -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt" to install requried python SDKs. 
-# Also make sure you have installed following dependencies on your local machine:
-#  - Git
-#  - Docker
-# Change variables below to customize environment.
-# Run "ansible-playbook ACICreatewithACR.yml" to execute this playbook.
+# Description
+# ===========
+# This plabyook build a docker image, then push to azure container registry, 
+# then provision an azure container instance with that image.
+# 1. clone a sample helloworld app
+# 1. create azure container registery
+# 1. build docker image from helloworld app, and push image to azure container azure container registry
+# 1. create azure container instance with the image in azure container registry
+#
+# Prequisite
+# ===========
+# - git
+# - Docker
+
 - name: demo
   hosts: localhost
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: ansibledemoaci
-    location: eastus
-    registry_name: ansibledemoacr
+    resource_group: <your_resource_group>
+    location: <your_resourcegroup_location>
+    registry_name: <your_register_name>
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"
     workspace: ~/src/aci-helloworld
     image_name: aci-helloworld
