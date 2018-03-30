@@ -26,5 +26,5 @@ Pls add below information at beginning of your playbook.
 
 ### Coding guideline
 - Add all variables into `vars`. In tasks, use variables then. Goal is user just need to update `vars` part, then no need to change tasks itself.
-- File naming convention: <ServiceName>_<Action>_<Properties>.yml
+- File naming convention: ServiceName_Action_Properties.yml
 - Folder layout: if there're multiple sample playbooks for one service, eg. subnet, you could create a folder to hold all samples.

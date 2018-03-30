@@ -9,14 +9,14 @@ This repository contains examples and best practices for building Ansible Playbo
   To authenticate with Azure, generate [service principal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) and expose them as environment variables or store them as a file. 
 
 - Install [Ansible]((http://docs.ansible.com/ansible/latest/intro_installation.html))
-- Install Azure dependencies pacakge
+- Install Azure dependencies pacakage
   ```
   pip install ansible[azure]
   ```
-- Install [azure_preview_module](https://galaxy.ansible.com/Azure/azure_preview_modules/) role.
+- Install [azure_preview_modules](https://galaxy.ansible.com/Azure/azure_preview_modules/) role.
 - Install azure_preview_module role's dependencies packages.
   ```
-  pip install -r ~/.ansible/roles/Azure.azure_preview_module/files/requirements-azure.txt
+  pip install -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
   ```
 
 ## How to run
@@ -25,7 +25,7 @@ To run samples in your local environment,
 - git clone https://github.com/Azure-Samples/ansible-playbooks.git
 - cd ansible-playbooks
 - modify playbook to replace variables with yours, such as resource group name.
-- [add Azure credential info](http://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html) either by setting environment variables or by credential files. 
+- [add Azure credential info](http://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html) either by setting environment variables or by credential files or by AZ CLI login. 
   ```
   # option 1. setting below environment variables
   AZURE_CLIENT_ID=<service_principal_client_id>
@@ -39,8 +39,11 @@ To run samples in your local environment,
   client_id=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   secret=xxxxxxxxxxxxxxxxx
   tenant=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+  # option3. do az login firstly
+  az login
   ```
-- ansible-playbook <sample>.yml
+- ansible-playbook sample.yml
 
 You also could develop your Ansible playbook and run it in [Visual Sutdio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
 
