@@ -6,7 +6,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: demo_vm
+    resource_group: createvmsubnetin2ndrg
     resource_group_secondary: demo_vm_1
     vm_name: testvm
     location: eastus

@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: ansible-testnic001
+    resource_group: nicwithvnetin2ndrg
     resource_group_secondary: ansible-testnic002
     location: eastus
   roles:
