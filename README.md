@@ -23,7 +23,7 @@ To run samples in your local environment, please ensure [Ansible](http://docs.an
     2. cd ansible-playbooks
     3. ansible-playbook <sample>.yml
 
-You also could develop your Ansible playbook and run it in [Visual Sutdio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
+You also could develop your Ansible playbook and run it in [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
 
 ## Resources
 
