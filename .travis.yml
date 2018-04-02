@@ -58,9 +58,7 @@ install:
   - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
     install ansible[azure]==$ANSIBLE_VERSION; fi
   - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"  
-  - ls
-  - pwd
-  - pip install -I -r ./files/requirements-azure.txt
+  - ansible -version
   - ansible-galaxy install Azure.azure_preview_modules
   - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt 
 
