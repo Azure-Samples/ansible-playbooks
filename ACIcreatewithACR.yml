@@ -18,7 +18,6 @@
     - Azure.azure_preview_modules
   vars:
     resource_group: acicreatewithACR
-    resource_group: acraciansible
     location: eastus
     registry_name: acicreatewithacr
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"

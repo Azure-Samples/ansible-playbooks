@@ -5,13 +5,13 @@
 - hosts: localhost
   vars:
     resource_group: nicwithvnetin2ndrg
-    resource_group_secondary: ansible-testnic002
+    resource_group_secondary: nicwithvnetin2ndrg2
     location: eastus
     vnet_name: testnic001
     subnet_name: testnic001
     nic_name: testnic001
   roles:
-    - Azure.azure_modules
+    - Azure.azure_preview_modules
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:

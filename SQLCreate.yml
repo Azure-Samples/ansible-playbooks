@@ -9,9 +9,9 @@
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: sqlcreate
+    resource_group: sqlcreate001
     location: eastus
-    sqlserver_name: sqlansible
+    sqlserver_name: sqlansible001
     sqldb_name: sqldbtest
     admin_username: admxyz
     admin_password: Abcpasswordxyz12!

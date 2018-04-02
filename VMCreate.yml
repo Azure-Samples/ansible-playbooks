@@ -6,15 +6,14 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: vmcreate
+    resource_group: vmcreate001
     vm_name: testvm
     location: eastus
   tasks:
-  docker_log
   - name: Create a resource group
     azure_rm_resourcegroup:
-        name: "{{ resource_group }}"
-        location: "{{ location }}"
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
   - name: Create virtual network
     azure_rm_virtualnetwork:
       resource_group: "{{ resource_group }}"
