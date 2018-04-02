@@ -4,7 +4,6 @@ python: '2.7'
 branches:
   only:
     - master
-    - ci
 
 env:
   global:
@@ -28,7 +27,7 @@ before_install:
       resource_group="${file}$(date +%s)";
       echo Run playbook $file;
 
-      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID, \"resource_group\":$resource_group"}";
+      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID, \"resource_group\":$resource_group}";
 
       if [ $? -ne 0 ]; then
         echo test $file failed;
