@@ -8,7 +8,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: vmcreatewindows
+    resource_group: vmcreatewindows001
     vm_name: zimswintestvm
     vm_user: azureuser
     vm_password: MyPassword123!!!

@@ -8,11 +8,11 @@
   connection: local
   vars:
     resource_group: createvmsubnetin2ndrg
-    resource_group_secondary: demo_vm_1
+    resource_group_secondary: createvmsubnetin2ndrg2
     vm_name: testvm
     location: eastus
   roles:
-    - Azure.azure_modules
+    - Azure.azure_preview_modules
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:

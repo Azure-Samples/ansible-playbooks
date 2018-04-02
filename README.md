@@ -1,3 +1,5 @@
+[![Travis CI](https://travis-ci.org/Azure-Samples/ansible-playbooks.svg?branch=master)](https://travis-ci.org/Azure-Samples/ansible-playbooks)
+
 # Ansible Playbooks for Azure
 
 This repository contains examples and best practices for building Ansible Playbooks for Azure. 
