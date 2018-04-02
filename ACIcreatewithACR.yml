@@ -17,9 +17,9 @@
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: <your_resource_group>
-    location: <your_resourcegroup_location>
-    registry_name: <your_register_name>
+    resource_group: acraciansible
+    location: eastus
+    registry_name: acicreatewithacr
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"
     workspace: ~/src/aci-helloworld
     image_name: aci-helloworld
