@@ -1,6 +1,9 @@
-# This playbook create a SQL server and an instance of SQL Database which is not available in v2.4, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
-# Change variables below to customize environment.
-# Run "ansible-playbook SQLCreate.yml" to execute this playbook
+# Description
+# ===========
+# This playbook create a SQL server and an instance of SQL Database,
+# azure_rm_sqlserver, azure_rm_sqldatabase module is not available in v2.4, but in azure_preview_modules role,
+# so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+
 ---
 - hosts: localhost
   roles:

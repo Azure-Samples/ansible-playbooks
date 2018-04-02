@@ -1,6 +1,6 @@
----
+# Description
+# ===========
 # This playbook create an Azure Virtual Machine Scale Set
-# Change variables below to customize your VM deployment
 
 - hosts: localhost
   connection: local
@@ -8,6 +8,7 @@
     resource_group: vmsscreateansibletest
     vm_name: testvmss
     location: eastus
+    capacity: 2
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -33,7 +34,7 @@
         admin_username: testuser
         ssh_password_enabled: true
         admin_password: Password@123
-        capacity: 2
+        capacity: "{{ capacity }}"
         virtual_network_name: "{{ vm_name }}"
         subnet_name: "{{ vm_name }}"
         upgrade_policy: Manual

@@ -1,4 +1,6 @@
----
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and open 22 port for SSH, and add ssh public key to the VM.
 # This playbook create an Azure VM with public IP
 # Change variables below to customize your VM deployment
 
@@ -9,6 +11,7 @@
     resource_group: vmcreatessh
     vm_name: testvm
     location: eastus
+    ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAsbjU002j16fMWZI7ks65dKPkxSQEnGaXvRe9SQGZ1zKZZsefbFmz8bFEC2EWO0W7iV/LbykzKx9G9M5KMPsiLVrUBVkeKa01yssTAbYoukE8sbiFCwWTtGQVxFXgsosKM6y7OIIt5rkNu/nwU9OSz+VP9poH2tK3FO6EdI4qks84SOnBkfWIJRLTz5mM3ISEYb4ghQnt74Y7gzQhf2kMKDa0T8GIa4HA/+LVqUHlvkyrRuWYYNC5sAoN91HGtsSferUekgm3b4Z6jQ9AV+xC39ylgoCfozI0T/dPRV2THsp6Fs/kHp8t/FnuQV9lgd8H1hxPlgPme1TN9L9NcSXYgQ== rsa-key-20180402"
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:
@@ -58,7 +61,7 @@
       ssh_password_enabled: false
       ssh_public_keys:
         - path: /home/azureuser/.ssh/authorized_keys
-          key_data: "ssh-rsa AAAAB3......"
+          key_data: "{{ ssh_key }}"
       network_interfaces: "{{ vm_name }}"
       image:
         offer: UbuntuServer

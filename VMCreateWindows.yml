@@ -1,7 +1,8 @@
----
+# Description
+# ===========
 # This playbook creates an Azure Windows VM with public IP. It also cobnfigures the machine to be accessible via Ansible using WinRM.
 # This playbook originally comes from @jborean93 (https://github.com/jborean93/ansible-win-demos)
-# Change variables below to customize your VM deployment
+
 
 - name: provision new azure host
   hosts: localhost

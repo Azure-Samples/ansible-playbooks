@@ -1,6 +1,7 @@
----
-# This playbook create an Azure VM with public IP
-# Change variables below to customize your VM deployment
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and subnet in another resource group.
+
 
 - name: Create Azure VM
   hosts: localhost
