@@ -9,7 +9,7 @@
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: ansibledemokeyvault
+    resource_group: kvcreate
     location: eastus
     keyvault_name: keyvaultansible
     object_id: 00000000-00000000-0000-0000-000000000000

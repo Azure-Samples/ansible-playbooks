@@ -8,10 +8,10 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: demo
+    resource_group: vmcreatessh
     vm_name: testvm
     location: eastus
-    ssh_key: <your_ssh_pub_key_egssh-rsa AAAAB3......>
+    ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAsbjU002j16fMWZI7ks65dKPkxSQEnGaXvRe9SQGZ1zKZZsefbFmz8bFEC2EWO0W7iV/LbykzKx9G9M5KMPsiLVrUBVkeKa01yssTAbYoukE8sbiFCwWTtGQVxFXgsosKM6y7OIIt5rkNu/nwU9OSz+VP9poH2tK3FO6EdI4qks84SOnBkfWIJRLTz5mM3ISEYb4ghQnt74Y7gzQhf2kMKDa0T8GIa4HA/+LVqUHlvkyrRuWYYNC5sAoN91HGtsSferUekgm3b4Z6jQ9AV+xC39ylgoCfozI0T/dPRV2THsp6Fs/kHp8t/FnuQV9lgd8H1hxPlgPme1TN9L9NcSXYgQ== rsa-key-20180402"
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:

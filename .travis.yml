@@ -1,0 +1,70 @@
+language: python
+python: '2.7'
+
+branches:
+  only:
+    - ci
+
+env:
+  global:
+    - exit_code=0
+    - number_per_job=2
+    - message=()
+    - ANSIBLE_VERSION=latest
+    #- ANSIBLE_VERSION=2.4.2.0
+  matrix:
+    - id=1
+    - id=2
+    - id=3
+    - id=4
+    - id=5
+    - id=6
+
+before_install:
+  - sudo apt-get update -qq
+  - run_test(){
+      file=$1;
+
+      echo Run playbook $file;
+
+      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID}";
+
+      if [ $? -ne 0 ]; then
+        echo test $file failed;
+        message+=($file);
+        export exit_code=1;
+      fi;      
+    }
+
+
+  - scan_test() {
+      end=$((id * number_per_job));
+      start=$((end - number_per_job));
+
+      liststr=./*.yml;
+      list=($liststr);
+
+      echo start = $start, end = $end, list_lenth = ${#list[@]};
+
+      for (( i = $start; i < $end; i++ )); do
+        if [ "$i" -lt "${#list[@]}" ]; then
+          run_test ${list[$i]};
+        fi
+      done;
+    }
+
+install:
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
+    install ansible[azure]==$ANSIBLE_VERSION; fi
+  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"  
+  - pip install -I -r ./files/requirements-azure.txt
+  - ansible-galaxy install Azure.azure_preview_modules
+  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt 
+
+script:
+  - scan_test
+  - exit $exit_code
+
+notifications:
+  email:
+    - yungez@microsoft.com

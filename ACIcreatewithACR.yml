@@ -17,6 +17,7 @@
   roles:
     - Azure.azure_preview_modules
   vars:
+    resource_group: acicreatewithACR
     resource_group: acraciansible
     location: eastus
     registry_name: acicreatewithacr

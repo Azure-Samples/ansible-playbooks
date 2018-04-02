@@ -9,7 +9,7 @@
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: ansibledemosql
+    resource_group: sqlcreate
     location: eastus
     sqlserver_name: sqlansible
     sqldb_name: sqldbtest

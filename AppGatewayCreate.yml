@@ -12,7 +12,7 @@
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: ansibledemo
+    resource_group: appgatewaycreate
     location: eastus
     vnet_name: ansiblevnetname
     subnet_name: ansiblesubnetname
