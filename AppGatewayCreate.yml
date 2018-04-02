@@ -1,6 +1,12 @@
-# This playbook creates an Application Gateway which is not available in v2.4 & 2.5, so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
-# Change variables below to customize environment.
-# Run "ansible-playbook AppGatewayCreate.yml" to execute this playbook
+# Description
+# ===========
+# This playbook creates an Application Gateway, the azure_rm_appgw module is not available in v2.4 & 2.5, but in azure_preview_modules role,
+# so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+# 1. create resource group
+# 1. create virtual network
+# 1. create subnet
+# 1. create application gateway
+
 ---
 - hosts: localhost
   roles:
