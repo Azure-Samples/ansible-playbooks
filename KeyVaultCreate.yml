@@ -12,7 +12,7 @@
     resource_group: kvcreatesample
     location: eastus
     keyvault_name: keyvaultansible
-    object_id: 00000000-00000000-0000-0000-000000000000
+    object_id: 97567bfa-cf13-4217-8fa3-cc56bc1867fe
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -23,6 +23,7 @@
       azure_rm_keyvault:
         resource_group: "{{ resource_group }}"
         vault_name: "{{ keyvault_name }}"
+        vault_tenant: "{{ azure_tenant }}"
         enabled_for_deployment: yes
         sku:
           name: standard
