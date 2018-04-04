@@ -24,10 +24,12 @@ before_install:
   - sudo apt-get update -qq
   - run_test(){
       file=$1;
-      resource_group="${file}$(date +%s)";
+      test_name=${file##./};
+      test_name=${test_name%%.yml};
+      resource_group="${test_name}$(date +%s)";
       echo Run playbook $file;
 
-      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID, \"resource_group\":$resource_group}";
+      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID}";
 
       if [ $? -ne 0 ]; then
         echo test $file failed;
