@@ -1,0 +1,49 @@
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules 
+  vars:
+    resource_group: ansible-aks
+    name: ansible-aks
+    location: eastus
+    AZURE_CLIENT_ID: your-client-id
+    AZURE_SECRET: your-secret
+    SSH_PUBLIC_KEY: your-ssh-public-key
+  tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+     name: "{{ resource_group }}"
+     location: "{{ location }}"
+  - name: Create an AKS instance
+    azure_rm_aks:
+     name: "{{ name }}"
+     resource_group: "{{ resource_group }}"
+     location: eastus
+     dns_prefix: "{{ name }}"
+     kubernetes_version: 1.8.1
+     service_principal:
+         client_id: "{{ AZURE_CLIENT_ID }}"
+         client_secret: "{{ AZURE_SECRET }}"
+     linux_profile:
+         admin_username: azureuser
+         ssh_key: "{{ SSH_PUBLIC_KEY }}"
+     agent_pool_profiles:
+         - name: default
+           count: 1
+           vm_size: Standard_DS1_v2
+  - name: Scale the AKS instance agent count from 1 to 2
+    azure_rm_aks:
+     name: "{{ name }}"
+     resource_group: "{{ resource_group }}"
+     location: eastus
+     dns_prefix: "{{ name }}"
+     kubernetes_version: 1.8.1 
+     service_principal:
+         client_id: "{{ AZURE_CLIENT_ID }}"
+     linux_profile:
+         admin_username: azureuser
+         ssh_key: "{{ SSH_PUBLIC_KEY }}"
+     agent_pool_profiles:
+         - name: default
+           count: 2
+           vm_size: Standard_DS1_v2
