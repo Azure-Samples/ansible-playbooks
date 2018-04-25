@@ -1,0 +1,144 @@
+# Description
+# ===========
+# This plabyook covers below scenario:
+# 1. create a VM with below conditions
+#    - private IP
+#    - vnet in another resource group
+# 1. clone a java application, build it
+# 1. install tomcat, deploy the java app to newly created VM
+#
+# Prequisite
+# ===========
+# - git on ansible host
+# - maven on ansible host
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars:
+    resource_group_vm: rg_yungezpvm1
+    resource_group_vnet: rg_yungezpvnet1
+    vnet_name: yungezpvnet1
+    subnet_name: yungezsnet1
+    vm_name: yungeztestvm1
+    location: eastus
+    repo_url: https://github.com/yungezz/helloworld.git
+    workspace: ~/src/helloworld
+    admin_username: azureuser
+    admin_password: Password@123
+  roles:
+    - Azure.azure_preview_modules
+  tasks:
+
+    - name: Create a resource group for vnet
+      azure_rm_resourcegroup:
+          name: "{{ resource_group_vnet }}"
+          location: "{{ location }}"
+
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group_vnet }}"
+        name: "{{ vnet_name }}"
+        address_prefixes: "10.0.0.0/16"
+
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group_vnet }}"
+        name: "{{ subnet_name }}"
+        address_prefix: "10.0.1.0/24"
+        virtual_network: "{{ vnet_name }}"
+
+    - name: Create a resource group for vm
+      azure_rm_resourcegroup:
+          name: "{{ resource_group_vm }}"
+          location: "{{ location }}"
+
+    - name: Create Network Security Group that allows SSH
+      azure_rm_securitygroup:
+        resource_group: "{{ resource_group_vm }}"
+        name: "{{ vm_name }}"
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            direction: Inbound
+          - name: Tomcat
+            protocol: Tcp
+            destination_port_range: 8080
+            access: Allow
+            priority: 1002
+            direction: Inbound
+
+    - name: Create VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group_vm }}"
+        name: "{{ vm_name }}"
+        vm_size: Standard_DS1_v2
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        virtual_network_resource_group: "{{ resource_group_vnet }}"
+        virtual_network_name: "{{ vnet_name }}"
+        subnet_name: "{{ subnet_name }}"
+        public_ip_allocation_method: Disabled
+        image:
+          offer: UbuntuServer
+          publisher: Canonical
+          sku: 16.04-LTS
+          version: latest
+      register: output
+
+    - name: add azure vm into host
+      add_host:
+        name: new_azure_vm
+        ansible_host: '{{ output.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.privateIPAddress }}'
+        ansible_connection: paramiko  # not guaranteed to have sshpass...
+        ansible_user: "{{ admin_username }}"
+        ansible_password: "{{ admin_password }}"
+        ansible_host_key_checking: false
+
+    - name: wait for the WinRM port to come online
+      wait_for:
+        port: 22
+        host: '{{ output.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.privateIPAddress }}'
+        timeout: 600 
+
+    - name: Git Clone
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ workspace }}"
+
+    - name: build sample app      
+      shell: mvn package chdir="{{ workspace }}"
+
+    - block:
+      - name: Update repositories cache and install "tomcat8" package
+        become: true
+        apt:
+          name: tomcat8
+          update_cache: yes
+
+      - name: Install "tomcat8-admin" package
+        become: true
+        apt:
+          name: tomcat8-admin
+
+      - name: copy app to azure vm
+        become: true
+        copy:
+          src: "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war"
+          dest: /var/lib/tomcat8/webapps/hello.war
+          force: yes
+          mode: 0755
+
+      - name: Start and enable Tomcat service
+        become: true
+        systemd:
+          name: tomcat8
+          state: started
+          enabled: true
+          daemon_reload: true
+      delegate_to: new_azure_vm
+
