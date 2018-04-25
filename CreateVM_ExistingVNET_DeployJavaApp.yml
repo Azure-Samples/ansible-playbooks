@@ -1,3 +1,16 @@
+# Description
+# ===========
+# This plabyook covers below scenario:
+# 1. create a VM with below conditions
+#    - private IP
+#    - vnet in another resource group
+# 1. clone a java application, build it
+# 1. install tomcat, deploy the java app to newly created VM
+#
+# Prequisite
+# ===========
+# - git on ansible host
+# - maven on ansible host
 - name: Create Azure VM
   hosts: localhost
   connection: local
@@ -7,10 +20,12 @@
     resource_group_vnet: rg_yungezpvnet1
     vnet_name: yungezpvnet1
     subnet_name: yungezsnet1
-    vm_name: aaaa1
+    vm_name: yungeztestvm1
     location: eastus
     repo_url: https://github.com/yungezz/helloworld.git
     workspace: ~/src/helloworld
+    admin_username: azureuser
+    admin_password: Password@123
   roles:
     - Azure.azure_preview_modules
   tasks:
@@ -56,8 +71,8 @@
         resource_group: "{{ resource_group_vm }}"
         name: "{{ vm_name }}"
         vm_size: Standard_DS1_v2
-        admin_username: azureuser
-        admin_password: Password@123
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
         virtual_network_resource_group: "{{ resource_group_vnet }}"
         virtual_network_name: "{{ vnet_name }}"
         subnet_name: "{{ subnet_name }}"
@@ -74,8 +89,8 @@
         name: new_azure_vm
         ansible_host: '{{ output.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.privateIPAddress }}'
         ansible_connection: paramiko  # not guaranteed to have sshpass...
-        ansible_user: azureuser
-        ansible_password: Password@123
+        ansible_user: "{{ admin_username }}"
+        ansible_password: "{{ admin_password }}"
         ansible_host_key_checking: false
 
     - name: wait for the WinRM port to come online
