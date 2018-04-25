@@ -29,25 +29,30 @@
   roles:
     - Azure.azure_preview_modules
   tasks:
+
     - name: Create a resource group for vnet
       azure_rm_resourcegroup:
           name: "{{ resource_group_vnet }}"
           location: "{{ location }}"
+
     - name: Create virtual network
       azure_rm_virtualnetwork:
         resource_group: "{{ resource_group_vnet }}"
         name: "{{ vnet_name }}"
         address_prefixes: "10.0.0.0/16"
+
     - name: Add subnet
       azure_rm_subnet:
         resource_group: "{{ resource_group_vnet }}"
         name: "{{ subnet_name }}"
         address_prefix: "10.0.1.0/24"
         virtual_network: "{{ vnet_name }}"
+
     - name: Create a resource group for vm
       azure_rm_resourcegroup:
           name: "{{ resource_group_vm }}"
           location: "{{ location }}"
+
     - name: Create Network Security Group that allows SSH
       azure_rm_securitygroup:
         resource_group: "{{ resource_group_vm }}"
@@ -66,6 +71,7 @@
             access: Allow
             priority: 1002
             direction: Inbound
+
     - name: Create VM
       azure_rm_virtualmachine:
         resource_group: "{{ resource_group_vm }}"
