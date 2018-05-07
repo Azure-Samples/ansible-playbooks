@@ -1,0 +1,3 @@
+- name: updatingvmss
+  src: https://github.com/Azure/azure_preview_modules
+  version: origin/updating-vmss

@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  roles:
+    - resourcesupport
+  vars:
+    resource_group: zimsvmss
+    scaleset_name: zimsvmss
+
+  tasks:
+    - name: Get scaleset info using azure_rm_resource_facts
+      azure_rm_resource_facts:
+        resource_group: "{{ resource_group }}"
+        provider: compute
+        resource_type: virtualmachinescalesets
+        resource_name: "{{ scaleset_name }}"
+        api_version: "2017-12-01"
+      register: scaleset
+
+    - name: Dump scaleset
+      debug:
+        var: scaleset

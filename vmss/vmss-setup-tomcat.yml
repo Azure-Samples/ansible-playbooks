@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  roles:
+    - resourcesupport
+  vars:
+    resource_group: zimsvmssrg
+    scaleset_name: zimsvmss
+    loadbalancer_name: zimsvmsslb
+
+  tasks:   
+    - include: get-hosts-tasks.yml
+
+- name: Install tomcat on Ubuntu 16.04
+  hosts: scalesethosts
+  become: yes
+  vars:
+
+  tasks:
+  - name: Update repositories cache and install "tomcat8" package
+    apt:
+      name: tomcat8
+      update_cache: yes
+
+  - name: Install "tomcat8-admin" package
+    apt:
+      name: tomcat8-admin
+
+  - name: copy Tomcat user roles configuration files, tomcat-users.xml
+    copy:
+      src: "tomcat-users.xml"
+      dest: "/var/lib/tomcat8/conf/tomcat-users.xml"
+
+  - name: Start and enable Tomcat service
+    systemd:
+      name: tomcat8
+      state: started
+      enabled: true
+      daemon_reload: true

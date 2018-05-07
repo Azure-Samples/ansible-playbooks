@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  roles:
+    - resourcesupport
+  vars:
+    resource_group: zimsvmssrg
+    scaleset_name: zimsvmss
+    loadbalancer_name: zimsvmsslb
+
+  tasks:   
+  tasks:   
+    - include: get-hosts-tasks.yml
+
+- hosts: scalesethosts
+  tasks: 
+    - name: Try to access Tomcat on specific VM
+      uri:
+        url: http://127.0.0.1:8080/
+        method: GET
+      register: output
+
+    - name: Dump output
+      debug:
+        var: output

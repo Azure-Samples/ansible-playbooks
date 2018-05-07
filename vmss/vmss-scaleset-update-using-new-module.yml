@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  roles:
+    - updatingvmss
+  vars:
+    resource_group: zimsvmssrg
+  tasks: 
+    - name: Get scaleset info
+      azure_rm_virtualmachine_scaleset_facts:
+        resource_group: zimsvmssrg
+        name: zimsvmss
+        format: full
+      register: output_scaleset
+
+    - name: Dump scaleset info
+      debug:
+        var: output_scaleset
+
+    - name: Modify scaleset (set upgradePolicy to Automatic and capacity to 3)
+      set_fact:
+        body: "{{ output_scaleset.ansible_facts.azure_vmss[0] | combine({'capacity': 3}, recursive=True) }}"
+
+    - name: Update something in that VMSS
+      azure_rm_virtualmachine_scaleset: "{{ body }}"

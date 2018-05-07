@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  roles:
+    - resourcesupport
+  vars:
+    resource_group: zimsvmssrg
+    scaleset_name: zimsvmss
+    loadbalancer_name: zimsvmsslb
+
+  tasks:   
+    - include: get-hosts-tasks.yml
+
+- hosts: scalesethosts
+  tasks: 
+    - name: Ping specific host
+      ping:

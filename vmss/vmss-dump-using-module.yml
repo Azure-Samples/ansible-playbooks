@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  roles:
+    - resourcesupport
+  vars:
+    resource_group: zimsnewscaleset
+    scaleset_name: zimsnewscaleset
+
+  tasks:
+    - name: Get scaleset info using azure_rm_resource_facts
+      azure_rm_scaleset_facts:
+        resource_group: "{{ resource_group }}"
+        name: "{{ scaleset_name }}"
+      register: scaleset
+
+    - name: Dump scaleset
+      debug:
+        var: scaleset

@@ -1,0 +1,4 @@
+# this playbook will contain entire pre-setup which will be equivalent of
+# - creating default VMSS using portal
+# - changing 80 to 8080 in LB rule
+# - changing 80 to 8080 in the probe
