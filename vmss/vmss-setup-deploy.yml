@@ -41,7 +41,7 @@
   become: yes
   vars:
 
-  tasks:  
+  tasks:
   - name: Update repositories cache and install "tomcat8" package
     apt:
       name: tomcat8
