@@ -40,6 +40,7 @@
   hosts: scalesethosts
   become: yes
   vars:
+    workspace: ~/src/helloworld
 
   tasks:
   - name: Update repositories cache and install "tomcat8" package
