@@ -1,7 +1,5 @@
 ---
 - hosts: localhost
-  roles:
-    - resourcesupport
   vars:
     resource_group: zimsvmssrg
     scaleset_name: zimsvmss
