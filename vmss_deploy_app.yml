@@ -1,0 +1,82 @@
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    resource_group: rg-yungezvmss426
+    scaleset_name: yungezvmss426
+    loadbalancer_name: yungezvmss426lb
+    repo_url: https://github.com/yungezz/helloworld.git
+    workspace: ~/src/helloworld
+    admin_name: azureuser
+    admin_pass: Password@123
+
+  tasks:   
+    - name: Get facts for all Public IPs within a resource groups
+      azure_rm_publicipaddress_facts:
+        resource_group: "{{ resource_group }}"
+      register: output_ip_address
+
+    - name: Get loadbalancer info
+      azure_rm_loadbalancer_facts:
+        resource_group: "{{ resource_group }}"
+        name: "{{ loadbalancer_name }}"
+      register: output
+
+    - debug:
+        var: output
+
+    - name: Print all items
+      add_host:
+        groups: scalesethosts
+        hostname: "{{ output_ip_address.ansible_facts.azure_publicipaddresses[0].properties.ipAddress }}_{{ item.frontend_port }}"
+        ansible_host: "{{ output_ip_address.ansible_facts.azure_publicipaddresses[0].properties.ipAddress }}"
+        ansible_port: "{{ item.frontend_port }}"
+        ansible_ssh_user: "{{ admin_name }}"
+        ansible_ssh_pass: "{{ admin_pass }}"
+      with_items:
+        - "{{ output.loadbalancers[loadbalancer_name].inbound_nat_rules }}"
+
+    - name: Git Clone sample app
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ workspace }}"
+
+    - name: Build sample app      
+      shell: mvn package chdir="{{ workspace }}"
+
+
+- name: Install tomcat on Ubuntu 16.04
+  hosts: scalesethosts
+  become: yes
+  vars:
+    workspace: ~/src/helloworld
+
+  tasks:
+  - name: Update repositories cache and install "tomcat8" package
+    apt:
+      name: tomcat8
+      update_cache: yes
+
+  - name: Install "tomcat8-admin" package
+    apt:
+      name: tomcat8-admin
+
+  - name: copy Tomcat user roles configuration files, tomcat-users.xml
+    copy:
+      src: "tomcat-users.xml"
+      dest: "/var/lib/tomcat8/conf/tomcat-users.xml"
+
+  - name: copy app to azure vm
+    copy:
+      src: "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war"
+      dest: /var/lib/tomcat8/webapps/hello.war
+      force: yes
+      mode: 0755
+
+  - name: Start and enable Tomcat service
+    systemd:
+      name: tomcat8
+      state: started
+      enabled: true
+      daemon_reload: true
