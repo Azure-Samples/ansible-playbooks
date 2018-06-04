@@ -1,13 +1,9 @@
 # Description
 # ===========
 # This playbook create a PostgreSQL server and an instance of PostgreSQL Database
-# azure_rm_postgresqlserver module and azure_rm_postgresqldatabase module are not available in v2.4, but in azure_preview_modules role,
-# so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
 
 ---
 - hosts: localhost
-  roles:
-    - Azure.azure_preview_modules
   vars:
     resource_group: postgresqlcreate
     location: eastus
