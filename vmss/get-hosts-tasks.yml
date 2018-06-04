@@ -1,3 +1,8 @@
+# Description
+# ===========
+# This is a helper playbook used by other playbooks.
+# Don't use it directly
+
 - name: Get facts for all Public IPs within a resource groups
   azure_rm_publicipaddress_facts:
     resource_group: "{{ resource_group }}"

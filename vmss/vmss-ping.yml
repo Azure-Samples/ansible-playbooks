@@ -1,3 +1,9 @@
+# Description
+# ===========
+# Use this playbook to ping all the Virtual Machines in VMSS.
+# Use vmss-create playbook to create VMSS first
+# This sample requires Ansible 2.6 
+
 ---
 - hosts: localhost
   vars:

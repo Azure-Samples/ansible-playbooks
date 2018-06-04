@@ -1,3 +1,8 @@
+# Description
+# ===========
+# This playbook creates a Virtual Machine Scaleset.
+# This sample requires Ansible 2.6 
+
 ---
 - hosts: localhost
   vars:

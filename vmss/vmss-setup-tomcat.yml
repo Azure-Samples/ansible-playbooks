@@ -1,3 +1,9 @@
+# Description
+# ===========
+# Use this playbook to scale up Tomcat on all VMs in the scaleset.
+# Use vmss-create playbook to create VMSS first
+# This sample requires Ansible 2.6 
+
 ---
 - hosts: localhost
   vars:

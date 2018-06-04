@@ -1,3 +1,9 @@
+# Description
+# ===========
+# Use this playbook to test URL on all VMs in the scaleset.
+# Use vmss-create and vmss-setup-tomcat playbooks to create VMSS and install Tomcat first
+# This sample requires Ansible 2.6 
+
 ---
 - hosts: localhost
   vars:
