@@ -1,0 +1,22 @@
+# Description
+# ===========
+# Use this playbook to ping all the Virtual Machines in VMSS.
+# Use vmss-create playbook to create VMSS first.
+# This sample requires Ansible 2.6 
+
+---
+- hosts: localhost
+  vars:
+    resource_group: vmsstestrg
+    vmss_name: vmsstest
+    loadbalancer_name: vmsstestlb
+    admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
+    admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"
+
+  tasks:   
+    - include: get-hosts-tasks.yml
+
+- hosts: scalesethosts
+  tasks: 
+    - name: Ping specific host
+      ping:

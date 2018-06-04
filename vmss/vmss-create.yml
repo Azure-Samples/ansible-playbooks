@@ -1,0 +1,100 @@
+# Description
+# ===========
+# This playbook creates a Virtual Machine Scaleset.
+# It also requires following env variables to be defined:
+# - VMSS_ADMIN_USERNAME
+# - VMSS_ADMIN_PASSWORD
+# This sample requires Ansible 2.6 
+
+---
+- hosts: localhost
+  vars:
+    resource_group: vmsstestrg
+    vmss_name: vmsstest
+    location: eastus
+    admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
+    admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"
+
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        address_prefixes: "10.0.0.0/16"
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        address_prefix: "10.0.1.0/24"
+        virtual_network: "{{ vmss_name }}"
+    - name: Create public IP address
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}"
+        allocation_method: Static
+        name: "{{ vmss_name }}"
+    - name: Create Network Security Group that allows SSH
+      azure_rm_securitygroup:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+
+    - name: Create a load balancer
+      azure_rm_loadbalancer:
+        name: "{{ vmss_name }}lb"
+        location: "{{ location }}"
+        resource_group: "{{ resource_group }}"
+        public_ip: "{{ vmss_name }}"
+        probe_protocol: Tcp
+        probe_port: 8080
+        probe_interval: 10
+        probe_fail_count: 3
+        protocol: Tcp
+        load_distribution: Default
+        frontend_port: 80
+        backend_port: 8080
+        idle_timeout: 4
+        natpool_frontend_port_start: 50000
+        natpool_frontend_port_end: 50040
+        natpool_backend_port: 22
+        natpool_protocol: Tcp
+
+    - name: Create VMSS
+      azure_rm_virtualmachine_scaleset:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        vm_size: Standard_DS1_v2
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        ssh_password_enabled: true
+        capacity: 2
+        virtual_network_name: "{{ vmss_name }}"
+        subnet_name: "{{ vmss_name }}"
+        upgrade_policy: Manual
+        tier: Standard
+        managed_disk_type: Standard_LRS
+        os_disk_caching: ReadWrite
+        image:
+          offer: UbuntuServer
+          publisher: Canonical
+          sku: 16.04-LTS
+          version: latest
+        load_balancer: "{{ vmss_name }}lb"
+        data_disks:
+          - lun: 0
+            disk_size_gb: 20
+            managed_disk_type: Standard_LRS
+            caching: ReadOnly
+          - lun: 1
+            disk_size_gb: 30
+            managed_disk_type: Standard_LRS
+            caching: ReadOnly
