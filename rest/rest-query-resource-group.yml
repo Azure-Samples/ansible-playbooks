@@ -1,7 +1,12 @@
+# Description
+# ===========
+# Use this playbook to query all the resources in a given resource group.
+# This sample requires Ansible 2.6 
+
 ---
 - hosts: localhost
   vars:
-    resource_group: zimsvmssrg
+    resource_group: resoure-group-name
 
   tasks:
     - name: Call REST API - Resources_ListByResourceGroup
