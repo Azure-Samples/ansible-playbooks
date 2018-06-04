@@ -1,8 +1,18 @@
 # Description
 # ===========
-# Use this playbook to scale up Tomcat on all VMs in the scaleset.
+# Use this playbook to 
+# - git clone and build a sample hello world java app
+# - Install tomcat on VMSS, 
+# - then copy war file to VMSS.
+# - start tomcat
+#
 # Use vmss-create playbook to create VMSS first
 # This sample requires Ansible 2.6 
+#
+# dependencies
+# ============
+# - maven on ansible host
+# - git on ansible host
 
 ---
 - hosts: localhost
@@ -12,16 +22,26 @@
     loadbalancer_name: vmsstestlb
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
     admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"
+    repo_url: https://github.com/yungezz/helloworld.git
+    workspace: ~/src/helloworld
 
   tasks:   
     - include: get-hosts-tasks.yml
+
+    - name: Git Clone sample app
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ workspace }}"
+
+    - name: Build sample app      
+      shell: mvn package chdir="{{ workspace }}"
 
 - name: Install tomcat on Ubuntu 16.04
   hosts: scalesethosts
   become: yes
   vars:
 
-  tasks:
+  tasks:  
   - name: Update repositories cache and install "tomcat8" package
     apt:
       name: tomcat8
@@ -35,6 +55,13 @@
     copy:
       src: "tomcat-users.xml"
       dest: "/var/lib/tomcat8/conf/tomcat-users.xml"
+
+  - name: copy app to azure vm
+    copy:
+      src: "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war"
+      dest: /var/lib/tomcat8/webapps/hello.war
+      force: yes
+      mode: 0755
 
   - name: Start and enable Tomcat service
     systemd:
