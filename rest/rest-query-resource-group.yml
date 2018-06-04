@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  vars:
+    resource_group: zimsvmssrg
+
+  tasks:
+    - name: Call REST API - Resources_ListByResourceGroup
+      azure_rm_resource_facts:
+        api_version: '2018-02-01'
+        resource_group: "{{ resource_group }}"
+        resource_type: resources
+      register: output
+
+    - debug:
+        var: output
