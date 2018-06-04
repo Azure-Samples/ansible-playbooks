@@ -23,7 +23,7 @@
     hostname: "{{ output_ip_address.ansible_facts.azure_publicipaddresses[0].properties.ipAddress }}_{{ item.properties.frontendPort }}"
     ansible_host: "{{ output_ip_address.ansible_facts.azure_publicipaddresses[0].properties.ipAddress }}"
     ansible_port: "{{ item.properties.frontendPort }}"
-    ansible_ssh_user: zim
-    ansible_ssh_pass: Vmssxxxabc1!
+    ansible_ssh_user: "{{ admin_username }}"
+    ansible_ssh_pass: "{{ admin_password }}"
   with_items:
     - "{{ output.ansible_facts.azure_loadbalancers[0].properties.inboundNatRules }}"

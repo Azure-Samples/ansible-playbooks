@@ -10,8 +10,9 @@
     resource_group: vmsstestrg
     scaleset_name: vmsstest
     loadbalancer_name: vmsstestlb
+    admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
+    admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"
 
-  tasks:   
   tasks:   
     - include: get-hosts-tasks.yml
 
