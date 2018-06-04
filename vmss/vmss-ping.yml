@@ -7,9 +7,9 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: zimsvmssrg
-    scaleset_name: zimsvmss
-    loadbalancer_name: zimsvmsslb
+    resource_group: vmsstestrg
+    vmss_name: vmsstest
+    loadbalancer_name: vmsstestlb
 
   tasks:   
     - include: get-hosts-tasks.yml

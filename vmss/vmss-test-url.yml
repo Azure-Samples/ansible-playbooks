@@ -7,9 +7,9 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: zimsvmssrg
-    scaleset_name: zimsvmss
-    loadbalancer_name: zimsvmsslb
+    resource_group: vmsstestrg
+    scaleset_name: vmsstest
+    loadbalancer_name: vmsstestlb
 
   tasks:   
   tasks:   

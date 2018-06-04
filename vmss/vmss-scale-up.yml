@@ -7,12 +7,13 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: zimsvmssrg
+    resource_group: vmsstestrg
+    vmss_name: vmsstest
   tasks: 
     - name: Get scaleset info
       azure_rm_virtualmachine_scaleset_facts:
-        resource_group: zimsvmssrg
-        name: zimsvmss
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
         format: curated
       register: output_scaleset
 

@@ -1,14 +1,19 @@
 # Description
 # ===========
 # This playbook creates a Virtual Machine Scaleset.
+# It also requires following env variables to be defined:
+# - VMSS_ADMIN_USERNAME
+# - VMSS_ADMIN_PASSWORD
 # This sample requires Ansible 2.6 
 
 ---
 - hosts: localhost
   vars:
-    resource_group: zimsvmssrg
-    vmss_name: zimsvmss
+    resource_group: vmsstestrg
+    vmss_name: vmsstest
     location: eastus
+    admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
+    admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"
 
   tasks:
     - name: Create a resource group
@@ -68,8 +73,8 @@
         resource_group: "{{ resource_group }}"
         name: "{{ vmss_name }}"
         vm_size: Standard_DS1_v2
-        admin_username: zim
-        admin_password: Vmssxxxabc1!
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
         ssh_password_enabled: true
         capacity: 2
         virtual_network_name: "{{ vmss_name }}"
