@@ -1,0 +1,65 @@
+# Description
+# ===========
+# Use this playbook to create an event hub, in several steps:
+#  - create a namespace
+#  - asynchronously wait for the namespace to become active using facts module
+#  - create an event hub 
+# This sample requires Ansible 2.6 
+
+- hosts: localhost
+  vars:
+    resource_group: testresourcegroupx
+    location: eastus
+    namespacename: testnamespaceabcnsxyzmxx
+    eventhubname: testeventhub
+  tasks:
+
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create a namespace for an event hub using REST API
+      azure_rm_resource:
+        api_version: '2017-04-01'
+        resource_group: "{{ resource_group }}"
+        provider: eventhub
+        resource_type: namespaces
+        resource_name: "{{ namespacename }}"
+        body:
+          location: "{{ location }}"
+          sku:
+            name: Basic
+            tier: Basic
+            capacity: 10
+          properties:
+            isAutoInflateEnabled: False
+
+    - name: Wait for namespace to be ready
+      azure_rm_resource_facts:
+        api_version: '2017-04-01'
+        resource_group: "{{ resource_group }}"
+        provider: eventhub
+        resource_type: namespaces
+        resource_name: "{{ namespacename }}"
+      register: output
+      until: output.response[0].properties.status == 'Active'
+      delay: 10
+
+    - debug:
+        var: output
+
+    - name: Create an event hub using REST API
+      azure_rm_resource:
+        api_version: '2017-04-01'
+        resource_group: "{{ resource_group }}"
+        provider: eventhub
+        resource_type: namespaces
+        resource_name: "{{ namespacename }}"
+        subresource:
+          - type: eventhubs
+            name: "{{ eventhubname }}"
+        body:
+          location: eastus
+          properties:
+            messageRetentionInDays: 1
