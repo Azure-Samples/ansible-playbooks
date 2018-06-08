@@ -60,6 +60,6 @@
           - type: eventhubs
             name: "{{ eventhubname }}"
         body:
-          location: eastus
+          location: "{{ location }}"
           properties:
             messageRetentionInDays: 1
