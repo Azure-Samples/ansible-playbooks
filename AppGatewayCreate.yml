@@ -24,6 +24,46 @@
         name: "{{ resource_group }}"
         location: "{{ location }}"
 
+    - name: Create a container with httpd image 
+      azure_rm_containerinstance:
+        resource_group: "{{ resource_group }}"
+        name: "aci{{ resource_group | hash('md5') | truncate(7, True, '') }}"
+        os_type: linux
+        ip_address: public
+        location: eastus
+        ports:
+          - 80
+        containers:
+          - name: mycontainer1
+            image: httpd
+            memory: 1.5
+            ports:
+              - 80
+      register: ci_output_a
+
+    - name: Create a container with httpd image 
+      azure_rm_containerinstance:
+        resource_group: "{{ resource_group }}"
+        name: "aci{{ resource_group | hash('md5') | truncate(7, True, '') }}b"
+        os_type: linux
+        ip_address: public
+        location: eastus
+        ports:
+          - 80
+        containers:
+          - name: mycontainer1
+            image: httpd
+            memory: 1.5
+            ports:
+              - 80
+      register: ci_output_b
+
+    - debug:
+        var: ci_output_a
+
+    - debug:
+        var: ci_output_b
+
     - name: Create a virtual network
       azure_rm_virtualnetwork:
         name: "{{ vnet_name }}"
@@ -41,47 +81,55 @@
         virtual_network_name: "{{ vnet_name }}"
         resource_group: "{{ resource_group }}"
         address_prefix_cidr: 10.1.0.0/24
+      register: subnet_output
+
+    - name: Create public IP address
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}"
+        allocation_method: Dynamic
+        name: appgwpublicip
+        domain_name_label: zimsag
+      register: pip_output
+
+    - debug:
+        var: pip_output
 
     - name: Create instance of Application Gateway
       azure_rm_appgw:
         resource_group: "{{ resource_group }}"
         name: "{{ appgw_name }}"
         sku:
-          name: Standard_Small
-          tier: Standard
+          name: standard_small
+          tier: standard
           capacity: 2
         gateway_ip_configurations:
           - subnet:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/{{ vnet_name }}/subnets/{{ subnet_name }}
+              id: "{{ subnet_output.state.id }}"
             name: app_gateway_ip_config
         frontend_ip_configurations:
-          - subnet:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/{{ vnet_name }}/subnets/{{ subnet_name }}
+          - public_ip_address: appgwpublicip
             name: sample_gateway_frontend_ip_config
         frontend_ports:
-          - port: 90
+          - port: 80
             name: ag_frontend_port
         backend_address_pools:
           - backend_addresses:
-              - ip_address: 10.0.0.4
+              - ip_address: "{{ ci_output_a.ip_address }}"
+              - ip_address: "{{ ci_output_b.ip_address }}"
             name: test_backend_address_pool
         backend_http_settings_collection:
           - port: 80
-            protocol: Http
-            cookie_based_affinity: Enabled
+            protocol: http
+            cookie_based_affinity: enabled
             name: sample_appgateway_http_settings
         http_listeners:
-          - frontend_ip_configuration:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/frontendIPConfigurations/sample_gateway_frontend_ip_config
-            frontend_port:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/frontendPorts/ag_frontend_port
+          - frontend_ip_configuration: sample_gateway_frontend_ip_config
+            frontend_port: ag_frontend_port
             name: sample_http_listener
         request_routing_rules:
           - rule_type: Basic
-            backend_address_pool:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/backendAddressPools/test_backend_address_pool
-            backend_http_settings:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/backendHttpSettingsCollection/sample_appgateway_http_settings
-            http_listener:
-              id: /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/applicationGateways/{{ appgw_name }}/httpListeners/sample_http_listener
+            backend_address_pool: test_backend_address_pool
+            backend_http_settings: sample_appgateway_http_settings
+            http_listener: sample_http_listener
             name: rule1
+      register: output
