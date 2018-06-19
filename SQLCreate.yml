@@ -15,7 +15,7 @@
 
 - hosts: localhost
   vars:
-    resource_group: sqlcreate001
+    resource_group: "{{ resource_group_name }}"
     location: eastus
     sqlserver_name: sqlansible{{ rpfx }}
     sqldb_name: sqldbtest
