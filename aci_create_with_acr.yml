@@ -11,6 +11,13 @@
 # ===========
 # - git
 # - Docker
+- hosts: localhost
+  tasks:
+    - name: Prepare random postfix
+      set_fact:
+        rpfx: "{{ 1000 | random }}"
+      run_once: yes
+
 
 - name: demo
   hosts: localhost
@@ -21,7 +28,7 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    registry_name: acicreatewithacr
+    registry_name: acr{{ rpfx }}
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"
     workspace: ~/src/aci-helloworld
     image_name: aci-helloworld

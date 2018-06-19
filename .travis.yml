@@ -68,7 +68,8 @@ install:
     install ansible[azure]==$ANSIBLE_VERSION; fi
   - ansible --version
   - ansible-galaxy install Azure.azure_preview_modules
-  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt 
+  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
+  - pip install docker
 
 script:
   - scan_test
