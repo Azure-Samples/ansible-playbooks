@@ -11,9 +11,10 @@
   vars:
     resource_group: kvcreatesample
     location: eastus
-    keyvault_name: keyvaultansible
-    object_id: 97567bfa-cf13-4217-8fa3-cc56bc1867fe
+    keyvault_name: keyvaultansible    
   tasks:
+    - name: set facts
+      object_id: "{{ lookup('env', 'AZURE_OBJECT_ID') }}"
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group }}"
