@@ -5,7 +5,7 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: postgresqlcreate
+    resource_group: "{{ resource_group_name }}"
     location: eastus
     postgresqlserver_name: sqlansible
     postgresqldb_name: sqldbtest

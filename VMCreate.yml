@@ -6,7 +6,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: vmcreate001
+    resource_group: "{{ resource_group_name }}"
     vm_name: testvm
     location: eastus
   tasks:

@@ -5,7 +5,7 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: mysqldbcreate
+    resource_group: "{{ resource_group_name }}"
     location: eastus
     mysqlserver_name: sqlansible
     mysqldb_name: sqldbtest

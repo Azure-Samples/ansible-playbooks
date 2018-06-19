@@ -5,7 +5,7 @@
 - hosts: localhost
   connection: local
   vars:
-    resource_group: vmsscreateansibletest
+    resource_group: "{{ resource_group_name }}"
     vm_name: testvmss
     location: eastus
     capacity: 2

@@ -8,7 +8,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: vmcreatewindows001
+    resource_group: "{{ resource_group_name }}"
     vm_name: zimswintestvm
     vm_user: azureuser
     vm_password: MyPassword123!!!

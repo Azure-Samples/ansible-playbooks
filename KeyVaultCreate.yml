@@ -9,7 +9,7 @@
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: kvcreatesample
+    resource_group: "{{ resource_group_name }}"
     location: eastus
     keyvault_name: keyvaultansible    
   tasks:
