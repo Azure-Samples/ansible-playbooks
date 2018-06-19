@@ -2,8 +2,7 @@
 # ===========
 # This playbook create a SQL server and an instance of SQL Database.
 # Note: Random number is used to set a globally unique name for SQL Server
-#xx
-
+#
 ---
 
 - hosts: localhost
