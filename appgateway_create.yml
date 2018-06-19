@@ -9,6 +9,13 @@
 
 ---
 - hosts: localhost
+  tasks:
+    - name: Prepare random postfix
+      set_fact:
+        rpfx: "{{ 1000 | random }}"
+      run_once: yes
+
+- hosts: localhost
   roles:
     - Azure.azure_preview_modules
   vars:
@@ -16,7 +23,7 @@
     location: eastus
     vnet_name: ansiblevnetname
     subnet_name: ansiblesubnetname
-    appgw_name: appgatewayname
+    appgw_name: appgw{{ rpfx }}
     azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
   tasks:
     - name: Create a resource group
