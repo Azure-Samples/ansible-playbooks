@@ -1,7 +1,7 @@
 # Description
 # ===========
 # This playbook create a SQL server and an instance of SQL Database.
-# Note: you have to set variable sqlserver_name to a globally unique name, otherwise SQL server creation may fail
+# Note: Random number is used to set a globally unique name for SQL Server
 #
 
 ---
