@@ -14,7 +14,9 @@
     keyvault_name: keyvaultansible    
   tasks:
     - name: set facts
-      object_id: "{{ lookup('env', 'AZURE_OBJECT_ID') }}"
+      set_fact:
+        object_id: "{{ lookup('env', 'AZURE_OBJECT_ID') }}"
+
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group }}"
