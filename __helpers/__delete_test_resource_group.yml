@@ -8,6 +8,6 @@
   tasks:
   - name: delete test resource group
     azure_rm_resourcegroup:
-      name: '{{resource_group}}'
+      name: '{{resource_group_name}}'
       location: '{{ location }}'
       state: absent
