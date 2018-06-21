@@ -1,0 +1,19 @@
+
+
+- name: query resource groups
+  hosts: localhost
+  connection: local
+
+  tasks:
+  - name: create Azure resource group
+    azure_rm_resourcegroup_facts:
+    register: output
+
+  - name: delete all resource groups
+    azure_rm_resourcegroup:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+      - "{{ output.ansible_facts.azure_resourcegroups }}"
+    when:
+      - item.name.startswith('aci_create')

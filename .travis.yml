@@ -36,6 +36,9 @@ before_install:
         message+=($file);
         export exit_code=1;
       fi;
+
+      travis_wait 50 ansible-playbook ./__helpers/__clean.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
+
       travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
     }
 
