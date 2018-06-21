@@ -17,4 +17,4 @@
     with_items:
       - "{{ output.ansible_facts.azure_resourcegroups }}"
     when:
-      - item.name.startswith('aci_create')
+      - item.name.startswith('aci_create') or item.name.startswith('appgateway_create') or item.name.startswith('mysql_create') or item.name.startswith('create_virtualmachine') or item.name.startswith('keyvault_create') or item.name.startswith('networkinterface_with') or item.name.startswith('postgresql_create') or item.name.startswith('sql_create') or item.name.startswith('vm_create')
