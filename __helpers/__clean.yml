@@ -11,7 +11,7 @@
 
   - name: delete all resource groups
     azure_rm_resourcegroup:
-      name: "{{ item }}"
+      name: "{{ item.name }}"
       state: absent
     with_items:
       - "{{ output.ansible_facts.azure_resourcegroups }}"
