@@ -44,7 +44,7 @@ before_install:
   - scan_test() {
         if [ $id -eq 1 ]; then
           run_test aci_create_with_acr.yml
-        fi
+        fi;
     }
 
 install:
