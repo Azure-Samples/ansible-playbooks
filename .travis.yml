@@ -51,6 +51,9 @@ before_install:
         if [ "$id" = 3 ]; then
           run_test postgresql_create.yml
         fi
+        if [ "$id" = 3 ]; then
+          run_test postgresql_create.yml
+        fi
     }
 
 install:
