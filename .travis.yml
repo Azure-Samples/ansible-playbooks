@@ -65,8 +65,9 @@ install:
   - apt-cache policy docker-ce
   - sudo apt-get install -y docker-ce
   - sudo usermod -aG docker ${USER}
-  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
-    install ansible[azure]==$ANSIBLE_VERSION; fi
+#  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
+#    install ansible[azure]==$ANSIBLE_VERSION; fi
+  - pip install ansible[azure]==2.6.0.rc3
   - ansible --version
   - ansible-galaxy install Azure.azure_preview_modules
   - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
