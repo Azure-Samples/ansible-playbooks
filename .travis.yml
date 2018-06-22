@@ -72,6 +72,7 @@ install:
   - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
   - pip install docker
   - pip freeze
+  - "{ echo '[defaults]'; echo 'roles_path = ~/.ansible/roles/'; } >> ansible.cfg"
 
 script:
   - scan_test
