@@ -42,19 +42,15 @@ before_install:
 
 
   - scan_test() {
-      end=$((id * number_per_job));
-      start=$((end - number_per_job));
-
-      liststr=./*.yml;
-      list=($liststr);
-
-      echo start = $start, end = $end, list_lenth = ${#list[@]};
-
-      for (( i = $start; i < $end; i++ )); do
-        if [ "$i" -lt "${#list[@]}" ]; then
-          run_test ${list[$i]};
+        if [ "$id" = 1 ]; then
+          run_test aci_create_with_acr.yml
         fi
-      done;
+        if [ "$id" = 2 ]; then
+          run_test mysql_create.yml
+        fi
+        if [ "$id" = 3 ]; then
+          run_test postgresql_create.yml
+        fi
     }
 
 install:
@@ -68,6 +64,7 @@ install:
 #  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
 #    install ansible[azure]==$ANSIBLE_VERSION; fi
   - pip install ansible[azure]==2.6.0.rc3
+  - pip install azure-mgmt-containerinstance==0.4.0
   - ansible --version
 #  - ansible-galaxy install Azure.azure_preview_modules
 #  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
