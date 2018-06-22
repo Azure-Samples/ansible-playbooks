@@ -9,7 +9,7 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    postgresqlserver_name: sqlansible
+    postgresqlserver_name: postgresql{{ rpfx }}
     postgresqldb_name: sqldbtest
     admin_username: admxyz
     admin_password: Abcpasswordxyz12!
