@@ -71,10 +71,6 @@ install:
   - ansible-galaxy install Azure.azure_preview_modules
   - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
   - pip install docker
-  - pip install azure-mgmt-containerinstance==0.4.0
-  - pip install azure-mgmt-containerregistry==2.0.0
-  - pip install azure-mgmt-sql==0.7.1
-  - pip install azure-mgmt-rdbms==1.2.0
   - pip freeze
 
 script:
