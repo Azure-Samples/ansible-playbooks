@@ -42,16 +42,16 @@ before_install:
 
 
   - scan_test() {
-        if [ "$id" -eq 1 ]; then
+        if [ $id -eq 1 ]; then
           run_test aci_create_with_acr.yml
         fi
-        if [ "$id" -eq 2 ]; then
+        if [ $id -eq 2 ]; then
           run_test mysql_create.yml
         fi
-        if [ "$id" -eq 3 ]; then
+        if [ $id -eq 3 ]; then
           run_test postgresql_create.yml
         fi
-        if [ "$id" = -eq ]; then
+        if [ $id = -eq ]; then
           run_test postgresql_create.yml
         fi
     }
