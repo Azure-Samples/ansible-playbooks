@@ -43,7 +43,9 @@ before_install:
 
   - scan_test() {
         if [ $id -eq 1 ]; then
-          run_test aci_create_with_acr.yml;
+          run_test mysql_create.yml;
+          run_test postgresql_create.yml;
+          run_test sql_create.yml;
         fi;
     }
 
@@ -59,7 +61,6 @@ install:
 #    install ansible[azure]==$ANSIBLE_VERSION; fi
 #  - pip install ansible[azure]==2.6.0.rc3
   - pip install ansible[azure]==2.5.0
-  - pip install azure-mgmt-containerinstance==0.4.0
   - ansible --version
 #  - ansible-galaxy install Azure.azure_preview_modules
 #  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
