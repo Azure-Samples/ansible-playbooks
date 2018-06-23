@@ -50,10 +50,13 @@ before_install:
           run_test aci_create_with_acr.yml;
         fi;
         if [ $id == "devel-3" ]; then
+          echo "no test";
         fi;
         if [ $id == "devel-4" ]; then
+          echo "no test";
         fi;
         if [ $id == "devel-5" ]; then
+          echo "no test";
         fi;
     }
 
