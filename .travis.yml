@@ -13,12 +13,11 @@ env:
     - ANSIBLE_VERSION=latest
     #- ANSIBLE_VERSION=2.4.2.0
   matrix:
-    - id=1
-    - id=2
-    - id=3
-    - id=4
-    - id=5
-    - id=6
+    - id="devel-1"
+    - id="devel-2"
+    - id="devel-3"
+    - id="devel-4"
+    - id="devel-5"
 
 before_install:
   - sudo apt-get update -qq
@@ -42,10 +41,19 @@ before_install:
 
 
   - scan_test() {
-        if [ $id -eq 1 ]; then
+        if [ $id -eq "devel-1" ]; then
           run_test mysql_create.yml;
           run_test postgresql_create.yml;
           run_test sql_create.yml;
+        fi;
+        if [ $id -eq "devel-2" ]; then
+          run_test aci_create_with_acr.yml;
+        fi;
+        if [ $id -eq "devel-3" ]; then
+        fi;
+        if [ $id -eq "devel-4" ]; then
+        fi;
+        if [ $id -eq "devel-5" ]; then
         fi;
     }
 
