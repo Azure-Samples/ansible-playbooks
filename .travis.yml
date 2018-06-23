@@ -41,19 +41,19 @@ before_install:
 
 
   - scan_test() {
-        if [ $id -eq "devel-1" ]; then
+        if [ $id == "devel-1" ]; then
           run_test mysql_create.yml;
           run_test postgresql_create.yml;
           run_test sql_create.yml;
         fi;
-        if [ $id -eq "devel-2" ]; then
+        if [ $id == "devel-2" ]; then
           run_test aci_create_with_acr.yml;
         fi;
-        if [ $id -eq "devel-3" ]; then
+        if [ $id == "devel-3" ]; then
         fi;
-        if [ $id -eq "devel-4" ]; then
+        if [ $id == "devel-4" ]; then
         fi;
-        if [ $id -eq "devel-5" ]; then
+        if [ $id == "devel-5" ]; then
         fi;
     }
 
