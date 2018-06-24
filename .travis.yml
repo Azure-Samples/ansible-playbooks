@@ -53,10 +53,10 @@ before_install:
           run_test vm_create.yml;
         fi;
         if [ $id == "devel-4" ]; then
-          echo "no test";
+          run_test vm_create_ssh.yml;
         fi;
         if [ $id == "devel-5" ]; then
-          echo "no test";
+          run_test vm_create_windows.yml;
         fi;
     }
 
