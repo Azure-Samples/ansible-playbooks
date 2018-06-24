@@ -10,8 +10,8 @@
     vnet_name: testnic001
     subnet_name: testnic001
     nic_name: testnic001
-  roles:
-    - Azure.azure_preview_modules
+#  roles:
+#    - Azure.azure_preview_modules
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
