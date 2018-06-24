@@ -18,6 +18,17 @@ env:
     - id="devel-3"
     - id="devel-4"
     - id="devel-5"
+    - id="devel-azure-preview-modules"
+    - id="2.6-stable-1"
+    - id="2.6-stable-2"
+    - id="2.6-stable-3"
+    - id="2.6-stable-4"
+    - id="2.6-stable-5"
+    - id="2.5-stable-1"
+    - id="2.5-stable-2"
+    - id="2.5-stable-3"
+    - id="2.5-stable-4"
+    - id="2.5-stable-5"
 
 before_install:
   - sudo apt-get update -qq
