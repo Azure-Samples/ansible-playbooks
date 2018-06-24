@@ -55,11 +55,9 @@ before_install:
         fi;
         if [ $id == "devel-4" ]; then
           run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
-          #run_test vm_create_existingvnet_deployjavaapp.yml;
         fi;
         if [ $id == "devel-5" ]; then
           echo "no tests";
-          #run_test vm_create_windows.yml;
         fi;
     }
 
