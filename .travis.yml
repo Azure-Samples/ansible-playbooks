@@ -58,6 +58,7 @@ before_install:
           #run_test vm_create_existingvnet_deployjavaapp.yml;
         fi;
         if [ $id == "devel-5" ]; then
+          echo "no tests";
           #run_test vm_create_windows.yml;
         fi;
     }
