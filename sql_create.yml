@@ -3,7 +3,6 @@
 # This playbook create a SQL server and an instance of SQL Database.
 # Note: Random number is used to set a globally unique name for SQL Server
 #
-
 ---
 
 - hosts: localhost
@@ -15,7 +14,7 @@
 
 - hosts: localhost
   vars:
-    resource_group: sqlcreate001
+    resource_group: "{{ resource_group_name }}"
     location: eastus
     sqlserver_name: sqlansible{{ rpfx }}
     sqldb_name: sqldbtest

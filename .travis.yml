@@ -13,12 +13,22 @@ env:
     - ANSIBLE_VERSION=latest
     #- ANSIBLE_VERSION=2.4.2.0
   matrix:
-    - id=1
-    - id=2
-    - id=3
-    - id=4
-    - id=5
-    - id=6
+    - id="devel-1"
+    - id="devel-2"
+    - id="devel-3"
+    - id="devel-4"
+    - id="devel-5"
+    - id="devel-azure-preview-modules"
+    - id="2.6-stable-1"
+    - id="2.6-stable-2"
+    - id="2.6-stable-3"
+    - id="2.6-stable-4"
+    - id="2.6-stable-5"
+    - id="2.5-stable-1"
+    - id="2.5-stable-2"
+    - id="2.5-stable-3"
+    - id="2.5-stable-4"
+    - id="2.5-stable-5"
 
 before_install:
   - sudo apt-get update -qq
@@ -29,31 +39,38 @@ before_install:
       resource_group="${test_name}$(date +%s)";
       echo Run playbook $file;
 
-      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID}";
+      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
 
       if [ $? -ne 0 ]; then
         echo test $file failed;
         message+=($file);
         export exit_code=1;
       fi;
-      travis_wait 50 delete_resource_group $resource_group;
+
+      travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
     }
 
 
   - scan_test() {
-      end=$((id * number_per_job));
-      start=$((end - number_per_job));
+        if [ $id == "devel-1" ]; then
+          run_test mysql_create.yml;
+          run_test postgresql_create.yml;
+          run_test sql_create.yml;
+        fi;
+        if [ $id == "devel-2" ]; then
+          run_test aci_create_with_acr.yml;
+        fi;
+        if [ $id == "devel-3" ]; then
+          run_test vm_create.yml;
+          run_test vm_create_ssh.yml;
+        fi;
+        if [ $id == "devel-4" ]; then
+          run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
+        fi;
+        if [ $id == "devel-5" ]; then
+          echo "no tests";
+        fi;
 
-      liststr=./*.yml;
-      list=($liststr);
-
-      echo start = $start, end = $end, list_lenth = ${#list[@]};
-
-      for (( i = $start; i < $end; i++ )); do
-        if [ "$i" -lt "${#list[@]}" ]; then
-          run_test ${list[$i]};
-        fi
-      done;
     }
 
 install:
@@ -64,11 +81,21 @@ install:
   - apt-cache policy docker-ce
   - sudo apt-get install -y docker-ce
   - sudo usermod -aG docker ${USER}
-  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
-    install ansible[azure]==$ANSIBLE_VERSION; fi
+#  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
+#    install ansible[azure]==$ANSIBLE_VERSION; fi
+#  - pip install ansible[azure]==2.6.0.rc3
+#  - pip install ansible[azure]==2.5.0
+  - git clone https://github.com/ansible/ansible.git
+  - pip install -r ./ansible/requirements.txt
+  - pip install -r ./ansible/packaging/requirements/requirements-azure.txt 
+  - cd ansible
+  - source ./hacking/env-setup
+  - cd ..
   - ansible --version
-  - ansible-galaxy install Azure.azure_preview_modules
-  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt 
+#  - ansible-galaxy install Azure.azure_preview_modules
+#  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
+  - pip install docker
+  - pip freeze
 
 script:
   - scan_test

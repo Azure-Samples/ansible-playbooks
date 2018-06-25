@@ -1,0 +1,13 @@
+# Description
+# ===========
+# This is helper task to delete test resource group
+
+- name: delete test resource group
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: delete test resource group
+    azure_rm_resourcegroup:
+      name: '{{resource_group_name}}'
+      force: True
+      state: absent

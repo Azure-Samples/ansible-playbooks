@@ -9,14 +9,21 @@
 
 ---
 - hosts: localhost
+  tasks:
+    - name: Prepare random postfix
+      set_fact:
+        rpfx: "{{ 1000 | random }}"
+      run_once: yes
+
+- hosts: localhost
   roles:
     - Azure.azure_preview_modules
   vars:
-    resource_group: appgatewaycreate
+    resource_group: "{{ resource_group_name }}"
     location: eastus
     vnet_name: ansiblevnetname
     subnet_name: ansiblesubnetname
-    appgw_name: appgatewayname
+    appgw_name: appgw{{ rpfx }}
     azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
   tasks:
     - name: Create a resource group
@@ -41,7 +48,7 @@
               - 80
       register: ci_output_a
 
-    - name: Create a container with httpd image 
+    - name: Create another container with httpd image 
       azure_rm_containerinstance:
         resource_group: "{{ resource_group }}"
         name: "aci{{ resource_group | hash('md5') | truncate(7, True, '') }}b"
@@ -58,10 +65,12 @@
               - 80
       register: ci_output_b
 
-    - debug:
+    - name: Dump first container instance output
+      debug:
         var: ci_output_a
 
-    - debug:
+    - name: Dump second container instance output
+      debug:
         var: ci_output_b
 
     - name: Create a virtual network
@@ -83,7 +92,7 @@
         address_prefix_cidr: 10.1.0.0/24
       register: subnet_output
 
-    - name: Create public IP address
+    - name: Create a public IP address
       azure_rm_publicipaddress:
         resource_group: "{{ resource_group }}"
         allocation_method: Dynamic
@@ -91,7 +100,8 @@
         domain_name_label: zimsag
       register: pip_output
 
-    - debug:
+    - name: Dump Public IP output
+      debug:
         var: pip_output
 
     - name: Create instance of Application Gateway

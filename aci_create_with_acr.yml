@@ -11,17 +11,24 @@
 # ===========
 # - git
 # - Docker
+- hosts: localhost
+  tasks:
+    - name: Prepare random postfix
+      set_fact:
+        rpfx: "{{ 1000 | random }}"
+      run_once: yes
+
 
 - name: demo
   hosts: localhost
 # The modules of azure container registry and azure container instance are available since Ansible version 2.5.
 # But if you are using Ansible version 2.4, you need to have below 2 lines to get modules of azure container registry and azure container instance from the playbook role of azure_preview_modules.
-# roles:
-#   - Azure.azure_preview_modules
+#  roles:
+#    - Azure.azure_preview_modules
   vars:
-    resource_group: acicreatewithACR
+    resource_group: "{{ resource_group_name }}"
     location: eastus
-    registry_name: acicreatewithacr
+    registry_name: acr{{ rpfx }}
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"
     workspace: ~/src/aci-helloworld
     image_name: aci-helloworld
