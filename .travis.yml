@@ -52,8 +52,8 @@ before_install:
   - setup_branch(){
         cd ansible;
         git checkout $1;
-        pip install -r ./ansible/requirements.txt;
-        pip install -r ./ansible/packaging/requirements/requirements-azure.txt; 
+        pip install -r requirements.txt;
+        pip install -r packaging/requirements/requirements-azure.txt; 
         source ./hacking/env-setup;
         cd ..;
     }
