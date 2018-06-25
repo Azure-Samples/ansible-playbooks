@@ -72,69 +72,69 @@ before_install:
         fi;
 
         if [ $id == "2.6-stable-1" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.6;
-          cd ..
+          cd ..;
           run_test mysql_create.yml;
           run_test postgresql_create.yml;
           run_test sql_create.yml;
         fi;
         if [ $id == "2.6-stable-2" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.6;
-          cd ..
+          cd ..;
           run_test aci_create_with_acr.yml;
         fi;
         if [ $id == "2.6-stable-3" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.6;
-          cd ..
+          cd ..;
           run_test vm_create.yml;
           run_test vm_create_ssh.yml;
         fi;
         if [ $id == "2.6-stable-4" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.6;
-          cd ..
+          cd ..;
           run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
         fi;
         if [ $id == "2.6-stable-5" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.6;
-          cd ..
+          cd ..;
         fi;
 
         if [ $id == "2.5-stable-1" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.5;
-          cd ..
+          cd ..;
           run_test mysql_create.yml;
           run_test postgresql_create.yml;
           run_test sql_create.yml;
         fi;
         if [ $id == "2.5-stable-2" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.5;
-          cd ..
+          cd ..;
           run_test aci_create_with_acr.yml;
         fi;
         if [ $id == "2.5-stable-3" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.5;
-          cd ..
+          cd ..;
           run_test vm_create.yml;
           run_test vm_create_ssh.yml;
         fi;
         if [ $id == "2.5-stable-4" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.5;
-          cd ..
+          cd ..;
           run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
         fi;
         if [ $id == "2.5-stable-5" ]; then
-          cd ansible
+          cd ansible;
           git checkout stable-2.5;
-          cd ..
+          cd ..;
         fi;
     }
 
