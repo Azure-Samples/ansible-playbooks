@@ -31,7 +31,7 @@
     registry_name: acr{{ rpfx }}
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"
     workspace: ~/src/aci-helloworld
-    image_name: aci-helloworld
+    image_name: "img{{ rpfx }}"
     http_port: 80
     email: test@email.com
   tasks:
