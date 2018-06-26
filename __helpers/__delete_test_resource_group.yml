@@ -11,3 +11,8 @@
       name: '{{resource_group_name}}'
       force: True
       state: absent
+  - name: delete test resource group
+    azure_rm_resourcegroup:
+      name: '{{resource_group_name_secondary}}'
+      force: True
+      state: absent
