@@ -142,7 +142,7 @@ install:
 #    install ansible[azure]==$ANSIBLE_VERSION; fi
 #  - pip install ansible[azure]==2.6.0.rc3
 #  - pip install ansible[azure]==2.5.0
-  - git clone https://github.com/zikalinose/ansible.git
+  - git clone https://github.com/zikalino/ansible.git
 #  - ansible-galaxy install Azure.azure_preview_modules
 #  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
   - pip install docker
