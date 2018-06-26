@@ -11,7 +11,7 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    keyvault_name: keyvault{{ random_number }}    
+    keyvault_name: keyvault{{ random_name }}    
   tasks:
     - name: set facts
       set_fact:

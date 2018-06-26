@@ -9,7 +9,7 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    mysqlserver_name: mysql{{ random_number }}
+    mysqlserver_name: mysql{{ random_name }}
     mysqldb_name: sqldbtest
     admin_username: admxyz
     admin_password: Abcpasswordxyz12!

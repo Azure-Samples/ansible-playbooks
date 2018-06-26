@@ -8,7 +8,7 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    sqlserver_name: sqlansible{{ random_number }}
+    sqlserver_name: sqlansible{{ random_name }}
     sqldb_name: sqldbtest
     admin_username: admxyz
     admin_password: Abcpasswordxyz12!
