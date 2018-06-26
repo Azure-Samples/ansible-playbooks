@@ -38,7 +38,7 @@ before_install:
       test_name=${test_name%%.yml};
       resource_group="${test_name}$(date +%s)";
       resource_group_secondary="${test_name}$(date +%s)2nd";
-      random_name=`mktemp tmp.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`;
+      random_name=`mktemp XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`;
       echo Run playbook $file;
 
       travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group,\"resource_group_name_secondary\":$resource_group_secondary,\"random_name\":$random_name}";
