@@ -4,19 +4,12 @@
 
 ---
 - hosts: localhost
-  tasks:
-    - name: Prepare random postfix
-      set_fact:
-        rpfx: "{{ 1000 | random }}"
-      run_once: yes
-
-- hosts: localhost
   #roles:
   #  - Azure.azure_preview_modules
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    postgresqlserver_name: postgresql{{ rpfx }}
+    postgresqlserver_name: postgresql{{ random_number }}
     postgresqldb_name: sqldbtest
     admin_username: admxyz
     admin_password: Abcpasswordxyz12!
