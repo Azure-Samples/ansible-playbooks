@@ -21,7 +21,7 @@
       debug:
         var: output_scaleset
 
-    - name: Modify scaleset (set upgradePolicy to Automatic and capacity to 3)
+    - name: Modify scaleset (Change capacity to 3)
       set_fact:
         body: "{{ output_scaleset.ansible_facts.azure_vmss[0] | combine({'capacity': 3}, recursive=True) }}"
 
