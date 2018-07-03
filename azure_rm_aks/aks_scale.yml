@@ -1,0 +1,37 @@
+# Description
+# ===========
+# This playbook scales an AKS cluster -- update number of nodes from 2(if you use the aks_create.yml to create AKS cluster) to 3
+# Change variables below to customize your AKS deployment.
+# It also requires a valid service principal to scale AKS cluster, so fill:
+# - client_id
+# - client_secret
+# This sample requires Ansible 2.6 
+
+- name: Scale Azure Kubernetes Service
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: "{{ resource_group_name }}"
+    location: eastus
+    aks_name: myAKSCluster
+    username: azureuser
+    ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDH14vPP1NE+qc3SgpoSPYMVaPLj8ouA1azujnMPbVKtN8mSg0KBWVWebx+GLqGI9nrKwmVwPHVzM8LhbbpYhfnN0UA2OV7sxBIshy7BshDTewiLyR9FXuNjuf8Cwd7WI+vgkKO0Yh6EdgwZ2hz+yVTn+5umCRDOg0ht0i2kyPMn1MHv61aN3noYp5zV8W3Tg8oJ2DPei6FxcNheRWkyvjan73/rISQJYWURlI90b3MCQOTXuI2w6BIxF3kHIHLUtzD7FqQhZdEkM/8cA9wUDgnS6+3ySkGOuQazkEWYn60Ll/597u2fLsq6P/pOCM1+KWLf2kY6mTl/dNxiIdV1d01
+    client_id: "{{ your_client_id }}"
+    client_secret: "{{ your_client_secret }}"
+  tasks:
+  - name: Scale an existed Azure Container Services (AKS) cluster
+    azure_rm_aks:
+      name: "{{ aks_name }}"
+      location: "{{ location }}"
+      resource_group: "{{ resource_group }}"
+      dns_prefix: "{{ aks_name }}"
+      linux_profile:
+        admin_username: "{{ username }}"
+        ssh_key: "{{ ssh_key }}"
+      service_principal:
+        client_id: "{{ client_id }}"
+        client_secret: "{{ client_secret }}"
+      agent_pool_profiles:
+        - name: default
+          count: 3
+          vm_size: Standard_D2_v2
