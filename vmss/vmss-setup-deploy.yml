@@ -22,7 +22,7 @@
     loadbalancer_name: vmsstestlb
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
     admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"
-    repo_url: https://github.com/yungezz/helloworld.git
+    repo_url: https://github.com/spring-guides/gs-spring-boot.git
     workspace: ~/src/helloworld
 
   tasks:   
@@ -33,40 +33,29 @@
         repo: "{{ repo_url }}"
         dest: "{{ workspace }}"
 
-    - name: Build sample app      
-      shell: mvn package chdir="{{ workspace }}"
+    - name: Build sample app
+      shell: mvn package chdir="{{ workspace }}/complete"
 
 - name: Install Tomcat on Ubuntu 16.04
   hosts: scalesethosts
   become: yes
   vars:
     workspace: ~/src/helloworld
+    admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
 
   tasks:
-  - name: Update repositories cache and install "tomcat8" package
+  - name: Install Java JDK
     apt:
-      name: tomcat8
+      name: default-jdk
       update_cache: yes
 
-  - name: Install "tomcat8-admin" package
-    apt:
-      name: tomcat8-admin
-
-  - name: Copy Tomcat user roles configuration files, tomcat-users.xml
-    copy:
-      src: "tomcat-users.xml"
-      dest: "/var/lib/tomcat8/conf/tomcat-users.xml"
 
   - name: Copy app to Azure VM
     copy:
-      src: "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war"
-      dest: /var/lib/tomcat8/webapps/hello.war
+      src: "{{ workspace }}/complete/target/gs-spring-boot-0.1.0.jar"
+      dest: "/home/{{ admin_username }}/helloworld.jar"
       force: yes
       mode: 0755
 
-  - name: Start and enable Tomcat service
-    systemd:
-      name: tomcat8
-      state: started
-      enabled: true
-      daemon_reload: true
+  - name: Start the app
+    shell: java -jar "/home/{{ admin_username }}/helloworld.jar" 2>&1 &
