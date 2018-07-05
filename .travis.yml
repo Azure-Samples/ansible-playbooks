@@ -58,26 +58,6 @@ before_install:
         fi
       done;
 
-      subfolders=($(ls -d */));
-
-      for (( i = $start; i< $end; i++ )); do
-        if [ "$i" -lt "${#subfolders[@]}" ]; then
-          if [ "${subfolders[$i]}" == "vmss/" ]; then
-            # run vmss test in specific order
-            run_test "./vmss/vmss-create.yml";
-            run_test "./vmss/vmss-setup-deploy.yml";
-            run_test "./vmss/vmss-scale-out.yml";
-          fi
-        else
-          foldername=${#subfolders[@]};
-          files=($(ls $foldername));
-          for (( i = start; i < $end; i++ )); do
-            run_test ${#files[@]};
-          done;
-        fi
-
-      done;
-
     }
 
 install:
