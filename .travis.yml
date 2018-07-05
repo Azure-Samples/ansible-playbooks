@@ -81,5 +81,3 @@ script:
 notifications:
   email:
     - yungez@microsoft.com
-    - yuwzho@microsoft.com
-    - zikalino@microsoft.com

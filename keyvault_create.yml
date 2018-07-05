@@ -9,7 +9,7 @@
   tasks:
     - name: Prepare random postfix
       set_fact:
-        rpfx: "{{ 1000 | random }}"
+        rpfx: "{{ 10000 | random }}"
       run_once: yes
 
 - hosts: localhost
@@ -18,7 +18,7 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    keyvault_name: keyvault{{ rpfx }}    
+    keyvault_name: keyvault{{ rpfx }}
   tasks:
     - name: set facts
       set_fact:
