@@ -11,11 +11,11 @@
   hosts: localhost
   connection: local
   vars:
+    ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDH14vPP1NE+qc3SgpoSPYMVaPLj8ouA1azujnMPbVKtN8mSg0KBWVWebx+GLqGI9nrKwmVwPHVzM8LhbbpYhfnN0UA2OV7sxBIshy7BshDTewiLyR9FXuNjuf8Cwd7WI+vgkKO0Yh6EdgwZ2hz+yVTn+5umCRDOg0ht0i2kyPMn1MHv61aN3noYp5zV8W3Tg8oJ2DPei6FxcNheRWkyvjan73/rISQJYWURlI90b3MCQOTXuI2w6BIxF3kHIHLUtzD7FqQhZdEkM/8cA9wUDgnS6+3ySkGOuQazkEWYn60Ll/597u2fLsq6P/pOCM1+KWLf2kY6mTl/dNxiIdV1d01
     resource_group: "{{ resource_group_name }}"
     location: eastus
     aks_name: myAKSCluster
     username: azureuser
-    ssh_key: ssh-rsa AAAAB3Nza...
     client_id: "{{ lookup('env', 'AZURE_CLIENT_ID') }}"
     client_secret: "{{ lookup('env', 'AZURE_CLIENT_SECRET') }}"
   tasks:
