@@ -58,7 +58,7 @@ before_install:
         fi
       done;
 
-      subfolders="$(ls -d */)";
+      subfolders=($(ls -d */));
 
       for (( i = $start; i< $end; i++ )); do
         if [ "$i" -lt "${#subfolders[@]}" ]; then
@@ -70,7 +70,7 @@ before_install:
           fi
         else
           foldername=${#subfolders[@]};
-          files="$(ls $foldername)";
+          files=($(ls $foldername));
           for (( i = start; i < $end; i++ )); do
             run_test ${#files[@]};
           done;
