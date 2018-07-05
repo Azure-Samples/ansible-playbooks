@@ -103,14 +103,14 @@
       wait_for:
         port: 22
         host: '{{ output.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.privateIPAddress }}'
-        timeout: 600 
+        timeout: 600
 
     - name: Git Clone
       git:
         repo: "{{ repo_url }}"
         dest: "{{ workspace }}"
 
-    - name: build sample app      
+    - name: build sample app
       shell: mvn package chdir="{{ workspace }}"
 
     - block:

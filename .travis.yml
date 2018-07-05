@@ -51,10 +51,33 @@ before_install:
       echo start = $start, end = $end, list_lenth = ${#list[@]};
 
       for (( i = $start; i < $end; i++ )); do	
-        if [ "$i" -lt "${#list[@]}" ]; then	
-          run_test ${list[$i]};	
-        fi	
+        if [ "$i" -lt "${#list[@]}" ]; then
+          if [ "${list[$i]}" != "./vm_create_existingvnet_deployjavaapp.yml" ]; then
+            run_test ${list[$i]};	
+          fi
+        fi
       done;
+
+      subfolders="$(ls -d */)";
+
+      for (( i = $start; i< $end; i++ )); do
+        if [ "$i" -lt "${#subfolders[@]}" ]; then
+          if [ "${subfolders[$i]}" == "vmss/" ]; then
+            # run vmss test in specific order
+            run_test "./vmss/vmss-create.yml";
+            run_test "./vmss/vmss-setup-deploy.yml";
+            run_test "./vmss/vmss-scale-out.yml";
+          fi
+        else
+          foldername=${#subfolders[@]};
+          files="$(ls $foldername)";
+          for (( i = start; i < $end; i++ )); do
+            run_test ${#files[@]};
+          done;
+        fi
+
+      done;
+
     }
 
 install:
@@ -65,6 +88,8 @@ install:
   - apt-cache policy docker-ce
   - sudo apt-get install -y docker-ce
   - sudo usermod -aG docker ${USER}
+  - sudo apt-get install -y default-jdk
+  - sudo apt-get install -y maven
 
   - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
     install ansible[azure]==$ANSIBLE_VERSION; fi
