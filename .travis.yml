@@ -56,7 +56,7 @@ before_install:
           excluded=false;
           for item in ${excludedList[*]}; do
             if [ "${list[$i]}" == "$item" ]; then
-              exclued=true;
+              excluded=true;
               break;
             fi
           done;
