@@ -48,11 +48,19 @@ before_install:
       liststr=./*.yml;
       list=($liststr);
 
+      excludedList=("./vm_create_existingvnet_deployjavaapp.yml")
       echo start = $start, end = $end, list_lenth = ${#list[@]};
 
       for (( i = $start; i < $end; i++ )); do	
         if [ "$i" -lt "${#list[@]}" ]; then
-          if [ "${list[$i]}" != "./vm_create_existingvnet_deployjavaapp.yml" ]; then
+          excluded=false;
+          for item in ${excludedList[*]}; do
+            if [ "${list[$i]}" == "$item" ]; then
+              exclued=true;
+              break;
+            fi
+          done;
+          if [ "$excluded" == false ]; then
             run_test ${list[$i]};	
           fi
         fi
@@ -86,3 +94,5 @@ script:
 notifications:
   email:
     - yungez@microsoft.com
+    - yuwzho@microsoft.com
+    - zikalino@microsoft.com
