@@ -44,7 +44,7 @@
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
 
   tasks:
-  - name: Install Java JDK
+  - name: Install JRE
     apt:
       name: default-jre
       update_cache: yes
