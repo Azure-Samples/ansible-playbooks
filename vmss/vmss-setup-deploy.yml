@@ -1,10 +1,10 @@
 # Description
 # ===========
 # Use this playbook to 
-# - git clone and build a sample hello world java app
-# - Install tomcat on VMSS, 
-# - then copy war file to VMSS.
-# - start tomcat
+# - git clone and build a sample hello world Spring java app
+# - Install JRE on VMSS, 
+# - then copy jar file to VMSS.
+# - start the application.
 #
 # Use vmss-create playbook to create VMSS first
 # This sample requires Ansible 2.6 
@@ -36,7 +36,7 @@
     - name: Build sample app
       shell: mvn package chdir="{{ workspace }}/complete"
 
-- name: Install Tomcat on Ubuntu 16.04
+- name: Install JRE on Ubuntu 16.04
   hosts: scalesethosts
   become: yes
   vars:
@@ -44,9 +44,9 @@
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
 
   tasks:
-  - name: Install Java JDK
+  - name: Install JRE
     apt:
-      name: default-jdk
+      name: default-jre
       update_cache: yes
 
 
