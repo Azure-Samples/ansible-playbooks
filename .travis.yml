@@ -26,7 +26,7 @@ before_install:
       file=$1;
       test_name=${file##./};
       test_name=${test_name%%.yml};
-      resource_group="${test_name}$(date +%s)";
+      resource_group="sampleplaybook$(date +%s)";
       echo Run playbook $file;
 
       travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
@@ -48,7 +48,7 @@ before_install:
       liststr=./*.yml;
       list=($liststr);
 
-      excludedList=("./vm_create_existingvnet_deployjavaapp.yml")
+      excludedList=("./vm_create_existingvnet_deployjavaapp.yml");
       echo start = $start, end = $end, list_lenth = ${#list[@]};
 
       for (( i = $start; i < $end; i++ )); do	
