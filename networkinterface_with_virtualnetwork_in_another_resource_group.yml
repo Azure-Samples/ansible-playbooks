@@ -5,7 +5,7 @@
 - hosts: localhost
   vars:
     resource_group: "{{ resource_group_name }}"
-    resource_group_secondary: "{{ resource_group_name }}2nd"
+    resource_group_secondary: "{{ resource_group_name_secondary }}"
     location: eastus
     vnet_name: testnic001
     subnet_name: testnic001

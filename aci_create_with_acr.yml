@@ -11,14 +11,6 @@
 # ===========
 # - git
 # - Docker
-- hosts: localhost
-  tasks:
-    - name: Prepare random postfix
-      set_fact:
-        rpfx: "{{ 1000 | random }}"
-      run_once: yes
-
-
 - name: demo
   hosts: localhost
 # The modules of azure container registry and azure container instance are available since Ansible version 2.5.
@@ -28,10 +20,10 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    registry_name: acr{{ rpfx }}
+    registry_name: acr{{ random_name }}
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"
     workspace: ~/src/aci-helloworld
-    image_name: aci-helloworld
+    image_name: "img{{ random_name }}"
     http_port: 80
     email: test@email.com
   tasks:

@@ -4,19 +4,11 @@
 # Note: Random number is used to set a globally unique name for SQL Server
 #
 ---
-
-- hosts: localhost
-  tasks:
-    - name: Prepare random postfix
-      set_fact:
-        rpfx: "{{ 1000 | random }}"
-      run_once: yes
-
 - hosts: localhost
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
-    sqlserver_name: sqlansible{{ rpfx }}
+    sqlserver_name: sqlansible{{ random_name }}
     sqldb_name: sqldbtest
     admin_username: admxyz
     admin_password: Abcpasswordxyz12!

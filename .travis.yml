@@ -37,9 +37,11 @@ before_install:
       test_name=${file##./};
       test_name=${test_name%%.yml};
       resource_group="${test_name}$(date +%s)";
+      resource_group_secondary="${test_name}$(date +%s)2nd";
+      random_name=`cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1`;
       echo Run playbook $file;
 
-      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
+      travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group,\"resource_group_name_secondary\":$resource_group_secondary,\"random_name\":$random_name}";
 
       if [ $? -ne 0 ]; then
         echo test $file failed;
@@ -47,30 +49,87 @@ before_install:
         export exit_code=1;
       fi;
 
-      travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
+      travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group,\"resource_group_name_secondary\":$resource_group_secondary}";
+    }
+  - setup_branch(){
+        cd ansible;
+        git checkout $1;
+        pip install -r requirements.txt;
+        pip install -r packaging/requirements/requirements-azure.txt; 
+        source ./hacking/env-setup;
+        cd ..;
     }
 
 
   - scan_test() {
         if [ $id == "devel-1" ]; then
+          setup_branch devel;
           run_test mysql_create.yml;
           run_test postgresql_create.yml;
           run_test sql_create.yml;
         fi;
         if [ $id == "devel-2" ]; then
+          setup_branch devel;
           run_test aci_create_with_acr.yml;
         fi;
         if [ $id == "devel-3" ]; then
+          setup_branch devel;
           run_test vm_create.yml;
           run_test vm_create_ssh.yml;
         fi;
         if [ $id == "devel-4" ]; then
+          setup_branch devel;
           run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
         fi;
         if [ $id == "devel-5" ]; then
-          echo "no tests";
+          setup_branch devel;
         fi;
 
+        if [ $id == "2.6-stable-1" ]; then
+          setup_branch stable-2.6;
+          run_test mysql_create.yml;
+          run_test postgresql_create.yml;
+          run_test sql_create.yml;
+        fi;
+        if [ $id == "2.6-stable-2" ]; then
+          setup_branch stable-2.6;
+          run_test aci_create_with_acr.yml;
+        fi;
+        if [ $id == "2.6-stable-3" ]; then
+          setup_branch stable-2.6;
+          run_test vm_create.yml;
+          run_test vm_create_ssh.yml;
+        fi;
+        if [ $id == "2.6-stable-4" ]; then
+          setup_branch stable-2.6;
+          run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
+        fi;
+        if [ $id == "2.6-stable-5" ]; then
+          setup_branch stable-2.6;
+        fi;
+
+        if [ $id == "2.5-stable-1" ]; then
+          setup_branch stable-2.5;
+          run_test mysql_create.yml;
+          run_test postgresql_create.yml;
+          run_test sql_create.yml;
+        fi;
+        if [ $id == "2.5-stable-2" ]; then
+          setup_branch stable-2.5;
+          run_test aci_create_with_acr.yml;
+        fi;
+        if [ $id == "2.5-stable-3" ]; then
+          setup_branch stable-2.5;
+          run_test vm_create.yml;
+          run_test vm_create_ssh.yml;
+        fi;
+        if [ $id == "2.5-stable-4" ]; then
+          setup_branch stable-2.5;
+          run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
+        fi;
+        if [ $id == "2.5-stable-5" ]; then
+          setup_branch stable-2.5;
+        fi;
     }
 
 install:
@@ -85,13 +144,7 @@ install:
 #    install ansible[azure]==$ANSIBLE_VERSION; fi
 #  - pip install ansible[azure]==2.6.0.rc3
 #  - pip install ansible[azure]==2.5.0
-  - git clone https://github.com/ansible/ansible.git
-  - pip install -r ./ansible/requirements.txt
-  - pip install -r ./ansible/packaging/requirements/requirements-azure.txt 
-  - cd ansible
-  - source ./hacking/env-setup
-  - cd ..
-  - ansible --version
+  - git clone https://github.com/zikalino/ansible.git
 #  - ansible-galaxy install Azure.azure_preview_modules
 #  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
   - pip install docker

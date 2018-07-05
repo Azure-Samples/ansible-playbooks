@@ -8,7 +8,7 @@
   connection: local
   vars:
     resource_group: "{{ resource_group_name }}"
-    resource_group_secondary: createvmsubnetin2ndrg2
+    resource_group_secondary: "{{ resource_group_name_secondary }}"
     vm_name: testvm
     location: eastus
 #  roles:
