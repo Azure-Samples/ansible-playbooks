@@ -14,7 +14,7 @@
   connection: local
   vars:
     resource_group: "{{ resource_group_name }}"
-    vm_name: zimswintestvm{{ rpfx }}
+    vm_name: wintestvm{{ rpfx }}
     vm_user: azureuser
     vm_password: MyPassword123!!!
     location: eastus

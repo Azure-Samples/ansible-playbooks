@@ -16,7 +16,7 @@
   connection: local
   gather_facts: true
   vars:
-    resource_group_vm: {{ resource_group_name }}
+    resource_group_vm: "{{ resource_group_name }}"
     resource_group_vnet: rg_yungezpvnet1
     vnet_name: yungezpvnet1
     subnet_name: yungezsnet1
