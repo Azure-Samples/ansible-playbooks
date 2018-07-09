@@ -36,7 +36,7 @@
     - name: Build sample app
       shell: mvn package chdir="{{ workspace }}/complete"
 
-- name: Install JRE on Ubuntu 16.04
+- name: Install JRE on VMSS
   hosts: scalesethosts
   become: yes
   vars:
@@ -58,4 +58,7 @@
       mode: 0755
 
   - name: Start the app
-    shell: java -jar "/home/{{ admin_username }}/helloworld.jar" 2>&1 &
+    shell: java -jar "/home/{{ admin_username }}/helloworld.jar" >/dev/null 2>&1 &
+    async: 5000
+    poll: 0
+
