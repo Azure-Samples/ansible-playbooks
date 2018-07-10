@@ -51,7 +51,7 @@ before_install:
       start=$((end - number_per_job));
 
       branch=$TRAVIS_BRANCH;
-
+      echo branch is $branch;
       git pull;
 
       diffstr=$(git diff $branch remotes/origin/master --name-only  -- '*.yml' --no-pager);
