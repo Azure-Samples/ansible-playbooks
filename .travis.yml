@@ -104,7 +104,7 @@ install:
 
   - git clone https://github.com/Azure-Samples/ansible-playbooks.git
   - cd ansible-playbooks
-  - git checkout -qf $TRAVIS_COMMIT
+  - git checkout $TRAVIS_BRANCH
 
 script:
   - scan_test
