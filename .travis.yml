@@ -55,7 +55,6 @@ before_install:
 
       echo branch is $branch;
       git pull;
-      git remote set-branches --add origin master
       git fetch;
       git branch -a;
 
@@ -102,6 +101,10 @@ install:
   - pip install docker
   - pip freeze
   - cp -f ./vmss/ansible.cfg /home/travis/.ansible
+
+  - git clone https://github.com/Azure-Samples/ansible-playbooks.git
+  - cd ansible-playbooks
+  - git checkout -qf $TRAVIS_COMMIT
 
 script:
   - scan_test
