@@ -53,6 +53,7 @@ before_install:
       branch=$TRAVIS_BRANCH;
 
       echo branch is $branch;
+      git fetch;
       diffstr=$(git diff $branch origin/master --name-only  -- '*.yml' --no-pager);
       changedfiles=($diffstr);
       excludedList="vm_create_existingvnet_deployjavaapp.yml .travis.yml";
