@@ -1,10 +1,6 @@
 language: python
 python: '2.7'
 
-branches:
-  only:
-    - master
-
 env:
   global:
     - exit_code=0
