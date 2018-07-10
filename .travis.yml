@@ -53,8 +53,7 @@ before_install:
       branch=$TRAVIS_BRANCH;
 
       echo branch is $branch;
-      git checkout master;
-      git checkout $branch;
+      git remote set-branches --add origin master
       git fetch;
       git branch -a;
 
