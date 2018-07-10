@@ -50,7 +50,9 @@ before_install:
       end=$((id * number_per_job));
       start=$((end - number_per_job));
 
-      branch=$TRAVIS_BRANCH
+      branch=$TRAVIS_BRANCH;
+
+      echo branch is $branch;
       diffstr=$(git diff $branch origin/master --name-only  -- '*.yml' --no-pager);
       changedfiles=($diffstr);
       excludedList="vm_create_existingvnet_deployjavaapp.yml .travis.yml";
