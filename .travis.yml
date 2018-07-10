@@ -11,6 +11,7 @@ env:
     - number_per_job=2
     - message=()
     - ANSIBLE_VERSION=latest
+    - ANSIBLE_CONFIG=/home/travis/.ansible/ansible.cfg
     #- ANSIBLE_VERSION=2.4.2.0
   matrix:
     - id=1
@@ -26,7 +27,9 @@ before_install:
       file=$1;
       test_name=${file##./};
       test_name=${test_name%%.yml};
-      resource_group="sampleplaybook$(date +%s)";
+      delete_resource_group=${2:-true};
+      resource_group=${3:-sampletest$(date +%s)};
+
       echo Run playbook $file;
 
       travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
@@ -37,7 +40,9 @@ before_install:
         export exit_code=1;
       fi;
 
-      travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
+      if [ "$delete_resource_group" == true ]; then
+        travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
+      fi;
     }
 
 
@@ -66,6 +71,30 @@ before_install:
         fi
       done;
 
+
+      subfolderstr="*/";
+      subfolders=($subfolderstr);
+
+      vmssfolder="vmss/";
+
+      echo list is $subfolders;
+      echo start = $start, end = $end, list_lenth = ${#subfolders[@]};
+      for (( k = $start; k < $end; k++ )); do
+        echo k is $k;
+        if [ "$k" -lt "${#subfolders[@]}" ]; then
+          if [ "${subfolders[$k]}" == "$vmssfolder" ]; then
+            run_test "./vmss/vmss-create.yml" false vmsstestrg;
+            run_test ./vmss/vmss-scale-out.yml true vmsstestrg;
+          else
+            foldername=${subfolders[$k]};
+            subfilestr="$foldername/*.yml";
+            files=($subfilestr);
+            for (( m = 0; m < ${#files[@]}; m++ )); do
+              run_test ${files[$m]};
+            done;
+          fi;
+        fi;
+      done;
     }
 
 install:
@@ -77,7 +106,7 @@ install:
   - sudo apt-get install -y docker-ce
   - sudo usermod -aG docker ${USER}
   - sudo apt-get install -y default-jdk
-  - sudo apt-get install -y maven
+  - sudo apt-get install -y maven sshpass
 
   - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
     install ansible[azure]==$ANSIBLE_VERSION; fi
@@ -86,6 +115,7 @@ install:
   - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
   - pip install docker
   - pip freeze
+  - cp -f ./vmss/ansible.cfg /home/travis/.ansible
 
 script:
   - scan_test
@@ -94,5 +124,5 @@ script:
 notifications:
   email:
     - yungez@microsoft.com
-    - yuwzho@microsoft.com
+    - yuwzho@microsoft.com	
     - zikalino@microsoft.com

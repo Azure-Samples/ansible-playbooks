@@ -97,7 +97,7 @@
         resource_group: "{{ resource_group }}"
         allocation_method: Dynamic
         name: appgwpublicip
-        domain_name_label: zimsag
+        domain_name_label: "{{ resource_group }}"
       register: pip_output
 
     - name: Dump Public IP output

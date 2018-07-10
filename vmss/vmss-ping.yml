@@ -7,7 +7,7 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: vmsstestrg
+    resource_group: "{{ resource_group_name }}"
     vmss_name: vmsstest
     loadbalancer_name: vmsstestlb
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
