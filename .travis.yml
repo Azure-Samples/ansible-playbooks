@@ -65,7 +65,7 @@ before_install:
       echo changed file count is $list_lenth, list is $changedfiles;
 
       for (( i = $start; i < $end; i++ )); do
-        echo file is ${#changedfiles[@]}
+        echo file is ${#changedfiles[@]};
         if [ "$i" -lt "${#changedfiles[@]}" ]; then
           excluded=false;
           for item in ${excludedList[*]}; do
