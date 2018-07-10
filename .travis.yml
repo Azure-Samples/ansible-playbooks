@@ -56,7 +56,7 @@ before_install:
 
       echo start = $start, end = $end, list_lenth = ${#changedfiles[@]};
 
-      echo changed file is $chagnedfiles;
+      echo changed file is $changedfiles;
 
       for (( i = $start; i < $end; i++ )); do	
         if [ "$i" -lt "${#changedfiles[@]}" ]; then
