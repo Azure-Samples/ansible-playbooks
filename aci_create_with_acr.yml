@@ -26,7 +26,7 @@
 #  roles:
 #    - Azure.azure_preview_modules
   vars:
-    resource_group: "{{ resource_group_name }}"
+    resource_group: "{{ resource_group_name }}{{ rpfx }}"
     location: eastus
     registry_name: acr{{ rpfx }}
     repo_url: "https://github.com/Azure-Samples/aci-helloworld.git"

@@ -7,7 +7,7 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: vmsstestrg
+    resource_group: "{{ resource_group_name }}"
     vmss_name: vmsstest
   tasks: 
     - name: Get scaleset info
