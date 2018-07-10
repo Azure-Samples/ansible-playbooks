@@ -50,7 +50,7 @@ before_install:
       end=$((id * number_per_job));
       start=$((end - number_per_job));
 
-      changedfiles=$(git diff --name-only  -- '*.yml' --no-pager);
+      changedfiles=$(git diff --name-only  -- "*.yml" --no-pager);
       excludedList="vm_create_existingvnet_deployjavaapp.yml .travis.yml";
 
       echo start = $start, end = $end, list_lenth = ${#changedfiles[@]};
@@ -64,7 +64,7 @@ before_install:
               break;
             fi
           done;
-          if [ "$excluded" == false ]; then
+          if [ "$excluded" == false ] && [ $(changedfiles[$i]} == *.yml ]; then
             run_test ${changedfiles[$i]};	
           fi
         fi
