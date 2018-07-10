@@ -39,4 +39,4 @@
         name: "{{ resource_name }}"
         address_prefix: "10.10.0.0/24"
         virtual_network: "{{ resource_name }}"
-        security_group_name: "{{ nsg.state.id }}"
+        security_group: "{{ nsg.state.id }}"
