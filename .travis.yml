@@ -3,7 +3,6 @@ python: '2.7'
 
 branches:
   only:
-    - incrementci
     - master
 
 env:
@@ -53,7 +52,6 @@ before_install:
 
       branch=$TRAVIS_BRANCH;
 
-      echo branch is $branch;
       git pull;
 
       diffstr=$(git diff $branch remotes/origin/master --name-only  -- '*.yml' --no-pager);
@@ -62,10 +60,8 @@ before_install:
 
       echo start = $start, end = $end, list_lenth = ${#changedfiles[@]};
 
-      echo changed file count is $list_lenth, list is $changedfiles;
-
       for (( i = $start; i < $end; i++ )); do
-        echo file is ${#changedfiles[@]};
+        echo file is ${#changedfiles[$i]};
         if [ "$i" -lt "${#changedfiles[@]}" ]; then
           excluded=false;
           for item in ${excludedList[*]}; do
