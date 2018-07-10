@@ -42,7 +42,7 @@
         name: "{{prefix}}nic{{item}}"
         resource_group: "{{nicResourceGroup}}"
         security_group_name: "{{prefix}}nsg"
-        subnet_name: "{{subnetName}}"
+        subnet_name: "{{prefix}}subnet"
         virtual_network_name: "{{prefix}}vn"
         ip_configurations:
           - name: ipconfigs
