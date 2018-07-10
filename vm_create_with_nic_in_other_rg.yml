@@ -15,7 +15,8 @@
         name: "{{ item }}"
         location: eastus
       with_items:
-        - "{{nicResourceGroup}}"
+        - "{{ nicResourceGroup }}"
+        - "{{ vmResourceGroup }}"
 
     - name: Create virtual network
       azure_rm_virtualnetwork:
@@ -66,7 +67,7 @@
          - name: "{{prefix}}nic{{item}}"
            resource_group: "{{ nicResourceGroup }}"
        os_disk_caching: ReadWrite
-       resource_group: "{{vmResourceGroup}}"
+       resource_group: "{{ vmResourceGroup }}"
        ssh_password_enabled: false
        ssh_public_keys:
         - key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVeZj8ACqIMakHaaO5c/2Qp4/eEzkGR6EP4W7BANOKjdd9rs7mgDzPbXXgo6aIQQ2mlRGJClHjWARATJUaX/FqJrRizY35qyYh5GKzv9WMVImRIAGAgAY40TcomRBBNZWGmKHja0Za7oLSW8CtmZYNphMcWB6rB2Ckkrovz6JZrB0ptHtv0J7pkSzlULJNYX8RxriipIyIrYpa3W2WTY4iqHZnVhfulctAf/Lci1TW0sWrPt8qSlG9lhbBvBBmI8AJNxjEiuHMdiiBx5v3MKfM98+wdlUh5tgkkUfoc8bBhevY1M63GwPHnf96xeR2JnvOmgLfVeCsGzKrxY0X6IPl bitest@sac-jumpbox0"
