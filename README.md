@@ -1,4 +1,4 @@
-[![Travis CI](https://travis-ci.org/Azure-Samples/ansible-playbooks.svg?branch=master)](https://travis-ci.org/Azure-Samples/ansible-playbooks)
+[![Travis CI](https://travis-ci.org/Azure-Samples/ansible-playbooks.svg?branch=full-ci)](https://travis-ci.org/Azure-Samples/ansible-playbooks)
 
 # Ansible Playbooks for Azure
 
@@ -73,3 +73,6 @@ This project welcomes contributions and suggestions.  Most contributions require
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Test
+Sample playbooks in this repository are tested via travis CI, please see detail [CI plan](https://github.com/Azure-Samples/ansible-playbooks/blob/full-ci/README.md).
