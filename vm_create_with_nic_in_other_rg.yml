@@ -1,4 +1,9 @@
----
+# Description
+# ===========
+# This playbook creates an Azure Network Interface.
+# Then creates an Azure Virtual Machine in another resource group, attach Azure Network Interface from last step. 
+# Change variables below to customize your VM deployment.
+
 - hosts: localhost
   vars:
     prefix: ansiblesample
