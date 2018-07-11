@@ -1,8 +1,13 @@
 # Description
 # ===========
-# This playbook creates an Azure Network Interface.
-# Then creates an Azure Virtual Machine in another resource group, attach Azure Network Interface from last step. 
+# This playbook creates an Azure Virtual Machine in one resource group, with exisitng sub sources in another resource group: VNet, Subnet, PublicIP,
+# Network interface
 # Change variables below to customize your VM deployment.
+#
+# Dependencies
+# ============
+# role: azure_preview_modules
+
 
 - hosts: localhost
   vars:
