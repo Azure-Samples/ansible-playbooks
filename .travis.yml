@@ -46,30 +46,50 @@ before_install:
       end=$((id * number_per_job));
       start=$((end - number_per_job));
 
-      branch=$TRAVIS_BRANCH;
-      echo branch is $branch;
-      git pull;
+      liststr=./*.yml;
+      list=($liststr);
 
-      diffstr=$(git diff $branch remotes/origin/master --name-only  -- '*.yml' --no-pager);
-      changedfiles=($diffstr);
-      excludedList="vm_create_existingvnet_deployjavaapp.yml .travis.yml";
+      excludedList=("./vm_create_existingvnet_deployjavaapp.yml");
+      echo start = $start, end = $end, list_lenth = ${#list[@]};
 
-      echo start = $start, end = $end, list_lenth = ${#changedfiles[@]};
-
-      for (( i = $start; i < $end; i++ )); do
-        echo file is ${#changedfiles[$i]};
-        if [ "$i" -lt "${#changedfiles[@]}" ]; then
+      for (( i = $start; i < $end; i++ )); do	
+        if [ "$i" -lt "${#list[@]}" ]; then
           excluded=false;
           for item in ${excludedList[*]}; do
-            if [ "${changedfiles[$i]}" == "$item" ]; then
+            if [ "${list[$i]}" == "$item" ]; then
               excluded=true;
               break;
             fi
           done;
           if [ "$excluded" == false ]; then
-            run_test ${changedfiles[$i]};	
+            run_test ${list[$i]};	
           fi
         fi
+      done;
+
+
+      subfolderstr="*/";
+      subfolders=($subfolderstr);
+
+      vmssfolder="vmss/";
+
+      echo list is $subfolders;
+      echo start = $start, end = $end, list_lenth = ${#subfolders[@]};
+      for (( k = $start; k < $end; k++ )); do
+        echo k is $k;
+        if [ "$k" -lt "${#subfolders[@]}" ]; then
+          if [ "${subfolders[$k]}" == "$vmssfolder" ]; then
+            run_test "./vmss/vmss-create.yml" false vmsstestrg;
+            run_test ./vmss/vmss-scale-out.yml true vmsstestrg;
+          else
+            foldername=${subfolders[$k]};
+            subfilestr="$foldername/*.yml";
+            files=($subfilestr);
+            for (( m = 0; m < ${#files[@]}; m++ )); do
+              run_test ${files[$m]};
+            done;
+          fi;
+        fi;
       done;
     }
 
@@ -92,10 +112,9 @@ install:
   - pip install docker
   - pip freeze
   - cp -f ./vmss/ansible.cfg /home/travis/.ansible
-
-  - git clone https://github.com/Azure-Samples/ansible-playbooks.git
+  - git clone https://Azure-Samples/ansible-playbooks.git
   - cd ansible-playbooks
-  - git checkout $TRAVIS_BRANCH
+  - git checkout master
 
 script:
   - scan_test
