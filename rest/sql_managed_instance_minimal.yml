@@ -1,0 +1,18 @@
+- hosts: localhost
+  vars:
+    resource_group:
+  tasks:
+
+    - name: Call REST API - ManagedInstances_CreateOrUpdate
+      azure_rm_resource:
+        # url: /subscriptions/{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}
+        api_version: '2015-05-01-preview'
+        resource_group: "{{ resource_group }}"
+        provider: sql
+        resource_type: managedinstances
+        body:
+          properties: 
+            administratorLogin: dummylogin
+            administratorLoginPassword: Un53cuRE!
+          location: Japan East
+    
