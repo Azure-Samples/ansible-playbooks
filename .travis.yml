@@ -1,34 +1,21 @@
 language: python
 python: '2.7'
 
-branches:
-  only:
-    - master
-
 env:
   global:
     - exit_code=0
     - number_per_job=2
     - message=()
     - ANSIBLE_VERSION=latest
+    - ANSIBLE_CONFIG=/home/travis/.ansible/ansible.cfg
     #- ANSIBLE_VERSION=2.4.2.0
   matrix:
-    - id="devel-1"
-    - id="devel-2"
-    - id="devel-3"
-    - id="devel-4"
-    - id="devel-5"
-    - id="devel-azure-preview-modules"
-    - id="2.6-stable-1"
-    - id="2.6-stable-2"
-    - id="2.6-stable-3"
-    - id="2.6-stable-4"
-    - id="2.6-stable-5"
-    - id="2.5-stable-1"
-    - id="2.5-stable-2"
-    - id="2.5-stable-3"
-    - id="2.5-stable-4"
-    - id="2.5-stable-5"
+    - id=1
+    - id=2
+    - id=3
+    - id=4
+    - id=5
+    - id=6
 
 before_install:
   - sudo apt-get update -qq
@@ -36,7 +23,9 @@ before_install:
       file=$1;
       test_name=${file##./};
       test_name=${test_name%%.yml};
-      resource_group="${test_name}$(date +%s)";
+      delete_resource_group=${2:-true};
+      resource_group=${3:-sampletest$(date +%s)};
+
       echo Run playbook $file;
 
       travis_wait 50 ansible-playbook $file --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
@@ -47,30 +36,41 @@ before_install:
         export exit_code=1;
       fi;
 
-      travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
+      if [ "$delete_resource_group" == true ]; then
+        travis_wait 50 ansible-playbook ./__helpers/__delete_test_resource_group.yml --extra-vars "{\"azure_subscription_id\":$AZURE_SUBSCRIPTION_ID,\"azure_tenant\":$AZURE_TENANT,\"azure_client_id\":$AZURE_CLIENT_ID,\"resource_group_name\":$resource_group}";
+      fi;
     }
 
 
   - scan_test() {
-        if [ $id == "devel-1" ]; then
-          run_test mysql_create.yml;
-          run_test postgresql_create.yml;
-          run_test sql_create.yml;
-        fi;
-        if [ $id == "devel-2" ]; then
-          run_test aci_create_with_acr.yml;
-        fi;
-        if [ $id == "devel-3" ]; then
-          run_test vm_create.yml;
-          run_test vm_create_ssh.yml;
-        fi;
-        if [ $id == "devel-4" ]; then
-          run_test networkinterface_with_virtualnetwork_in_another_resource_group.yml;
-        fi;
-        if [ $id == "devel-5" ]; then
-          echo "no tests";
-        fi;
+      end=$((id * number_per_job));
+      start=$((end - number_per_job));
 
+      branch=$TRAVIS_BRANCH;
+      echo branch is $branch;
+      git pull;
+
+      diffstr=$(git diff $branch remotes/origin/master --name-only  -- '*.yml' --no-pager);
+      changedfiles=($diffstr);
+      excludedList="vm_create_existingvnet_deployjavaapp.yml .travis.yml";
+
+      echo start = $start, end = $end, list_lenth = ${#changedfiles[@]};
+
+      for (( i = $start; i < $end; i++ )); do
+        echo file is ${#changedfiles[$i]};
+        if [ "$i" -lt "${#changedfiles[@]}" ]; then
+          excluded=false;
+          for item in ${excludedList[*]}; do
+            if [ "${changedfiles[$i]}" == "$item" ]; then
+              excluded=true;
+              break;
+            fi
+          done;
+          if [ "$excluded" == false ]; then
+            run_test ${changedfiles[$i]};	
+          fi
+        fi
+      done;
     }
 
 install:
@@ -81,21 +81,21 @@ install:
   - apt-cache policy docker-ce
   - sudo apt-get install -y docker-ce
   - sudo usermod -aG docker ${USER}
-#  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
-#    install ansible[azure]==$ANSIBLE_VERSION; fi
-#  - pip install ansible[azure]==2.6.0.rc3
-#  - pip install ansible[azure]==2.5.0
-  - git clone https://github.com/ansible/ansible.git
-  - pip install -r ./ansible/requirements.txt
-  - pip install -r ./ansible/packaging/requirements/requirements-azure.txt 
-  - cd ansible
-  - source ./hacking/env-setup
-  - cd ..
+  - sudo apt-get install -y default-jdk
+  - sudo apt-get install -y maven sshpass
+
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible[azure]; else pip
+    install ansible[azure]==$ANSIBLE_VERSION; fi
   - ansible --version
-#  - ansible-galaxy install Azure.azure_preview_modules
-#  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
+  - ansible-galaxy install Azure.azure_preview_modules
+  - pip install -I -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
   - pip install docker
   - pip freeze
+  - cp -f ./vmss/ansible.cfg /home/travis/.ansible
+
+  - git clone https://github.com/Azure-Samples/ansible-playbooks.git
+  - cd ansible-playbooks
+  - git checkout $TRAVIS_BRANCH
 
 script:
   - scan_test
@@ -104,5 +104,5 @@ script:
 notifications:
   email:
     - yungez@microsoft.com
-    - yuwzho@microsoft.com
+    - yuwzho@microsoft.com	
     - zikalino@microsoft.com

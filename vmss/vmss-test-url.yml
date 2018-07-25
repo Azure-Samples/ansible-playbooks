@@ -7,7 +7,7 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: vmsstestrg
+    resource_group: "{{ resource_group_name }}"
     scaleset_name: vmsstest
     loadbalancer_name: vmsstestlb
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
@@ -18,7 +18,7 @@
 
 - hosts: scalesethosts
   tasks: 
-    - name: Try to access Tomcat on specific VM
+    - name: Try to access application on specific VM
       uri:
         url: http://127.0.0.1:8080/
         method: GET
