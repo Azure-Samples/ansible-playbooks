@@ -1,8 +1,11 @@
 # Description
 # ===========
-# This playbook create an Azure VM with public IP, and open 22 port for SSH
+# This playbook create an SQL Managed Instance and all the infrastructure needed
+# As SQL Managed instance is currently available as preview only, it's necessary
+# to have it enabled in selected subscription.
+# Please note that currently it may take more than 24 hours to complete
 
-- name: Create Azure VM
+- name: Create SQL Managed Instance
   hosts: localhost
   connection: local
   vars:
@@ -25,7 +28,7 @@
       name: "{{ virtual_network }}"
       address_prefixes: "10.0.0.0/16"
 
-  - name: Create route table using REST as no module available
+  - name: Create route table using REST as currently no module is available
     azure_rm_resource:
       api_version: '2018-04-01'
       resource_group: "{{ resource_group }}"
@@ -67,9 +70,7 @@
       resource_type: managedinstances
       resource_name: "{{ managed_instance }}"
       body:
-        tags: 
-          tagKey1: TagValue1
-        location: eastus
+        location: "{{ location }}"
         sku: 
           name: "GP_Gen4"
           tier: GeneralPurpose
