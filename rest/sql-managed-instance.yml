@@ -62,7 +62,7 @@
   - name: Create managed instance
     azure_rm_resource:
       api_version: '2015-05-01-preview'
-      resource_group: zimssqlmanaged
+      resource_group: "{{ resource_group }}"
       provider: sql
       resource_type: managedinstances
       resource_name: "{{ managed_instance }}"
