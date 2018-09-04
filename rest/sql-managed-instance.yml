@@ -1,19 +1,20 @@
 # Description
 # ===========
-# This playbook create an SQL Managed Instance and all the infrastructure needed
+# This playbook creates an SQL Managed Instance and all the infrastructure needed
 # As SQL Managed instance is currently available as preview only, it's necessary
 # to have it enabled in selected subscription.
 # Please note that currently it may take more than 24 hours to complete
+# This sample requires Ansible 2.7
 
 - name: Create SQL Managed Instance
   hosts: localhost
   connection: local
   vars:
-    resource_group: zimsmanagedthird
-    virtual_network: mivirtualnet
+    resource_group: zimsmanagedfifth
+    virtual_network: mivirtualnetx
     route_table: miroutetable
-    subnet: misubnet
-    managed_instance: mibyansible
+    subnet: misubnetx
+    managed_instance: mibyansiblesixth
     location: eastus
   tasks:
 
@@ -28,40 +29,28 @@
       name: "{{ virtual_network }}"
       address_prefixes: "10.0.0.0/16"
 
-  - name: Create route table using REST as currently no module is available
-    azure_rm_resource:
-      api_version: '2018-04-01'
+  - name: Create route table
+    azure_rm_routetable:
       resource_group: "{{ resource_group }}"
-      provider: network
-      resource_type: routetables
-      resource_name: "{{ route_table }}"
-      body:
-        location: "{{ location }}"
-        properties:
-          routes:
-            - name: default
-              properties:
-                addressPrefix: 0.0.0.0/0
-                nextHopType: Internet
-    register: output
+      name: "{{ route_table }}"
 
-  - name: Create subnet using REST as current module doesn't support referring route tables
-    azure_rm_resource:
-      api_version: '2018-04-01'
+  - name: Create route
+    azure_rm_route:
+      name: "default"
       resource_group: "{{ resource_group }}"
-      provider: network
-      resource_type: virtualnetworks
-      resource_name: "{{ virtual_network }}"
-      subresource:
-        - type: subnets
-          name: "{{ subnet }}"
-      body:
-        properties: 
-          addressPrefix: 10.0.0.0/16
-          routeTable:
-            id: "{{ output.response.id }}"
-    register: output
-  
+      next_hop_type: internet
+      address_prefix: 0.0.0.0/0
+      route_table_name: "{{ route_table }}"
+
+  - name: Create subnet
+    azure_rm_subnet:
+      name: "{{ subnet }}"
+      virtual_network_name: "{{ virtual_network }}"
+      resource_group: "{{ resource_group }}"
+      address_prefix_cidr: "10.0.0.0/16"
+      route_table: "{{ output.id }}"
+    register: subnet_output
+
   - name: Create managed instance
     azure_rm_resource:
       api_version: '2015-05-01-preview'
@@ -79,7 +68,7 @@
           fullyQualifiedDomainName: "{{ managed_instance }}.database.windows.net"
           administratorLogin: dummylogin
           administratorLoginPassword: "Pa$$w0rd12345678"
-          subnetId: "{{ output.response.id }}"
+          subnetId: "{{ subnet_output.state.id }}"
           vCores: 8
           storageSizeInGB: 32
           licenseType: BasePrice
