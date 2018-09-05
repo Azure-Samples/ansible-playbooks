@@ -20,22 +20,17 @@
     - Azure.azure_preview_modules
   
   tasks:
-  - name: Create second resource group
+  - name: Create resource group
     azure_rm_resourcegroup:
         name: "{{ resource_group }}"
         location: "{{ location }}"
-
-  - name: Create a resource group
-    azure_rm_resourcegroup:
-      name: "{{ plan_resource_group }}"
-      location: "{{ location }}"
 
   - name: Create a linux web app Java framework and Tomcat
     azure_rm_webapp:
         resource_group: "{{ resource_group }}"
         name: "{{ app_name }}"
         plan:
-          resource_group: "{{ plan_resource_group }}"
+          resource_group: "{{ resource_group }}"
           name: "{{ linux_plan_name }}"
           is_linux: true
           sku: S1
