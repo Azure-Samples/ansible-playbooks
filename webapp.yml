@@ -1,0 +1,76 @@
+# Description
+# ===========
+# This playbook create an Azure Linux Web app with Java container Tomcat 8.5,
+# then build a java hello world app, then ftp the war file to the Web app.
+#
+# Dependencies
+# ============
+# git
+# maven
+- hosts: localhost
+  connection: local
+  vars:
+    app_name: ansible_app1
+    location: eastus
+    linux_plan_name: linux_appplan1
+    repo_url: https://github.com/yungezz/helloworld.git
+    workspace: ~/helloworld
+
+  roles:
+    - Azure.azure_preview_modules
+  
+  tasks:
+  - name: Create second resource group
+    azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{ plan_resource_group }}"
+      location: "{{ location }}"
+
+  - name: Create a linux web app Java framework and Tomcat
+    azure_rm_webapp:
+        resource_group: "{{ resource_group }}"
+        name: "{{ app_name }}"
+        plan:
+          resource_group: "{{ plan_resource_group }}"
+          name: "{{ linux_plan_name }}"
+          is_linux: true
+          sku: S1
+          number_of_workers: 2
+        app_settings:
+          testkey: "testvalue"
+        frameworks:
+          - name: java
+            version: 8
+            settings:
+              java_container: "Tomcat"
+              java_container_version: "8.5"
+  
+  - name: Get web app facts
+    azure_rm_webapp_facts:
+      resource_group: "{{ resource_group }}"
+      name: "{{ app_name }}"
+      return_publish_profile: true
+    no_log: true
+    register: webapp
+
+  - name: git clone sample url
+    git:
+      repo: "{{ repo_url }}"
+      dest: "{{ workspace }}"
+#      version: "{{ branch_name }}"
+  
+  - name: build sample app
+    shell: mvn package chdir="{{ workspace }}"
+  
+  - name: deploy sample app to web app via ftp
+    shell: curl -T "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war" {{ webapp.webapps[0].publish_url }}/webapps/hello.war --user '{{ webapp.webapps[0].publishing_username }}:{{ webapp.webapps[0].publishing_password }}'
+
+  - name: restart the web app
+    azure_rm_webapp:
+      resource_group: "{{ resource_group }}"
+      name: "{{ app_name }}"
+      app_state: restarted
