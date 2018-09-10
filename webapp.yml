@@ -12,9 +12,9 @@
 - hosts: localhost
   connection: local
   vars:
-    app_name: ansible_app1
+    app_name: testapp-yungez
     location: eastus
-    linux_plan_name: linux_appplan1
+    linux_plan_name: testplan-yungez
     repo_url: https://github.com/yungezz/helloworld.git
     workspace: /helloworld
 
