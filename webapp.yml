@@ -56,7 +56,6 @@
       resource_group: "{{ resource_group_name }}"
       name: "{{ app_name }}"
       return_publish_profile: true
-    no_log: true
     register: webapp
 
   - name: Access the web ap
