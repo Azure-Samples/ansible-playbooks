@@ -1,7 +1,9 @@
 # Description
 # ===========
-# This playbook create an Azure Linux Web app with Java container Tomcat 8.5,
-# then build a java hello world app, then ftp the war file to the Web app.
+# This playbook creates an Azure Linux Web app with Java container Tomcat 8.5,
+# then build a Java hello world app, ftp the war file to the Web app.
+# Please note, it's recommended to use CI/CD tool to do webapp deployment, such as Jenkins.
+# Deployment step in this sample is just to validate webapp created is working.
 #
 # Dependencies
 # ============
@@ -14,7 +16,7 @@
     location: eastus
     linux_plan_name: linux_appplan1
     repo_url: https://github.com/yungezz/helloworld.git
-    workspace: ~/helloworld
+    workspace: /helloworld
 
   roles:
     - Azure.azure_preview_modules
@@ -25,16 +27,21 @@
         name: "{{ resource_group_name }}"
         location: "{{ location }}"
 
-  - name: Create a linux web app Java framework and Tomcat
+  - name: Create secondary resource group
+    azure_rm_resourcegroup:
+        name: "{{ resource_group_name }}2nd"
+        location: "{{ location }}"
+
+  - name: Create a Linux web app with Java framework and Tomcat
     azure_rm_webapp:
         resource_group: "{{ resource_group_name }}"
         name: "{{ app_name }}"
         plan:
-          resource_group: "{{ resource_group_name }}"
+          resource_group: "{{ resource_group_name }}2nd"
           name: "{{ linux_plan_name }}"
           is_linux: true
           sku: S1
-          number_of_workers: 2
+          number_of_workers: 1
         app_settings:
           testkey: "testvalue"
         frameworks:
@@ -52,20 +59,23 @@
     no_log: true
     register: webapp
 
-  - name: git clone sample url
+  - name: Git clone sample app
     git:
       repo: "{{ repo_url }}"
       dest: "{{ workspace }}"
-#      version: "{{ branch_name }}"
   
-  - name: build sample app
+  - name: Build sample app
     shell: mvn package chdir="{{ workspace }}"
   
-  - name: deploy sample app to web app via ftp
-    shell: curl -T "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war" {{ webapp.webapps[0].publish_url }}/webapps/hello.war --user '{{ webapp.webapps[0].publishing_username }}:{{ webapp.webapps[0].publishing_password }}'
+  - name: Deploy sample app to web app via FTP
+    shell: curl -T "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war" {{ webapp.webapps[0].ftp_publish_url }}/webapps/hello.war --user '{{ webapp.webapps[0].publishing_username }}:{{ webapp.webapps[0].publishing_password }}'
 
-  - name: restart the web app
+  - name: Restart the web app
     azure_rm_webapp:
       resource_group: "{{ resource_group_name }}"
       name: "{{ app_name }}"
       app_state: restarted
+
+  - name: Dump webapp information
+    debug:
+      var: webapp
