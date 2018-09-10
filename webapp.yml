@@ -59,6 +59,9 @@
     no_log: true
     register: webapp
 
+  - name: Access the web ap
+    shell: curl {{ webapp.webapps[0] }}.default_host_name
+
   - name: Git clone sample app
     git:
       repo: "{{ repo_url }}"
