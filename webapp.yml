@@ -61,23 +61,23 @@
   - name: Access the web app
     shell: curl {{ webapp.webapps[0].default_host_name }}
 
-  - name: Git clone sample app
-    git:
-      repo: "{{ repo_url }}"
-      dest: "{{ workspace }}"
+  # - name: Git clone sample app
+  #   git:
+  #     repo: "{{ repo_url }}"
+  #     dest: "{{ workspace }}"
   
-  - name: Build sample app
-    shell: mvn package chdir="{{ workspace }}"
+  # - name: Build sample app
+  #   shell: mvn package chdir="{{ workspace }}"
   
-  - name: Deploy sample app to web app via FTP
-    shell: curl -T "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war" {{ webapp.webapps[0].ftp_publish_url }}/webapps/hello.war --user '{{ webapp.webapps[0].publishing_username }}:{{ webapp.webapps[0].publishing_password }}'
+  # - name: Deploy sample app to web app via FTP
+  #   shell: curl -T "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war" {{ webapp.webapps[0].ftp_publish_url }}/webapps/hello.war --user '{{ webapp.webapps[0].publishing_username }}:{{ webapp.webapps[0].publishing_password }}'
 
-  - name: Restart the web app
-    azure_rm_webapp:
-      resource_group: "{{ resource_group_name }}"
-      name: "{{ app_name }}"
-      app_state: restarted
+  # - name: Restart the web app
+  #   azure_rm_webapp:
+  #     resource_group: "{{ resource_group_name }}"
+  #     name: "{{ app_name }}"
+  #     app_state: restarted
 
-  - name: Dump webapp information
-    debug:
-      var: webapp
+  # - name: Dump webapp information
+  #   debug:
+  #     var: webapp
