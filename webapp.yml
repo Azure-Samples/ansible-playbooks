@@ -16,7 +16,7 @@
     location: eastus
     linux_plan_name: testplan-yungez
     repo_url: https://github.com/yungezz/helloworld.git
-    workspace: /helloworld
+    workspace: /tmp/helloworld
 
   roles:
     - Azure.azure_preview_modules
@@ -58,8 +58,8 @@
       return_publish_profile: true
     register: webapp
 
-  - name: Access the web ap
-    shell: curl {{ webapp.webapps[0] }}.default_host_name
+  - name: Access the web app
+    shell: curl {{ webapp.webapps[0].default_host_name }}
 
   - name: Git clone sample app
     git:
