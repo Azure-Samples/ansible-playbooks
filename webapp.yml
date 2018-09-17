@@ -1,26 +1,24 @@
 # Description
 # ===========
-# This playbook creates an Azure Linux Web app with Java container Tomcat 8.5,
-# then build a Java hello world app, ftp the war file to the Web app.
-# Please note that it's recommended to use CI/CD tool, such as Jenkins, to do webapp deployment.
-# Deployment step in this sample is just to validate webapp created is working.
+# This playbook creates 
+# - An Azure Linux Web app with Java container Tomcat 8.5.
+# - An Azure Traffic manager profile.
+# - Add the web site created as an endpoint of the Traffic Manager Profile.
 #
-# Dependencies
-# ============
-# git
-# maven
+# This playbook requires Ansible version >=2.7, or you could use role Azure.azure_preview_modules
+#
 - hosts: localhost
   connection: local
   vars:
-    app_name: testapp-yungez
+    app_name: testapp0917
     location: eastus
-    linux_plan_name: testplan-yungez
-    repo_url: https://github.com/yungezz/helloworld.git
-    workspace: /tmp/helloworld
+    linux_plan_name: testapp0917
+    traffic_manager_profile_name: profile0917
+    traffic_manager_endpoint_name: azureendpoint1
 
   roles:
     - Azure.azure_preview_modules
-  
+
   tasks:
   - name: Create resource group
     azure_rm_resourcegroup:
@@ -34,8 +32,12 @@
 
   - name: Create App Service Plan
     azure_rm_appserviceplan:
-      resource_group: "{{ resource_grouop_name }}2nd"
+      resource_group: "{{ resource_group_name }}2nd"
+      name: "{{ linux_plan_name }}"
       location: "{{ location }}"
+      is_linux: true
+      sku: S1
+      number_of_workers: 1
 
   - name: Create a Linux web app with Java framework and Tomcat
     azure_rm_webapp:
@@ -44,9 +46,6 @@
         plan:
           resource_group: "{{ resource_group_name }}2nd"
           name: "{{ linux_plan_name }}"
-          is_linux: true
-          sku: S1
-          number_of_workers: 1
         app_settings:
           testkey: "testvalue"
         frameworks:
@@ -66,23 +65,30 @@
   - name: Access the web app
     shell: curl {{ webapp.webapps[0].default_host_name }}
 
-  # - name: Git clone sample app
-  #   git:
-  #     repo: "{{ repo_url }}"
-  #     dest: "{{ workspace }}"
-  
-  # - name: Build sample app
-  #   shell: mvn package chdir="{{ workspace }}"
-  
-  # - name: Deploy sample app to web app via FTP
-  #   shell: curl -T "{{ workspace }}/target/demo-0.0.1-SNAPSHOT.war" {{ webapp.webapps[0].ftp_publish_url }}/webapps/hello.war --user '{{ webapp.webapps[0].publishing_username }}:{{ webapp.webapps[0].publishing_password }}'
+  - name: Create Traffic Manager Profile
+    azure_rm_trafficmanagerprofile:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ traffic_manager_profile_name }}"
+      location: global
+      routing_method: performance
+      dns_config:
+        relative_name: "{{ traffic_manager_profile_name }}"
+        ttl:  60
+      monitor_config:
+        protocol: HTTPS
+        port: 80
+        path: '/'
 
-  # - name: Restart the web app
-  #   azure_rm_webapp:
-  #     resource_group: "{{ resource_group_name }}"
-  #     name: "{{ app_name }}"
-  #     app_state: restarted
+  - name: Add endpoint to traffic manager profile, using the web site created above
+    azure_rm_trafficmanagerendpoint:
+      resource_group: "{{ resource_group_name }}"
+      profile_name: "{{ traffic_manager_profile_name }}"
+      name: "{{ traffic_manager_endpoint_name }}"
+      type: azure_endpoints
+      location: "{{ location }}"
+      target_resource_id: "{{ webapp.webapps[0].default_host_name }}"
 
-  # - name: Dump webapp information
-  #   debug:
-  #     var: webapp
+  - name: Get Traffic Manager Profile facts
+    azure_rm_trafficmanagersprofile_facts:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ traffic_manager_profile_name }}"
