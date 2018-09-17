@@ -1,11 +1,10 @@
 # Description
 # ===========
-# This playbook creates an SQL Managed Instance and all the infrastructure needed
+# This playbook creates an SQL Managed Instance and all the infrastructure needed, as described in following document:
+#  https://docs.microsoft.com/en-us/azure/sql-database/sql-database-managed-instance
 # As SQL Managed instance is currently available as preview only, it's necessary
 # to have it enabled in selected subscription.
 # Please note that currently it may take more than 24 hours to complete.
-# More information on SQL Managed Instance can be found here:
-# https://docs.microsoft.com/en-us/azure/sql-database/sql-database-managed-instance
 # This sample requires Ansible 2.7
 
 - name: Create SQL Managed Instance
