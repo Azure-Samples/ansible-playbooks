@@ -7,6 +7,7 @@
 #
 # This playbook requires Ansible version >=2.7, or you could use role Azure.azure_preview_modules
 #
+
 - hosts: localhost
   connection: local
   vars:
@@ -62,8 +63,8 @@
       return_publish_profile: true
     register: webapp
 
- - name: Access the web app
-   shell: curl {{ webapp.webapps[0].default_host_name }}
+  - name: Access the web app
+    shell: curl {{ webapp.webapps[0].default_host_name }}
 
   - name: Create Traffic Manager Profile
     azure_rm_trafficmanagerprofile:
