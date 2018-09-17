@@ -6,7 +6,7 @@
 # - Add the web site created as an endpoint of the Traffic Manager Profile.
 #
 # This playbook requires Ansible version >=2.7, or you could use role Azure.azure_preview_modules
-#
+# If you're using Ansible >=2.7, just remove the role lines.
 
 - hosts: localhost
   connection: local
@@ -17,7 +17,6 @@
     traffic_manager_profile_name: profile0917
     traffic_manager_endpoint_name: endpoint1
 
-  # if you're using Ansible >=2.7, just remove the role lines.
   roles:
     - Azure.azure_preview_modules
 
