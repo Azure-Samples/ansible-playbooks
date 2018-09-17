@@ -2,7 +2,7 @@
 # ===========
 # This playbook creates an Azure Linux Web app with Java container Tomcat 8.5,
 # then build a Java hello world app, ftp the war file to the Web app.
-# Please note, it's recommended to use CI/CD tool to do webapp deployment, such as Jenkins.
+# Please note that it's recommended to use CI/CD tool, such as Jenkins, to do webapp deployment.
 # Deployment step in this sample is just to validate webapp created is working.
 #
 # Dependencies
@@ -27,10 +27,15 @@
         name: "{{ resource_group_name }}"
         location: "{{ location }}"
 
-  - name: Create secondary resource group
+  - name: Create resource group for app service plan
     azure_rm_resourcegroup:
         name: "{{ resource_group_name }}2nd"
         location: "{{ location }}"
+
+  - name: Create App Service Plan
+    azure_rm_appserviceplan:
+      resource_group: "{{ resource_grouop_name }}2nd"
+      location: "{{ location }}"
 
   - name: Create a Linux web app with Java framework and Tomcat
     azure_rm_webapp:
