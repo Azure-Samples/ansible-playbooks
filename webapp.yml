@@ -23,13 +23,13 @@
   tasks:
   - name: Create resource group
     azure_rm_resourcegroup:
-        name: "{{ resource_group_name }}"
-        location: "{{ location }}"
+      name: "{{ resource_group_name }}"
+      location: "{{ location }}"
 
   - name: Create resource group for app service plan
     azure_rm_resourcegroup:
-        name: "{{ resource_group_name }}2nd"
-        location: "{{ location }}"
+      name: "{{ resource_group_name }}2nd"
+      location: "{{ location }}"
 
   - name: Create App Service Plan
     azure_rm_appserviceplan:
@@ -42,19 +42,19 @@
 
   - name: Create a Linux web app with Java framework and Tomcat
     azure_rm_webapp:
-        resource_group: "{{ resource_group_name }}"
-        name: "{{ app_name }}"
-        plan:
-          resource_group: "{{ resource_group_name }}2nd"
-          name: "{{ linux_plan_name }}"
-        app_settings:
-          testkey: "testvalue"
-        frameworks:
-          - name: java
-            version: 8
-            settings:
-              java_container: "Tomcat"
-              java_container_version: "8.5"
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ app_name }}"
+      plan:
+        resource_group: "{{ resource_group_name }}2nd"
+        name: "{{ linux_plan_name }}"
+      app_settings:
+        testkey: "testvalue"
+      frameworks:
+        - name: java
+          version: 8
+          settings:
+            java_container: "Tomcat"
+            java_container_version: "8.5"
 
   - name: Get web app facts
     azure_rm_webapp_facts:
@@ -62,9 +62,6 @@
       name: "{{ app_name }}"
       return_publish_profile: true
     register: webapp
-
-  - name: Access the web app
-    shell: curl {{ webapp.webapps[0].default_host_name }}
 
   - name: Create Traffic Manager Profile
     azure_rm_trafficmanagerprofile:
