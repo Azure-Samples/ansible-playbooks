@@ -12,9 +12,9 @@
   vars:
     app_name: testapp0917
     location: eastus
-    linux_plan_name: testapp0917
+    linux_plan_name: testplan0917
     traffic_manager_profile_name: profile0917
-    traffic_manager_endpoint_name: azureendpoint1
+    traffic_manager_endpoint_name: endpoint1
 
   roles:
     - Azure.azure_preview_modules
@@ -54,7 +54,7 @@
             settings:
               java_container: "Tomcat"
               java_container_version: "8.5"
-  
+
   - name: Get web app facts
     azure_rm_webapp_facts:
       resource_group: "{{ resource_group_name }}"
@@ -62,8 +62,8 @@
       return_publish_profile: true
     register: webapp
 
-  - name: Access the web app
-    shell: curl {{ webapp.webapps[0].default_host_name }}
+ - name: Access the web app
+   shell: curl {{ webapp.webapps[0].default_host_name }}
 
   - name: Create Traffic Manager Profile
     azure_rm_trafficmanagerprofile:
@@ -86,9 +86,9 @@
       name: "{{ traffic_manager_endpoint_name }}"
       type: azure_endpoints
       location: "{{ location }}"
-      target_resource_id: "{{ webapp.webapps[0].default_host_name }}"
+      target_resource_id: "{{ webapp.webapps[0].id }}"
 
   - name: Get Traffic Manager Profile facts
-    azure_rm_trafficmanagersprofile_facts:
+    azure_rm_trafficmanagerprofile_facts:
       resource_group: "{{ resource_group_name }}"
       name: "{{ traffic_manager_profile_name }}"
