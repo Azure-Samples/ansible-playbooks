@@ -10,7 +10,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: zimsmanagedfifth
+    resource_group: "{{ resource_group_name }}"
     virtual_network: mivirtualnetx
     route_table: miroutetable
     subnet: misubnetx
