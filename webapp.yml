@@ -17,6 +17,7 @@
     traffic_manager_profile_name: profile0917
     traffic_manager_endpoint_name: endpoint1
 
+  # if you're using Ansible >=2.7, just remove the role lines.
   roles:
     - Azure.azure_preview_modules
 
