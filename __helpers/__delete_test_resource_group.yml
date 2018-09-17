@@ -11,3 +11,9 @@
       name: "{{ resource_group_name }}"
       force: True
       state: absent
+
+  - name: delete second resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}2nd"
+      force: True
+      state: absent

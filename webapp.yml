@@ -1,0 +1,92 @@
+# Description
+# ===========
+# This playbook creates 
+# - An Azure Linux Web app with Java container Tomcat 8.5.
+# - An Azure Traffic manager profile.
+# - Add the web site created as an endpoint of the Traffic Manager Profile.
+#
+# This playbook requires Ansible version >=2.7, or you could use role Azure.azure_preview_modules
+# If you're using Ansible >=2.7, just remove the role lines.
+
+- hosts: localhost
+  connection: local
+  vars:
+    app_name: testapp0917
+    location: eastus
+    linux_plan_name: testplan0917
+    traffic_manager_profile_name: profile0917
+    traffic_manager_endpoint_name: endpoint1
+
+  roles:
+    - Azure.azure_preview_modules
+
+  tasks:
+  - name: Create resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}"
+      location: "{{ location }}"
+
+  - name: Create resource group for app service plan
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}2nd"
+      location: "{{ location }}"
+
+  - name: Create App Service Plan
+    azure_rm_appserviceplan:
+      resource_group: "{{ resource_group_name }}2nd"
+      name: "{{ linux_plan_name }}"
+      location: "{{ location }}"
+      is_linux: true
+      sku: S1
+      number_of_workers: 1
+
+  - name: Create a Linux web app with Java framework and Tomcat
+    azure_rm_webapp:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ app_name }}"
+      plan:
+        resource_group: "{{ resource_group_name }}2nd"
+        name: "{{ linux_plan_name }}"
+      app_settings:
+        testkey: "testvalue"
+      frameworks:
+        - name: java
+          version: 8
+          settings:
+            java_container: "Tomcat"
+            java_container_version: "8.5"
+
+  - name: Get web app facts
+    azure_rm_webapp_facts:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ app_name }}"
+      return_publish_profile: true
+    register: webapp
+
+  - name: Create Traffic Manager Profile
+    azure_rm_trafficmanagerprofile:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ traffic_manager_profile_name }}"
+      location: global
+      routing_method: performance
+      dns_config:
+        relative_name: "{{ traffic_manager_profile_name }}"
+        ttl:  60
+      monitor_config:
+        protocol: HTTPS
+        port: 80
+        path: '/'
+
+  - name: Add endpoint to traffic manager profile, using the web site created above
+    azure_rm_trafficmanagerendpoint:
+      resource_group: "{{ resource_group_name }}"
+      profile_name: "{{ traffic_manager_profile_name }}"
+      name: "{{ traffic_manager_endpoint_name }}"
+      type: azure_endpoints
+      location: "{{ location }}"
+      target_resource_id: "{{ webapp.webapps[0].id }}"
+
+  - name: Get Traffic Manager Profile facts
+    azure_rm_trafficmanagerprofile_facts:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ traffic_manager_profile_name }}"
