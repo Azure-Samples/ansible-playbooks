@@ -52,7 +52,7 @@ before_install:
 
       diffstr=$(git diff $branch remotes/origin/master --name-only  -- '*.yml' --no-pager);
       changedfiles=($diffstr);
-      excludedList="vm_create_existingvnet_deployjavaapp.yml .travis.yml aks_create_scale.yml webapp.yml";
+      excludedList="vm_create_existingvnet_deployjavaapp.yml .travis.yml aks_create_scale.yml webapp.yml rest/sql-managed-instance.yml";
 
       echo start = $start, end = $end, list_lenth = ${#changedfiles[@]};
 

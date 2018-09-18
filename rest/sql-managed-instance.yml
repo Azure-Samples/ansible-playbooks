@@ -1,0 +1,76 @@
+# Description
+# ===========
+# This playbook creates a SQL Managed Instance and all the infrastructure needed, as described in following document:
+#  https://docs.microsoft.com/en-us/azure/sql-database/sql-database-managed-instance
+# As SQL Managed instance is currently available as preview only, it's necessary
+# to have it enabled in selected subscription.
+# Please note that currently it may take more than 24 hours to complete.
+# This sample requires Ansible 2.7
+
+- name: Create SQL Managed Instance
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: "{{ resource_group_name }}"
+    virtual_network: mivirtualnetx
+    route_table: miroutetable
+    subnet: misubnetx
+    managed_instance: mibyansiblesixth
+    location: eastus
+  tasks:
+
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
+
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: "{{ resource_group }}"
+      name: "{{ virtual_network }}"
+      address_prefixes: "10.0.0.0/16"
+
+  - name: Create route table
+    azure_rm_routetable:
+      resource_group: "{{ resource_group }}"
+      name: "{{ route_table }}"
+
+  - name: Create route
+    azure_rm_route:
+      name: "default"
+      resource_group: "{{ resource_group }}"
+      next_hop_type: internet
+      address_prefix: 0.0.0.0/0
+      route_table_name: "{{ route_table }}"
+
+  - name: Create subnet
+    azure_rm_subnet:
+      name: "{{ subnet }}"
+      virtual_network_name: "{{ virtual_network }}"
+      resource_group: "{{ resource_group }}"
+      address_prefix_cidr: "10.0.0.0/16"
+      route_table: "{{ output.id }}"
+    register: subnet_output
+
+  - name: Create managed instance
+    azure_rm_resource:
+      api_version: '2015-05-01-preview'
+      resource_group: "{{ resource_group }}"
+      provider: sql
+      resource_type: managedinstances
+      resource_name: "{{ managed_instance }}"
+      body:
+        location: "{{ location }}"
+        sku: 
+          name: "GP_Gen4"
+          tier: GeneralPurpose
+          capacity: 1
+        properties: 
+          fullyQualifiedDomainName: "{{ managed_instance }}.database.windows.net"
+          administratorLogin: dummylogin
+          administratorLoginPassword: "Pa$$w0rd12345678"
+          subnetId: "{{ subnet_output.state.id }}"
+          vCores: 8
+          storageSizeInGB: 32
+          licenseType: BasePrice
+
