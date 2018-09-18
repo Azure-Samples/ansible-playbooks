@@ -1,6 +1,6 @@
 # Description
 # ===========
-# This playbook creates an SQL Managed Instance and all the infrastructure needed, as described in following document:
+# This playbook creates a SQL Managed Instance and all the infrastructure needed, as described in following document:
 #  https://docs.microsoft.com/en-us/azure/sql-database/sql-database-managed-instance
 # As SQL Managed instance is currently available as preview only, it's necessary
 # to have it enabled in selected subscription.
