@@ -11,9 +11,13 @@
 - hosts: localhost
   vars:
     resource_group: zimsappgwrgXXX
-    location: eastus
+    location: eastus 
+    vnet_name: ansiblevnetname 
+    subnet_name: ansiblesubnetname 
+    appgateway_name: appgw{{ rpfx }} 
+    azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
   tasks:
-    - name: Prepare random number
+    - name: Prepare random postfix
       set_fact:
         rpfx: "{{ resource_group | hash('md5') | truncate(7, True, '') }}{{ 1000 | random }}"
       run_once: yes
@@ -67,7 +71,7 @@
 
     - name: Create a virtual network
       azure_rm_virtualnetwork:
-        name: vnet{{ rpfx }}
+        name: "{{ vnet_name }}"
         resource_group: "{{ resource_group }}"
         address_prefixes_cidr:
             - 10.1.0.0/16
@@ -78,8 +82,8 @@
 
     - name: Create a subnet
       azure_rm_subnet:
-        name: subnet{{ rpfx }}
-        virtual_network_name: vnet{{ rpfx }}
+        name: "{{ subnet_name }}"
+        virtual_network_name: "{{ vnet_name }}"
         resource_group: "{{ resource_group }}"
         address_prefix_cidr: 10.1.0.0/24
       register: subnet_output
@@ -88,7 +92,7 @@
     - name: Create instance of Application Gateway
       azure_rm_appgateway:
         resource_group: "{{ resource_group }}"
-        name: "appgateway{{ rpfx }}"
+        name: "{{ appgateway_name }}"
         sku:
           name: standard_small
           tier: standard
