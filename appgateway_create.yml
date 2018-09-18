@@ -9,23 +9,15 @@
 
 ---
 - hosts: localhost
+  vars:
+    resource_group: zimsappgwrgXXX
+    location: eastus
   tasks:
-    - name: Prepare random postfix
+    - name: Prepare random number
       set_fact:
-        rpfx: "{{ 1000 | random }}"
+        rpfx: "{{ resource_group | hash('md5') | truncate(7, True, '') }}{{ 1000 | random }}"
       run_once: yes
 
-- hosts: localhost
-  roles:
-    - Azure.azure_preview_modules
-  vars:
-    resource_group: "{{ resource_group_name }}"
-    location: eastus
-    vnet_name: ansiblevnetname
-    subnet_name: ansiblesubnetname
-    appgw_name: appgw{{ rpfx }}
-    azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
-  tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group }}"
@@ -75,7 +67,7 @@
 
     - name: Create a virtual network
       azure_rm_virtualnetwork:
-        name: "{{ vnet_name }}"
+        name: vnet{{ rpfx }}
         resource_group: "{{ resource_group }}"
         address_prefixes_cidr:
             - 10.1.0.0/16
@@ -86,46 +78,49 @@
 
     - name: Create a subnet
       azure_rm_subnet:
-        name: "{{ subnet_name }}"
-        virtual_network_name: "{{ vnet_name }}"
+        name: subnet{{ rpfx }}
+        virtual_network_name: vnet{{ rpfx }}
         resource_group: "{{ resource_group }}"
         address_prefix_cidr: 10.1.0.0/24
       register: subnet_output
 
-    - name: Create a public IP address
-      azure_rm_publicipaddress:
-        resource_group: "{{ resource_group }}"
-        allocation_method: Dynamic
-        name: appgwpublicip
-        domain_name_label: "{{ resource_group }}"
-      register: pip_output
-
-    - name: Dump Public IP output
-      debug:
-        var: pip_output
 
     - name: Create instance of Application Gateway
-      azure_rm_appgw:
+      azure_rm_appgateway:
         resource_group: "{{ resource_group }}"
-        name: "{{ appgw_name }}"
+        name: "appgateway{{ rpfx }}"
         sku:
           name: standard_small
           tier: standard
           capacity: 2
+        ssl_policy:
+          policy_type: predefined
+          policy_name: ssl_policy20150501
+          disabled_ssl_protocols:
+            - tls_v1_0
+          cipher_suites:
+            - tls_ecdhe_ecdsa_with_aes_256_gcm_sha384
+        authentication_certificates:
+          - name: cert1
+            data: "{{ lookup('file', 'cert1.txt') }}"
+        ssl_certificates:
+          - name: cert2
+            password: your-password
+            data: "{{ lookup('file', 'cert2.txt') }}"
         gateway_ip_configurations:
           - subnet:
               id: "{{ subnet_output.state.id }}"
             name: app_gateway_ip_config
         frontend_ip_configurations:
-          - public_ip_address: appgwpublicip
+          - subnet:
+              id: "{{ subnet_output.state.id }}"
             name: sample_gateway_frontend_ip_config
         frontend_ports:
-          - port: 80
+          - port: 90
             name: ag_frontend_port
         backend_address_pools:
           - backend_addresses:
-              - ip_address: "{{ ci_output_a.ip_address }}"
-              - ip_address: "{{ ci_output_b.ip_address }}"
+              - ip_address: 10.0.0.4
             name: test_backend_address_pool
         backend_http_settings_collection:
           - port: 80
@@ -143,3 +138,9 @@
             http_listener: sample_http_listener
             name: rule1
       register: output
+
+    - name: Assert the resource instance is well created
+      assert:
+        that:
+          - output.changed
+
