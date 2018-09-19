@@ -1,8 +1,9 @@
 # Description
 # ===========
-# This playbook creates an Application Gateway, the azure_rm_appgw module is not available in v2.4 & 2.5, but in azure_preview_modules role,
+# This playbook creates an Application Gateway, the azure_rm_appgateway module is not available in v2.4 & 2.5, but in azure_preview_modules role,
 # so you need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
 # 1. create resource group
+# 1. create two container instances with httpd running
 # 1. create virtual network
 # 1. create subnet
 # 1. create application gateway
@@ -10,19 +11,13 @@
 ---
 
 - hosts: localhost
-  tasks:
-    - name: Prepare random postfix
-      set_fact:
-        rpfx: "{{ 'zimsappgwrg' | truncate(7, True, '') }}{{ 1000 | random }}"
-      run_once: yes
-
-- hosts: localhost
   vars:
-    resource_group: zimsappgwrgxx
+    resource_group: zimsappgwnew
     location: eastus 
     vnet_name: ansiblevnetname 
     subnet_name: ansiblesubnetname 
     appgw_name: zimsappgw 
+
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -62,14 +57,6 @@
             ports:
               - 80
       register: ci_output_b
-
-    - name: Dump first container instance output
-      debug:
-        var: ci_output_a
-
-    - name: Dump second container instance output
-      debug:
-        var: ci_output_b
 
     - name: Create a virtual network
       azure_rm_virtualnetwork:
@@ -148,11 +135,11 @@
           - frontend_ip_configuration: sample_gateway_frontend_ip_config
             frontend_port: ag_frontend_port
             name: sample_http_listener
+            protocol: https
+            ssl_certificate: cert2
         request_routing_rules:
           - rule_type: Basic
             backend_address_pool: test_backend_address_pool
             backend_http_settings: sample_appgateway_http_settings
             http_listener: sample_http_listener
             name: rule1
-      register: output
-
