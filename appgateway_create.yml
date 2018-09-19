@@ -135,7 +135,7 @@
               id: "{{ subnet_output.state.id }}"
             name: app_gateway_ip_config
         frontend_ip_configurations:
-          - public_ip_address: appgwpublicip 
+          - public_ip_address: appgwpublicip
             name: sample_gateway_frontend_ip_config
         frontend_ports:
           - port: 90
