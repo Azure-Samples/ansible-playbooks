@@ -98,12 +98,6 @@
         domain_name_label: "{{ resource_group }}"
       register: pip_output
 
-    - name: Create a public IP address
-      azure_rm_publicipaddress_facts:
-        resource_group: "{{ resource_group }}" 
-        name: appgwpublicip
-      register: pip_output
-
     - name: Dump Public IP output 
       debug:
         var: pip_output
