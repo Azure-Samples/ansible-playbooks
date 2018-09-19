@@ -10,12 +10,11 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: zimsappgwrgXXX
+    resource_group: "{{ resource_group_name }}"
     location: eastus 
     vnet_name: ansiblevnetname 
     subnet_name: ansiblesubnetname 
     appgateway_name: appgw{{ rpfx }} 
-    azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
   tasks:
     - name: Prepare random postfix
       set_fact:
