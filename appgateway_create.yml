@@ -22,7 +22,7 @@
     location: eastus 
     vnet_name: ansiblevnetname 
     subnet_name: ansiblesubnetname 
-    appgateway_name: zimsappgw 
+    appgw_name: zimsappgw 
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -105,7 +105,7 @@
     - name: Create instance of Application Gateway
       azure_rm_appgateway:
         resource_group: "{{ resource_group }}"
-        name: "{{ appgateway_name }}"
+        name: "{{ appgw_name }}"
         sku:
           name: standard_small
           tier: standard
