@@ -13,17 +13,17 @@
   tasks:
     - name: Prepare random postfix
       set_fact:
-        rpfx: "{{ resource_group | hash('md5') | truncate(7, True, '') }}{{ 1000 | random }}"
+        rpfx: "{{ 'zimsappgwrg' | truncate(7, True, '') }}{{ 1000 | random }}"
       run_once: yes
 
 - hosts: localhost
   vars:
-    resource_group: "{{ resource_group_name }}"
+    resource_group: zimsappgwrg
     location: eastus 
     vnet_name: ansiblevnetname 
     subnet_name: ansiblesubnetname 
-    appgateway_name: appgw{{ rpfx }} 
-
+    appgateway_name: zimsappgw 
+  tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group }}"
@@ -90,6 +90,17 @@
         address_prefix_cidr: 10.1.0.0/24
       register: subnet_output
 
+    - name: Create a public IP address
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}" 
+        allocation_method: Dynamic
+        name: appgwpublicip
+        domain_name_label: "{{ resource_group }}"
+      register: pip_output
+
+    - name: Dump Public IP output 
+      debug:
+        var: pip_output
 
     - name: Create instance of Application Gateway
       azure_rm_appgateway:
