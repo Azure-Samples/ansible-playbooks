@@ -124,7 +124,8 @@
             name: ag_frontend_port
         backend_address_pools:
           - backend_addresses:
-              - ip_address: 10.0.0.4
+              - ip_address: "{{ ci_output_a.ip_address }}"
+              - ip_address: "{{ ci_output_b.ip_address }}"
             name: test_backend_address_pool
         backend_http_settings_collection:
           - port: 80
