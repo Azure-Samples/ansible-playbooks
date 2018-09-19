@@ -144,8 +144,3 @@
             name: rule1
       register: output
 
-    - name: Assert the resource instance is well created
-      assert:
-        that:
-          - output.changed
-
