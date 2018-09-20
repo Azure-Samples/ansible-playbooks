@@ -1,11 +1,11 @@
 
 # Description
 # ===========
-# This plabyook covers below scenario:
+# This plabyook covers scenario as described below:
 # 1. create a minimal VM
-# 1. sets up httpd using azure_rm_virtualmachine_extension
-# 1. creates image from that VM
-#
+# 1. set up httpd using azure_rm_virtualmachine_extension
+# 1. create image from that VM
+# Note: Ansible 2.7 is required for this sample.
 
 - name: Capture VM Image with httpd set up on Ubuntu
   hosts: localhost
@@ -49,7 +49,6 @@
           publisher: Canonical
           sku: 16.04-LTS
           version: latest
-      #register: output
 
     - name: Create VM Extension
       azure_rm_virtualmachine_extension:
@@ -61,10 +60,6 @@
         type_handler_version: 2.0
         auto_upgrade_minor_version: true
         settings: {"commandToExecute": "sudo apt-get -y install apache2"}
-      register: results
-
-    - debug:
-        var: results
 
     - name: Stop VM before it can be generalized and image captured
       azure_rm_virtualmachine:
@@ -72,7 +67,7 @@
         name: "{{ vm_name }}"
         started: no
 
-    - name: Call REST API - VirtualMachines_Generalize
+    - name: Generalize VM using REST API
       azure_rm_resource:
         # url: /subscriptions/{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/generalize
         api_version: '2017-12-01'
