@@ -37,26 +37,13 @@
         address_prefix: "10.0.1.0/24"
         virtual_network: testVnet
 
-    - name: Create virtual network interface card
-      azure_rm_networkinterface:
-        resource_group: "{{ resource_group }}"
-        name: testNIC
-        virtual_network: testVnet
-        subnet: testSubnet
-
-    - name: Create VM
+    - name: Create minimal VM with defaults
       azure_rm_virtualmachine:
         resource_group: "{{ resource_group }}"
-        name: testVM
-        vm_size: Standard_DS1_v2
-        admin_username: testuser
-        ssh_password_enabled: true
-        admin_password: "Password1234!"
-        network_interfaces: testNIC
-        #storage_account_name: "{{ storage_account }}"
-        #storage_container: osdisk
-        #storage_blob: osdisk.vhd
-        #os_disk_caching: ReadWrite
+        name: "{{ vm_name }}"
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        vm_size: Standard_B1ms
         image:
           offer: UbuntuServer
           publisher: Canonical
