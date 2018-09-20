@@ -1,0 +1,104 @@
+
+# Description
+# ===========
+# This plabyook covers below scenario:
+# 1. create a minimal VM
+# 1. sets up httpd using azure_rm_virtualmachine_extension
+# 1. creates image from that VM
+#
+
+- name: Capture VM Image with httpd set up on Ubuntu
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: zimsimagerg
+    vm_name: testvm
+    vm_image_name: testvmimage
+    location: eastus
+    admin_username: zim
+    admin_password: Password123!!!
+  tasks:
+
+    - name: Create a resource group for vnet
+      azure_rm_resourcegroup:
+          name: "{{ resource_group }}"
+          location: "{{ location }}"
+
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group }}"
+        name: testVnet
+        address_prefixes: "10.0.0.0/16"
+
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group }}"
+        name: testSubnet
+        address_prefix: "10.0.1.0/24"
+        virtual_network: testVnet
+
+    - name: Create virtual network interface card
+      azure_rm_networkinterface:
+        resource_group: "{{ resource_group }}"
+        name: testNIC
+        virtual_network: testVnet
+        subnet: testSubnet
+
+    - name: Create VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: testVM
+        vm_size: Standard_DS1_v2
+        admin_username: testuser
+        ssh_password_enabled: true
+        admin_password: "Password1234!"
+        network_interfaces: testNIC
+        #storage_account_name: "{{ storage_account }}"
+        #storage_container: osdisk
+        #storage_blob: osdisk.vhd
+        #os_disk_caching: ReadWrite
+        image:
+          offer: UbuntuServer
+          publisher: Canonical
+          sku: 16.04-LTS
+          version: latest
+      #register: output
+
+    - name: Create VM Extension
+      azure_rm_virtualmachine_extension:
+        resource_group: "{{ resource_group }}"
+        name: testVMExtension
+        virtual_machine_name: "{{ vm_name }}"
+        publisher: Microsoft.Azure.Extensions
+        virtual_machine_extension_type: CustomScript
+        type_handler_version: 2.0
+        auto_upgrade_minor_version: true
+        settings: {"commandToExecute": "sudo apt-get -y install apache2"}
+      register: results
+
+    - debug:
+        var: results
+
+    - name: Stop VM before it can be generalized and image captured
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vm_name }}"
+        started: no
+
+    - name: Call REST API - VirtualMachines_Generalize
+      azure_rm_resource:
+        # url: /subscriptions/{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/generalize
+        api_version: '2017-12-01'
+        method: POST
+        resource_group: "{{ resource_group }}"
+        provider: compute
+        resource_type: virtualmachines
+        resource_name: "{{ vm_name }}"
+        subresource:
+          - type: generalize
+    
+    - name: Create an image from a virtual machine
+      azure_rm_image:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vm_image_name }}"
+        source: "{{ vm_name }}"
