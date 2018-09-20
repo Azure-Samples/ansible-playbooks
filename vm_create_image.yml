@@ -11,7 +11,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: zimsimagerg
+    resource_group: "{{ resource_group_name }}"
     vm_name: testvm
     vm_image_name: testvmimage
     location: eastus
