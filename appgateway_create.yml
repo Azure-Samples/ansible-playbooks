@@ -100,20 +100,6 @@
           name: standard_small
           tier: standard
           capacity: 2
-        ssl_policy:
-          policy_type: predefined
-          policy_name: ssl_policy20150501
-          disabled_ssl_protocols:
-            - tls_v1_0
-          cipher_suites:
-            - tls_ecdhe_ecdsa_with_aes_256_gcm_sha384
-        authentication_certificates:
-          - name: cert1
-            data: "{{ lookup('file', 'cert1.txt') }}"
-        ssl_certificates:
-          - name: cert2
-            password: your-password
-            data: "{{ lookup('file', 'cert2.txt') }}"
         gateway_ip_configurations:
           - subnet:
               id: "{{ subnet_output.state.id }}"
@@ -122,7 +108,7 @@
           - public_ip_address: appgwpublicip
             name: sample_gateway_frontend_ip_config
         frontend_ports:
-          - port: 90
+          - port: 80
             name: ag_frontend_port
         backend_address_pools:
           - backend_addresses:
@@ -138,8 +124,7 @@
           - frontend_ip_configuration: sample_gateway_frontend_ip_config
             frontend_port: ag_frontend_port
             name: sample_http_listener
-            protocol: https
-            ssl_certificate: cert2
+            protocol: http
         request_routing_rules:
           - rule_type: Basic
             backend_address_pool: test_backend_address_pool
