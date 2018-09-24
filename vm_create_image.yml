@@ -11,12 +11,12 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: "{{ resource_group_name }}"
-    vm_name: testvm
-    vm_image_name: testvmimage
+    resource_group: kylie_ansiblefest
+    vm_name: ansiblefestvm
+    vm_image_name: ansiblevmimage
     location: eastus
-    admin_username: zim
-    admin_password: Password123!!!
+    admin_username: kylie
+    admin_password: Ansible123!!!
   tasks:
 
     - name: Create a resource group for vnet
