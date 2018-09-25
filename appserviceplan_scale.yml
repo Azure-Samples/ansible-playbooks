@@ -20,12 +20,12 @@
   - name: Create resource group
     azure_rm_resourcegroup:
       name: "{{ resource_group_name }}"
+      location: "{{ location }}"
 
   - name: Create App Service Plan
     azure_rm_appserviceplan:
       resource_group: "{{ resource_group_name }}"
       name: "{{ plan_name }}"
-      location: "{{ location }}"
       is_linux: true
       sku: S1
       number_of_workers: 1
@@ -34,7 +34,6 @@
     azure_rm_appserviceplan:
       resource_group: "{{ resource_group_name }}"
       name: "{{ plan_name }}"
-      location: "{{ location }}"
       is_linux: true
       sku: S2
       number_of_workers: 1
