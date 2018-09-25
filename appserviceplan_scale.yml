@@ -1,0 +1,45 @@
+# Description
+# ===========
+# This playbook covers below scenario: 
+# - An Azure app service plan with sku=S1(stanard tier 1)
+# - Scale up the app service plan to sku=s2(stardard tier 2)
+#
+# This playbook requires Ansible version >=2.7, or you could use role Azure.azure_preview_modules
+# If you're using Ansible >=2.7, just remove the role lines.
+
+- hosts: localhost
+  connection: local
+  vars:
+    location: eastus
+    plan_name: myAppServicePlan
+
+  roles:
+    - Azure.azure_preview_modules
+
+  tasks:
+  - name: Create resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}"
+
+  - name: Create App Service Plan
+    azure_rm_appserviceplan:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ plan_name }}"
+      location: "{{ location }}"
+      is_linux: true
+      sku: S1
+      number_of_workers: 1
+
+  - name: Scale up the App Service Plan
+    azure_rm_appserviceplan:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ plan_name }}"
+      location: "{{ location }}"
+      is_linux: true
+      sku: S2
+      number_of_workers: 1
+
+  - name: Get facts
+    azure_rm_appserviceplan_facts:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ plan_name }}"
