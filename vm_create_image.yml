@@ -15,7 +15,7 @@
     vm_name: testvm
     vm_image_name: testvmimage
     location: eastus
-    admin_username: zim
+    admin_username: azureuser
     admin_password: Password123!!!
   tasks:
 

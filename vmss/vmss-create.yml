@@ -9,8 +9,8 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: vmsstestrg
-    vmss_name: vmsstest
+    resource_group: myTestRG
+    vmss_name: myTestVMSS
     location: eastus
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
     admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"

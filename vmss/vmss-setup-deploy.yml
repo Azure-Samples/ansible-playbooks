@@ -18,7 +18,7 @@
 - hosts: localhost
   vars:
     resource_group: "{{ resource_group_name }}"
-    scaleset_name: vmsstest
+    scaleset_name: myTestVMSS
     loadbalancer_name: vmsstestlb
     admin_username: "{{ lookup('env','VMSS_ADMIN_USERNAME') }}"
     admin_password: "{{ lookup('env','VMSS_ADMIN_PASSWORD') }}"
