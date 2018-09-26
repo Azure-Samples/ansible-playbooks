@@ -1,7 +1,7 @@
 # Description
 # ===========
 # Use this playbook to auto scale up VMSS.
-# Use vmss-create playbook to create VMSS first
+# This requires you already have a VMSS. If not, refer to vmss-create.yml to create one.
 # This sample requires Ansible 2.7
 
 ---
@@ -22,7 +22,7 @@
       debug:
         var: output_scaleset.ansible_facts.azure_vmss[0]
         
-    - name: create auto scaling
+    - name: Create auto scaling
       azure_rm_autoscale:
          resource_group: "{{ resource_group }}"
          name: "{{ name }}"
