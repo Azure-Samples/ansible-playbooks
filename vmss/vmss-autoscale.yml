@@ -8,7 +8,7 @@
 - hosts: localhost
   vars:
     resource_group: "{{ resource_group_name }}"
-    vmss_name: vmsstest
+    vmss_name: myTestVMSS
     name: autoscalerule
   tasks: 
     - name: Get scaleset info
@@ -36,10 +36,10 @@
            recurrence_days:
            - Monday
            name: Auto created scale condition
-           recurrence_timezone: China Standard Time
+           recurrence_timezone: Pacific Standard Time
            recurrence_mins:
               - '0'
-           min_count: '2'
+           min_count: '3'
            max_count: '3'
            recurrence_frequency: Week
            recurrence_hours:
