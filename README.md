@@ -42,7 +42,7 @@ First option, set the following environment variables:
   AZURE_TENANT=<azure_tenant_id>
 ```
 
-Second option, add the following content to file $HOME/.azure/credentials:
+Second option, add the following content to the file `$HOME/.azure/credentials`:
 
 ```ini
   [default]
