@@ -58,7 +58,7 @@ Third option, do a az login:
   az login
 ```
 
-- ansible-playbook sample.yml
+- `ansible-playbook sample.yml`
 
 You also could develop your Ansible playbook and run it in [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
 
