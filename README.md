@@ -36,26 +36,26 @@ To run samples in your local environment,
 First option, set the following environment variables:
 
 ```ini
-  AZURE_CLIENT_ID=<service_principal_client_id>
-  AZURE_SECRET=<service_principal_password>
-  AZURE_SUBSCRIPTION_ID=<azure_subscription_id>
-  AZURE_TENANT=<azure_tenant_id>
+AZURE_CLIENT_ID=<service_principal_client_id>
+AZURE_SECRET=<service_principal_password>
+AZURE_SUBSCRIPTION_ID=<azure_subscription_id>
+AZURE_TENANT=<azure_tenant_id>
 ```
 
 Second option, add the following content to the file `$HOME/.azure/credentials`:
 
 ```ini
-  [default]
-  subscription_id=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-  client_id=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-  secret=xxxxxxxxxxxxxxxxx
-  tenant=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+[default]
+subscription_id=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+client_id=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+secret=xxxxxxxxxxxxxxxxx
+tenant=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 Third option, do a az login:
 
 ```sh
-  az login
+az login
 ```
 
 - `ansible-playbook sample.yml`
