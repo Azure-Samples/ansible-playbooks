@@ -3,14 +3,6 @@
 # This playbook create an Azure VM with public IP, and subnet in another resource group.
 # This Script will create two resource group, defined by variables resource_group and resource_group_secondary. 
 # Then it creates VM in resource_group and virtual network with defined subnets,nsg rules in resource_group_secondary.
-# To be able to run this script you will need to be in active session of azure subscription where you want to create this infrastruture. 
-# You have two options to achive this
-# 1. Using Azure cloud shell, Azure cloud shell automatically logs you in your azure subscription so you need not to do anything extra other than login to cluod shell and run the ansible-playbook command with -e switch to provide
-# resource_group_name variable value. 
-# Login to cloud shell in VS code, upload the file to cloud drive and run the following command (replace yourusernameincloudshell with your username value).
-# ansible-playbook /home/yourusernameincloudshell/create_virtualmachine_with_subnet_in_different_resource_group.yml -e "resource_group_name=ansible_test_rg"
-# 2. Install ansible on your own linux box and login to azure (follow https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ansible-install-configure?toc=%2Fen-us%2Fazure%2Fansible%2Ftoc.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#create-azure-credentials)
-# After login to azure, issue the same ansible-playbook command after replacing the yml file location as per your local file location.
 
 - name: Create Azure VM
   hosts: localhost
