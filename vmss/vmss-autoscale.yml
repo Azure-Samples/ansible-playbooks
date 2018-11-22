@@ -1,0 +1,46 @@
+# Description
+# ===========
+# Use this playbook to auto scale up VMSS.
+# This requires you already have a VMSS. If not, refer to vmss-create.yml to create one.
+# This sample requires Ansible 2.7
+
+---
+- hosts: localhost
+  vars:
+    resource_group: "{{ resource_group_name }}"
+    vmss_name: myTestVMSS
+    name: autoscalerule
+  tasks: 
+    - name: Get scaleset info
+      azure_rm_virtualmachine_scaleset_facts:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        format: curated
+      register: output_scaleset
+
+    - name: Dump scaleset info
+      debug:
+        var: output_scaleset.ansible_facts.azure_vmss[0]
+        
+    - name: Create auto scaling
+      azure_rm_autoscale:
+         resource_group: "{{ resource_group }}"
+         name: "{{ name }}"
+         target:
+           namespace: "Microsoft.Compute"
+           types: "virtualMachineScaleSets"
+           name: "{{ vmss_name }}"
+         enabled: true
+         profiles:
+         - count: '3'
+           recurrence_days:
+           - Monday
+           name: Auto created scale condition
+           recurrence_timezone: Pacific Standard Time
+           recurrence_mins:
+              - '0'
+           min_count: '3'
+           max_count: '3'
+           recurrence_frequency: Week
+           recurrence_hours:
+           - '18'
