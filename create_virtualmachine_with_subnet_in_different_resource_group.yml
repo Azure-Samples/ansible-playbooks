@@ -1,7 +1,8 @@
 # Description
 # ===========
 # This playbook create an Azure VM with public IP, and subnet in another resource group.
-
+# This Script will create two resource group, defined by variables resource_group and resource_group_secondary. 
+# Then it creates VM in resource_group and virtual network with defined subnets,nsg rules in resource_group_secondary.
 
 - name: Create Azure VM
   hosts: localhost

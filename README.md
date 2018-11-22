@@ -62,6 +62,19 @@ az login
 
 You also could develop your Ansible playbook and run it in [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
 
+### Using Azure cloud hell in Visual Studio Code
+
+Azure cloud shell automatically logs you in your azure subscription so you need not to do anything extra other than login to cluod shell and run the ansible-playbook command with -e switch to provide
+resource_group_name variable value. 
+
+To be able to run Cloud Shell in Visual Studio Code, you will need to install [Azure Account Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) in VS Code.
+
+After installing the Azure Account extension, Login to cloud shell in VS code and clone this repository. Upload the Ansible Playbook you want to run to cloud drive and run the following command (replace `yourusernameincloudshell` with your username value). Make sure you also replace the `playbook name` and corrosponding `variable name` expected by playbook.
+
+```ansible
+ansible-playbook /home/yourusernameincloudshell/create_virtualmachine_with_subnet_in_different_resource_group.yml -e "resource_group_name=ansible_test_rg"
+```
+
 ## How to Contribute
 
 Please refer to [Coding Guideline](./CODEGUIDELINE.md) on how to contribute.
