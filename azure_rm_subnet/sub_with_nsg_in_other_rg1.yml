@@ -3,9 +3,9 @@
   roles:
     - Azure.azure_preview_modules 
   vars:
-    resource_group: ansible-nsg
-    resource_group_secondary: ansible-nsg
-    resource_name: subnsg
+    resource_group: "{{ resource_group_name }}"
+    resource_group_secondary: "{{ resource_group_name }}2"
+    resource_name: mySubNet
     location: eastus
   tasks:
     - name: Create a resource group

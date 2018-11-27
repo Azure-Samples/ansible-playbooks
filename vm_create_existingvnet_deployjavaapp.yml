@@ -17,10 +17,10 @@
   gather_facts: true
   vars:
     resource_group_vm: "{{ resource_group_name }}"
-    resource_group_vnet: rg_yungezpvnet1
-    vnet_name: yungezpvnet1
-    subnet_name: yungezsnet1
-    vm_name: yungeztestvm1
+    resource_group_vnet: myVNetRg
+    vnet_name: myVentName
+    subnet_name: mysubNet
+    vm_name: myTesVM
     location: eastus
     repo_url: https://github.com/yungezz/helloworld.git
     workspace: ~/src/helloworld

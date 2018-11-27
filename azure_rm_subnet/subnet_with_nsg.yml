@@ -1,8 +1,8 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: ansible-subnet-nsg
-    resource_name: subnsg
+    resource_group: "{{ resource_group_name }}"
+    resource_name: mySubNet
     location: eastus
   tasks:
     - name: Create a resource group

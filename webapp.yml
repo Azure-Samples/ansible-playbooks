@@ -11,10 +11,10 @@
 - hosts: localhost
   connection: local
   vars:
-    app_name: testapp0917
+    app_name: myTestApp
     location: eastus
-    linux_plan_name: testplan0917
-    traffic_manager_profile_name: profile0917
+    linux_plan_name: myTestPlan
+    traffic_manager_profile_name: myTMProfile
     traffic_manager_endpoint_name: endpoint1
 
   roles:

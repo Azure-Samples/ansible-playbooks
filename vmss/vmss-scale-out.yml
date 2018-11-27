@@ -8,7 +8,7 @@
 - hosts: localhost
   vars:
     resource_group: "{{ resource_group_name }}"
-    vmss_name: vmsstest
+    vmss_name: myTestVMSS
   tasks: 
     - name: Get scaleset info
       azure_rm_virtualmachine_scaleset_facts:
