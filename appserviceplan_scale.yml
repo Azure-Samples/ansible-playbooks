@@ -4,8 +4,8 @@
 # - An Azure app service plan with sku=S1(stanard tier 1)
 # - Scale up the app service plan to sku=s2(stardard tier 2)
 #
-# This playbook requires Ansible version >=2.7, or you could use role Azure.azure_preview_modules
-# If you're using Ansible >=2.7, just remove the role lines.
+# This playbook requires Ansible version >=2.7, 
+# If you're using Ansible < 2.7, just add role 'azure_preview_modules' like commented out lines 16-17.
 
 - hosts: localhost
   connection: local
@@ -13,8 +13,8 @@
     location: eastus
     plan_name: myAppServicePlan
 
-  roles:
-    - Azure.azure_preview_modules
+#  roles:
+#    - Azure.azure_preview_modules
 
   tasks:
   - name: Create resource group
