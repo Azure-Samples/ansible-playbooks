@@ -42,3 +42,8 @@
     azure_rm_appserviceplan_facts:
       resource_group: "{{ resource_group_name }}"
       name: "{{ plan_name }}"
+    register: output
+
+  - name: Display facts output
+    debug:
+      var: output
