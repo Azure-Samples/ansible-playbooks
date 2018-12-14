@@ -62,7 +62,7 @@ az login
 
 You also could develop your Ansible playbook and run it in [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscoss.vscode-ansible).
 
-### Using Azure cloud hell in Visual Studio Code
+### Using Azure cloud shell in Visual Studio Code
 
 Azure cloud shell automatically logs you in your azure subscription so you need not to do anything extra other than login to cluod shell and run the ansible-playbook command with -e switch to provide
 resource_group_name variable value. 
