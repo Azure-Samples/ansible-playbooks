@@ -1,0 +1,30 @@
+# Description
+# ===========
+# This playbook creates an Azure VM with public IP, and then dumps it using facts
+
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    vm_name: vmforimage
+  tasks:
+
+  - name: Stop and generalize VM A
+    azure_rm_virtualmachine:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}{{ item }}"
+      generalized: yes
+    loop:
+      - A
+      - B
+
+  - name: Create an image from a virtual machine
+    azure_rm_image:
+      resource_group: "{{ resource_group }}"
+      name: "image_{{ vm_name }}{{ item }}"
+      source: "{{ vm_name }}{{ item }}"
+    loop:
+      - A
+      - B
