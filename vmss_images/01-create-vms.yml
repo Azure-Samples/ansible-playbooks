@@ -1,8 +1,8 @@
 # Description
 # ===========
-# This playbook creates an Azure VM with public IP, and then dumps it using facts
+# This playbook creates two VMS with HTTPD and all the prerequisites.
 
-- name: Create Azure VM
+- name: Create two VMs (A and B) with HTTPS
   hosts: localhost
   connection: local
   roles:
@@ -11,6 +11,7 @@
     vm_name: vmforimage
     admin_username: testuser
     admin_password: Pass123$$$abx!
+    location: eastus
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:
