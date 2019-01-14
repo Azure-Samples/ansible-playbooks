@@ -1,0 +1,68 @@
+# Description
+# ===========
+# This playbook creates a Virtual Machine Scaleset.
+# This sample requires Ansible 2.8
+
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    vmss_name: vmsstest
+    location: eastus
+    admin_username: vmssadmin
+    admin_password: User123!!!abc
+    vm_name: vmforimage
+    image_name: "image_vmforimageA"
+
+  tasks:
+
+    - name: Create public IP address
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}"
+        allocation_method: Static
+        name: "{{ vmss_name }}"
+      register: pip_output
+
+    - name: Create a load balancer
+      azure_rm_loadbalancer:
+        name: "{{ vmss_name }}lb"
+        location: "{{ location }}"
+        resource_group: "{{ resource_group }}"
+        public_ip: "{{ vmss_name }}"
+        probe_protocol: Tcp
+        probe_port: 80
+        probe_interval: 10
+        probe_fail_count: 3
+        protocol: Tcp
+        load_distribution: Default
+        frontend_port: 80
+        backend_port: 80
+        idle_timeout: 4
+        natpool_frontend_port_start: 50000
+        natpool_frontend_port_end: 50040
+        natpool_backend_port: 22
+        natpool_protocol: Tcp
+
+    - name: Create VMSS
+      azure_rm_virtualmachine_scaleset:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        vm_size: Standard_DS1_v2
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        ssh_password_enabled: true
+        capacity: 2
+        virtual_network_name: "{{ vm_name }}"
+        subnet_name: "{{ vm_name }}"
+        upgrade_policy: Manual
+        tier: Standard
+        managed_disk_type: Standard_LRS
+        os_disk_caching: ReadWrite
+        image:
+          name: "{{ image_name }}"
+          resource_group: "{{ resource_group }}"
+        load_balancer: "{{ vmss_name }}lb"
+
+    - debug:
+        msg: "VMSS public IP address: {{ pip_output.state.ip_address }}"

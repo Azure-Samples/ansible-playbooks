@@ -1,0 +1,53 @@
+# Description
+# ===========
+# This playbook updates image reference in Virtual Machine Scaleset.
+# This sample requires Ansible 2.9
+
+- name: Update VMSS Image Referece
+  hosts: localhost
+  connection: local
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    vmss_name: vmsstest
+    image_name: image_vmforimageB
+    admin_username: vmssadmin
+    admin_password: User123!!!abc
+  tasks:
+
+  - name: Update VMSS - second image
+    azure_rm_virtualmachine_scaleset:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vmss_name }}"
+      vm_size: Standard_DS1_v2
+      admin_username: "{{ admin_username }}"
+      admin_password: "{{ admin_password }}"
+      ssh_password_enabled: true
+      capacity: 3
+      virtual_network_name: "{{ vmss_name }}"
+      subnet_name: "{{ vmss_name }}"
+      upgrade_policy: Manual
+      tier: Standard
+      managed_disk_type: Standard_LRS
+      os_disk_caching: ReadWrite
+      image:
+        name: "{{ image_name }}"
+        resource_group: "{{ resource_group }}"
+      load_balancer: "{{ vmss_name }}lb"
+
+  - name: List all of the instances
+    azure_rm_virtualmachinescalesetinstance_facts:
+      resource_group: "{{ resource_group }}"
+      vmss_name: "{{ vmss_name }}"
+    register: instances
+
+  - debug:
+      var: instances
+
+  - name: manually upgrade all the instances 
+    azure_rm_virtualmachinescalesetinstance:
+      resource_group: "{{ resource_group }}"
+      vmss_name: "{{ vmss_name }}"
+      instance_id: "{{ item.instance_id }}"
+      latest_model: yes
+    with_items: "{{ instances.instances }}"
