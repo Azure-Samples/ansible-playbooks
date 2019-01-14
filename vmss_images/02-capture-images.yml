@@ -2,7 +2,7 @@
 # ===========
 # This playbook creates an Azure VM with public IP, and then dumps it using facts
 
-- name: Create Azure VM
+- name: Capture VM Images
   hosts: localhost
   connection: local
   roles:
@@ -11,7 +11,7 @@
     vm_name: vmforimage
   tasks:
 
-  - name: Stop and generalize VM A
+  - name: Stop and generalize VMs
     azure_rm_virtualmachine:
       resource_group: "{{ resource_group }}"
       name: "{{ vm_name }}{{ item }}"
@@ -20,7 +20,7 @@
       - A
       - B
 
-  - name: Create an image from a virtual machine
+  - name: Create an images from a VMs
     azure_rm_image:
       resource_group: "{{ resource_group }}"
       name: "image_{{ vm_name }}{{ item }}"

@@ -3,7 +3,7 @@
 # This playbook updates image reference in Virtual Machine Scaleset.
 # This sample requires Ansible 2.9
 
-- name: Create Azure VM
+- name: Update VMSS Image Referece
   hosts: localhost
   connection: local
   roles:
@@ -36,30 +36,17 @@
       load_balancer: "{{ vmss_name }}lb"
 
   - name: List all of the instances
-    azure_rm_resource_facts:
-      # url: /subscriptions/{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}
-      api_version: '2017-12-01'
+    azure_rm_virtualmachinescalesetinstance_facts:
       resource_group: "{{ resource_group }}"
-      provider: compute
-      resource_type: virtualmachinescalesets
-      resource_name: "{{ vmss_name }}"
-      subresource:
-        - type: virtualMachines
+      vmss_name: "{{ vmss_name }}"
     register: instances
 
+  - debug:
+      var: instances
+
   - name: manually upgrade all the instances 
-    azure_rm_resource:
-      api_version: '2017-12-01'
-      polling_timeout: 600
-      polling_interval: 30
-      method: POST
+    azure_rm_virtualmachinescalesetinstance:
       resource_group: "{{ resource_group }}"
-      provider: compute
-      resource_type: virtualmachinescalesets
-      resource_name: "{{ vmss_name }}"
-      subresource:
-        - type: manualupgrade
-      body:
-        instanceIds:
-          - "{{ item.instanceId }}"
-    with_items: "{{ instances.response[0].value }}"
+      vmss_name: "{{ vmss_name }}"
+      instance_id: "{{ item.instance_id }}"
+    with_items: "{{ instances.instances }}"
