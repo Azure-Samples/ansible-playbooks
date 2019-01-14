@@ -49,4 +49,5 @@
       resource_group: "{{ resource_group }}"
       vmss_name: "{{ vmss_name }}"
       instance_id: "{{ item.instance_id }}"
+      latest_model: yes
     with_items: "{{ instances.instances }}"
