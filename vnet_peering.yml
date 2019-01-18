@@ -16,7 +16,7 @@
   vars:
     resource_group: "{{ resource_group_name }}"
     vnet_name1: "myVnet{{ rpfx }}"
-    vnet_name2: "myVnet{{ rpfx }}"
+    vnet_name2: "myVnet{{ rpfx }}2"
     location: eastus2
   roles:
     - Azure.azure_preview_modules    
