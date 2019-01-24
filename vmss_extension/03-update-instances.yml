@@ -1,0 +1,27 @@
+# Description
+# ===========
+# This playbook updates Virtual Machine Scaleset instances.
+# This sample requires Ansible 2.8 (or azure_preview_modules)
+
+- name: Update VMSS Image Referece
+  hosts: localhost
+  connection: local
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    vmss_name: vmsstest
+  tasks:
+
+  - name: List all of the instances
+    azure_rm_virtualmachinescalesetinstance_facts:
+      resource_group: "{{ resource_group }}"
+      vmss_name: "{{ vmss_name }}"
+    register: instances
+
+  - name: manually upgrade all the instances 
+    azure_rm_virtualmachinescalesetinstance:
+      resource_group: "{{ resource_group }}"
+      vmss_name: "{{ vmss_name }}"
+      instance_id: "{{ item.instance_id }}"
+      latest_model: yes
+    with_items: "{{ instances.instances }}"

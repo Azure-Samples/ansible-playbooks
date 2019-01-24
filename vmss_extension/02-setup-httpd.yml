@@ -1,0 +1,25 @@
+# Description
+# ===========
+# This playbook installs VMSS Extension that will install Apache.
+# This sample requires Ansible 2.8
+
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    vmss_name: vmsstest
+    location: eastus
+
+  tasks:
+
+    - name: Create VM Extension - HTTPD
+      azure_rm_virtualmachinescalesetextension:
+        resource_group: "{{ resource_group }}"
+        vmss_name: "{{ vmss_name }}"
+        name: testVMExtension
+        publisher: Microsoft.Azure.Extensions
+        type: CustomScript
+        type_handler_version: 2.0
+        auto_upgrade_minor_version: true
+        settings: {"commandToExecute": "sudo apt-get -y install apache2"}
