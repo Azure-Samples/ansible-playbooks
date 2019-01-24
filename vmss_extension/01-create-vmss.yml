@@ -1,7 +1,7 @@
 # Description
 # ===========
-# This playbook creates a Virtual Machine Scale Set with of the shelf Ubuntu 16.04 image. 
-# This sample requires Ansible 2.8
+# This playbook creates a Virtual Machine Scale Set with Ubuntu 16.04 image. 
+# This sample requires Ansible 2.8 or (or azure_preview_modules)
 
 ---
 - hosts: localhost

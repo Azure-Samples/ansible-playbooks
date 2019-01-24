@@ -1,7 +1,7 @@
 # Description
 # ===========
 # This playbook installs VMSS Extension that will install Apache.
-# This sample requires Ansible 2.8
+# This sample requires Ansible 2.8 (or azure_preview_modules)
 
 ---
 - hosts: localhost

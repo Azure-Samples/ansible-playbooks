@@ -1,6 +1,7 @@
 # Description
 # ===========
-# This playbook updates Virtual Machine Scaleset instances.
+# This playbook upgrades existing Virtual Machine Scaleset instances.
+# Please note that all new instances will have extension installed automatically, while old instances need explicit upgrade.
 # This sample requires Ansible 2.8 (or azure_preview_modules)
 
 - name: Update VMSS Image Referece
