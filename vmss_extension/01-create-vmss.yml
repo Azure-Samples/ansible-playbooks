@@ -1,0 +1,82 @@
+# Description
+# ===========
+# This playbook creates a Virtual Machine Scale Set with Ubuntu 16.04 image. 
+# This sample requires Ansible 2.8 or (or azure_preview_modules)
+
+---
+- hosts: localhost
+  roles:
+    - Azure.azure_preview_modules
+  vars:
+    vmss_name: vmsstest
+    location: eastus
+    admin_username: vmssadmin
+    admin_password: User123!!!abc
+
+  tasks:
+
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        address_prefixes: "10.0.0.0/16"
+
+    - name: Create subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group }}"
+        virtual_network: "{{ vmss_name }}"
+        name: "{{ vmss_name }}"
+        address_prefix: "10.0.1.0/24"
+
+    - name: Create public IP address
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}"
+        allocation_method: Static
+        name: "{{ vmss_name }}"
+      register: pip_output
+
+    - name: Create a load balancer
+      azure_rm_loadbalancer:
+        name: "{{ vmss_name }}lb"
+        location: "{{ location }}"
+        resource_group: "{{ resource_group }}"
+        public_ip: "{{ vmss_name }}"
+        probe_protocol: Tcp
+        probe_port: 80
+        probe_interval: 10
+        probe_fail_count: 3
+        protocol: Tcp
+        load_distribution: Default
+        frontend_port: 80
+        backend_port: 80
+        idle_timeout: 4
+
+    - name: Create VMSS
+      azure_rm_virtualmachine_scaleset:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        vm_size: Standard_DS1_v2
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        ssh_password_enabled: true
+        capacity: 2
+        virtual_network_name: "{{ vmss_name }}"
+        subnet_name: "{{ vmss_name }}"
+        upgrade_policy: Manual
+        tier: Standard
+        managed_disk_type: Standard_LRS
+        os_disk_caching: ReadWrite
+        image:
+          offer: UbuntuServer
+          publisher: Canonical
+          sku: 16.04-LTS
+          version: latest
+        load_balancer: "{{ vmss_name }}lb"
+
+    - debug:
+        msg: "VMSS public IP address: {{ pip_output.state.ip_address }}"
