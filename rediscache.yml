@@ -1,6 +1,6 @@
 # Description
 # ===========
-# This playbook creates Azure Cache for Redis instance, scale it up, rebooot it, add firewall rule,  delete it.
+# This playbook creates Azure Cache for Redis instance, scales it up, rebooots it, adds firewall rule, and deletes it.
 # This playbook requires ansible >= 2.8, or role azure.azure_preview_modules.
 ---
 - name: Manage Azure Cache for Redis
@@ -15,7 +15,7 @@
     - azure.azure_preview_modules    
 
   tasks:
-  - name: create resource group
+  - name: Create resource group
     azure_rm_resourcegroup:
       name: "{{ resource_group }}"
       location: "{{ location }}"
@@ -28,7 +28,7 @@
         name: basic
         size: C1
 
-  - name: Wait for Redis provision succeeded
+  - name: Wait for Redis provisioning to complete
     azure_rm_rediscache_facts:
       resource_group: "{{ resource_group }}"
       name: "{{ redis_name }}"
@@ -45,7 +45,7 @@
         name: standard
         size: C1
 
-  - name: Wait for Redis scale ups succeeded
+  - name: Wait for Redis scaling up to complete
     azure_rm_rediscache_facts:
       resource_group: "{{ resource_group }}"
       name: "{{ redis_name }}"
