@@ -66,8 +66,8 @@
       resource_group: "{{ resource_group }}"
       cache_name: "{{ redis_name }}"
       name: rule1
-      start_ip_address: 169.1.1.1
-      end_ip_address: 169.1.1.4
+      start_ip_address: 168.1.1.1
+      end_ip_address: 168.1.1.4
 
   - name: Delete Azure Cache for Redis
     azure_rm_rediscache:
