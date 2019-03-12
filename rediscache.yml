@@ -1,0 +1,77 @@
+# Description
+# ===========
+# This playbook creates Azure Cache for Redis instance, scales it up, rebooots it, adds firewall rule, and deletes it.
+# This playbook requires ansible >= 2.8, or role azure.azure_preview_modules.
+---
+- name: Manage Azure Cache for Redis
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: "{{ resource_group_name }}"
+    redis_name: "redis{{ resource_group_name }}"
+    location: eastus2
+
+  roles:
+    - azure.azure_preview_modules    
+
+  tasks:
+  - name: Create resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
+
+  - name: Create Azure Cache for Redis
+    azure_rm_rediscache:
+      resource_group: "{{ resource_group }}"
+      name: "{{ redis_name }}"
+      sku:
+        name: basic
+        size: C1
+
+  - name: Wait for Redis provisioning to complete
+    azure_rm_rediscache_facts:
+      resource_group: "{{ resource_group }}"
+      name: "{{ redis_name }}"
+    register: facts
+    until: "{{ facts.rediscaches[0]['provisioning_state'] == 'Succeeded' }}"
+    retries: 100
+    delay: 60
+
+  - name: Scale up Azure Cache for Redis
+    azure_rm_rediscache:
+      resource_group: "{{ resource_group }}"
+      name: "{{ redis_name }}"
+      sku:
+        name: standard
+        size: C1
+
+  - name: Wait for Redis scaling up to complete
+    azure_rm_rediscache_facts:
+      resource_group: "{{ resource_group }}"
+      name: "{{ redis_name }}"
+    register: facts
+    until: "{{ facts.rediscaches[0]['provisioning_state'] == 'Succeeded' }}"
+    retries: 100
+    delay: 60
+
+  - name: Reboot Azure Cache for Redis
+    azure_rm_rediscache:
+      resource_group: "{{ resource_group }}"
+      name: "{{ redis_name }}"
+      reboot:
+        reboot_type: all
+
+  - name: Add Firewall rule
+    azure_rm_rediscachefirewallrule:
+      resource_group: "{{ resource_group }}"
+      cache_name: "{{ redis_name }}"
+      name: rule1
+      start_ip_address: 168.1.1.1
+      end_ip_address: 168.1.1.4
+
+  - name: Delete Azure Cache for Redis
+    azure_rm_rediscache:
+      resource_group: "{{ resource_group }}"
+      name: "{{ redis_name }}"
+      state: absent
+
