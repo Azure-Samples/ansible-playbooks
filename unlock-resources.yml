@@ -1,0 +1,41 @@
+# Description
+# ===========
+# This playbook lists all the locks in current subscription using azure_rm_resource_facts,
+# and then filters them using regex, finally it deletes all matching locks using azure_rm_resource.
+
+- name: Attempt to delete RG with locked resource
+  hosts: localhost
+  connection: local
+  roles:
+    - Azure.azure_preview_modules
+  tasks:
+
+  - name: List all the locks in the resource group
+    azure_rm_resource_facts:
+      api_version: '2016-09-01'
+      # uncomment this to narrow the query to selected resource group
+      # resource_group: "{{ resource_group }}"
+      provider: authorization
+      resource_type: locks
+    register: output
+
+  - debug:
+      var: output
+
+  - name: Print out all items matching '.*resourceGroups/myrg*'
+    debug:
+      var: item    
+    with_items: "{{ output.response[0].value | selectattr('id', 'match', '.*resourceGroups/myrg*') | list }}"
+    # for Ansible 2.8 use following line:
+    # with_items: "{{ output.response | selectattr('id', 'match', '.*resourceGroups/myrg*') | list }}"
+
+  - name: Delete all the locks with id matching '.*resourceGroups/myrg*'
+    azure_rm_resource:
+      api_version: '2016-09-01'
+      url: "{{ item.id }}"
+      provider: authorization
+      resource_type: locks
+      state: absent
+    with_items: "{{ output.response[0].value | selectattr('id', 'match', '.*resourceGroups/myrg*') | list }}"
+    # for Ansible 2.8 use following line:
+    #with_items: "{{ output.response | selectattr('id', 'match', '.*resourceGroups/myrg*') | list }}"
