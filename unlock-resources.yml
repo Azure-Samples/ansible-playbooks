@@ -6,13 +6,16 @@
 - name: Attempt to delete RG with locked resource
   hosts: localhost
   connection: local
-  roles:
-    - Azure.azure_preview_modules
   vars:
     confirm_delete: no
-    pattern: ".*resourceGroups/elk.*"
+    filter: ""
     lock_list: []
   tasks:
+
+  - name: Set default filter
+    set_fact:
+      filter: ".*resourceGroups.*"
+    when: "filter | length == 0"
 
   - name: List all the locks in the resource group
     azure_rm_resource_facts:
@@ -30,7 +33,7 @@
                   [{ 'resource_group': '{{ item.id.split("/resourceGroups/")[1].split("/")[0] }}',
                      'resource': '{{ item.id.split("/resourceGroups/")[1].split("/providers/Microsoft.Authorization/locks")[0].split("providers/")[1] if item.id.split("/resourceGroups/")[1].split("/providers/Microsoft.Authorization/locks")[0].split("providers") | length > 1 else "" }}',
                      'id': '{{ item.id }}' }]
-    with_items: "{{ output.response[0].value | selectattr('id', 'match', pattern) | list }}"
+    with_items: "{{ output.response[0].value | selectattr('id', 'match', filter) | list }}"
     # for Ansible 2.8 use following line:
     # with_items: "{{ output.response | selectattr('id', 'match', '.*resourceGroups/myrg*') | list }}"
     no_log: true
