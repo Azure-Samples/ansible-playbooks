@@ -10,17 +10,14 @@
   hosts: localhost
   connection: local
   vars:
-    confirm_delete: no
+    force_delete: no
     filter: ""
-    lock_list: []
+    resource_id_list: []
+    resource_list: []
+    resource_sorted: []
+    
   tasks:
-
-  - name: Set default filter
-    set_fact:
-      filter: ".*resourceGroups.*"
-    when: "filter | length == 0"
-
-  - name: List all the locks in the resource group
+  - name: List all locks in the subscription
     azure_rm_resource_facts:
       api_version: '2016-09-01'
       # uncomment this to narrow the query to selected resource group
@@ -28,28 +25,46 @@
       provider: authorization
       resource_type: locks
     register: output
-
-  - name: Add matching items to the list
-    set_fact:
-      lock_list: >
-                  {{ lock_list }} +
-                  [{ 'resource_group': '{{ item.id.split("/resourceGroups/")[1].split("/")[0] }}',
-                     'resource': '{{ item.id.split("/resourceGroups/")[1].split("/providers/Microsoft.Authorization/locks")[0].split("providers/")[1] if item.id.split("/resourceGroups/")[1].split("/providers/Microsoft.Authorization/locks")[0].split("providers") | length > 1 else "" }}',
-                     'id': '{{ item.id }}' }]
-    with_items: "{{ output.response[0].value | selectattr('id', 'match', filter) | list }}"
-    # for Ansible 2.8 use following line:
-    # with_items: "{{ output.response | selectattr('id', 'match', '.*resourceGroups/myrg*') | list }}"
     no_log: true
 
-  - debug:
-      var: lock_list
+  - name: Get locked resources
+    set_fact:
+      resource_id_list: "{{ resource_id_list }} + [ '{{ item.id[:item.id.index('/providers/Microsoft.Authorization/locks')] }}' ]"
+    with_items: "{{ output.response[0].value }}"
+    no_log: true
+    # for Ansible 2.8 use following line:
+    # with_items: "{{ output.response }}"
 
-  - name: Delete all the locks with id matching '.*resourceGroups/myrg*'
+  - name: Parse resource type and resource name
+    set_fact:
+      resource_list: >
+                      {{ resource_list }} +
+                      [ '{{ "{0}: {1}".format(item.split("/")[6], item.split("/")[-1]) if item.split("/") | length > 5 else "{0}: {1}".format(item.split("/")[3], item.split("/")[-1]) }}' ]
+    with_items: "{{ resource_id_list }}"
+    no_log: true
+
+  - name: Sort output
+    set_fact:
+      resource_sorted: "{{ resource_list | sort(case_sensitive=False) }}"
+    no_log: true
+
+  - name: Print resource with locks
+    debug:
+      var: resource_sorted
+
+  - name: Delete all locks if force_delete is true
     azure_rm_resource:
-      api_version: '2016-09-01'
+      api_version: '2017-04-01'
       url: "{{ item.id }}"
-      provider: authorization
-      resource_type: locks
       state: absent
-    with_items: "{{ lock_list }}"
-    when: confirm_delete | bool
+    with_items: "{{ output.response[0].value }}"
+    when: force_delete | bool
+
+  - name: Delete all locked resources if force_delete is true
+    azure_rm_resource:
+      api_version: '2018-05-01'
+      url: "{{ item | regex_replace('/', '%2F') }}"
+      state: absent
+    with_items: "{{ resource_id_list }}"
+    when: force_delete | bool
+
