@@ -1,17 +1,13 @@
 # Description
 # ===========
 # This playbook lists all the locks in current subscription using azure_rm_resource_facts,
-# and then filters them using regex, finally it deletes all matching locks using azure_rm_resource.
-# Sample filters:
-# ".*resourceGroups.*" - select all locks on virtual machines - this one is used by default
-# ".*virtualMachines.*" - select all locks on virtual machines
+# set variable force_delete=True to force delete lock, then resource such as resource group, vm
 
 - name: Attempt to delete RG with locked resource
   hosts: localhost
   connection: local
   vars:
     force_delete: no
-    filter: ""
     resource_id_list: []
     resource_list: []
     resource_sorted: []
