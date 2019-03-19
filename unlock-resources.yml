@@ -1,0 +1,66 @@
+# Description
+# ===========
+# This playbook lists all the locks in current subscription using azure_rm_resource_facts,
+# set variable force_delete=True to force delete lock, then resource such as resource group, vm
+
+- name: Attempt to delete RG with locked resource
+  hosts: localhost
+  connection: local
+  vars:
+    force_delete: no
+    resource_id_list: []
+    resource_list: []
+    resource_sorted: []
+    
+  tasks:
+  - name: List all locks in the subscription
+    azure_rm_resource_facts:
+      api_version: '2016-09-01'
+      # uncomment this to narrow the query to selected resource group
+      # resource_group: "{{ resource_group }}"
+      provider: authorization
+      resource_type: locks
+    register: output
+    no_log: true
+
+  - name: Get locked resources
+    set_fact:
+      resource_id_list: "{{ resource_id_list }} + [ '{{ item.id[:item.id.index('/providers/Microsoft.Authorization/locks')] }}' ]"
+    with_items: "{{ output.response[0].value }}"
+    no_log: true
+    # for Ansible 2.8 use following line:
+    # with_items: "{{ output.response }}"
+
+  - name: Parse resource type and resource name
+    set_fact:
+      resource_list: >
+                      {{ resource_list }} +
+                      [ '{{ "{0}: {1}".format(item.split("/")[6], item.split("/")[-1]) if item.split("/") | length > 5 else "{0}: {1}".format(item.split("/")[3], item.split("/")[-1]) }}' ]
+    with_items: "{{ resource_id_list }}"
+    no_log: true
+
+  - name: Sort output
+    set_fact:
+      resource_sorted: "{{ resource_list | sort(case_sensitive=False) }}"
+    no_log: true
+
+  - name: Print resource with locks
+    debug:
+      var: resource_sorted
+
+  - name: Delete all locks if force_delete is true
+    azure_rm_resource:
+      api_version: '2017-04-01'
+      url: "{{ item.id }}"
+      state: absent
+    with_items: "{{ output.response[0].value }}"
+    when: force_delete | bool
+
+  - name: Delete all locked resources if force_delete is true
+    azure_rm_resource:
+      api_version: '2018-05-01'
+      url: "{{ item | regex_replace('/', '%2F') }}"
+      state: absent
+    with_items: "{{ resource_id_list }}"
+    when: force_delete | bool
+
