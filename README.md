@@ -10,7 +10,7 @@ This repository contains examples and best practices for building Ansible Playbo
 
   To authenticate with Azure, generate [service principal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) and expose them as environment variables or store them as a file.
 
-- Install [Ansible]((http://docs.ansible.com/ansible/latest/intro_installation.html))
+- Install [Ansible](http://docs.ansible.com/ansible/latest/intro_installation.html)
 - Install Azure dependencies package
 
   ```sh
