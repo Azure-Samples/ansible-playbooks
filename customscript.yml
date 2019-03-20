@@ -1,0 +1,86 @@
+# Description
+# ===========
+# This playbook is used to run custom script on specific Azure VM.
+# It supports same interface with custom extension interface:
+# - VM credentials
+# - fileUri
+# - commandToExecute
+# - script(b64 encoded)
+# - skipDos2Unix
+
+- name: Custom script playbook
+  hosts: localhost
+  connection: local
+  vars:
+    vmIP: 10.172.15.145
+    vmUserName: azureuser
+    vmPassword: Password@123
+    vmSSHKey: "ssh-rsa xxxx"
+    fileUri: https://raw.githubusercontent.com/Azure/Ansible/master/scripts/install_ansible_Ubuntu.sh
+    commandToExecute: "./install_ansible_Ubuntu.sh -v latest -sp msi -spid -ss -subid xxx -tid xxx"
+    script: ""
+    storageAccountName: ""
+    storageAccountType: ""
+    timeStamp: ""
+    skipDos2Unix: true
+
+  tasks:
+  - name: add Azure VM into host
+    add_host:
+      name: "azure_vm_{{ vmIP }}"
+      ansible_host: "{{ vmIP }}"
+      ansible_connection: paramiko
+      ansible_user: "{{ vmUserName }}"
+      ansible_password: "{{ vmPassword }}"
+      ansible_pass: "{{ vmSSHKey }}"
+      ansible_host_key_checking: false
+
+  - name: wait for the 22 port to come online
+    wait_for:
+      port: 22
+      host: "{{ vmIP }}"
+      timeout: 600
+
+  - block:
+    - name: download custom script to remote Azure VM
+      become: true
+      get_url:
+        url: "{{ fileUri }}"
+        dest: "./"
+        mode: 0555
+      when: fileUri is defined and fileUri != '' and fileUri != None
+    
+    - name: get script name
+      set_fact:
+        script_name: "{{ fileUri.split('/')[-1] }}"
+
+    - name: convert Dos to unix file
+      replace:
+        path: "./{{ script_name }}"
+        regexp: "\r\n"
+        replace: "\n"
+      when: skipDos2Unix == false
+      
+    - name: run custom script from commandToExecute
+      command: "{{ commandToExecute }}"
+      when: commandToExecute is defined and commandToExecute != '' and commandToExecute != None
+      register: output_command
+    
+    - name: run custom script from script
+      command: "{{ script | b64decode }}"
+      register: output_script
+      when: script is defined and script != '' and script != None
+    
+    - name: dump output
+      debug:
+        var: output_command
+      when: output_command.changed == true
+
+    - name: dump output
+      debug:
+        var: output_script
+      when: output_script.changed == true
+
+    delegate_to: "azure_vm_{{ vmIP }}"
+      
+      
