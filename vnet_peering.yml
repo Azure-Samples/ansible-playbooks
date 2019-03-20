@@ -15,12 +15,24 @@
   connection: local
   vars:
     resource_group: "{{ resource_group_name }}"
+    resource_group_secondary: "{{ resource_group_name }}2"
     vnet_name1: "myVnet{{ rpfx }}"
     vnet_name2: "myVnet{{ rpfx }}2"
+    peering_name: peer1
     location: eastus2
-  roles:
-    - Azure.azure_preview_modules    
+  # uncomment role if you're using ansible version < 2.8.
+  # At same install, install rule by ansible-galaxy install Azure.azure_preview_modules
+  # roles:
+  #   - Azure.azure_preview_modules    
   tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
+  - name: Create secondary resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_secondary }}"
+      location: "{{ location }}"
   - name: Create first virtual network
     azure_rm_virtualnetwork:
       resource_group: "{{ resource_group }}"
@@ -64,3 +76,9 @@
         name: "{{ vnet_name1 }}"
       allow_virtual_network_access: true
       allow_forwarded_traffic: true
+
+  - name: Delete vnet peering
+    azure_rm_virtualnetworkpeering:
+      resource_group: "{{ resource_group }}"
+      name: "{{ peering_name }}"
+      virtual_network: "{{ vnet_name1 }}"
