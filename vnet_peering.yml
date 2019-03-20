@@ -20,7 +20,7 @@
     vnet_name2: "myVnet{{ rpfx }}2"
     peering_name: peer1
     location: eastus2
-  # uncomment role if you're using ansible version < 2.8.
+  # Uncomment role reference if you're using ansible version < 2.8.
   # At same time, install the role by ansible-galaxy install azure.azure_preview_modules
   # roles:
   #   - azure.azure_preview_modules    
