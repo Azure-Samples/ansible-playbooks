@@ -23,21 +23,18 @@
 - hosts: localhost
   roles:
     - Azure.azure_preview_modules
-
+  vars:
+    resource_group: "{{ resource_group_name }}"
+    lab_name: myLab
+    vn_name: myLabVirtualNetwork
+    vm_name: myLabVm
+    artifacts_name: myArtifacts
+    github_token: "{{ lookup('env','GITHUB_ACCESS_TOKEN') }}"
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group }}"
         location: "{{ location }}"
-
-    - name: Prepare random number
-      set_fact:
-        lab_name: "lab{{ resource_group | hash('md5') | truncate(7, True, '') }}{{ 1000 | random }}"
-        vn_name: "vn{{ resource_group | hash('md5') | truncate(7, True, '') }}{{ 1000 | random }}"
-        vm_name: "vn{{ resource_group | hash('md5') | truncate(7, True, '') }}{{ 1000 | random }}"
-        artifacts_name: myartifacts
-        github_token: "{{ lookup('env','GITHUB_ACCESS_TOKEN') }}"
-      run_once: yes
 
     - name: Create instance of Lab
       azure_rm_devtestlab:
