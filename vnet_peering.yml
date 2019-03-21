@@ -44,14 +44,14 @@
       name: "{{ vnet_name1 }}"
       address_prefix: "10.0.0.0/24"
       virtual_network: "{{ vnet_name1 }}"
-  - name: Ceate second virtual network
+  - name: Create second virtual network
     azure_rm_virtualnetwork:
       resource_group: "{{ resource_group_secondary }}"
       name: "{{ vnet_name2 }}"
       address_prefixes: "10.1.0.0/16"
   - name: Add subnet
     azure_rm_subnet:
-      resource_group: "{{ resource_group }}"
+      resource_group: "{{ resource_group_secondary }}"
       name: "{{ vnet_name2 }}"
       address_prefix: "10.1.0.0/24"
       virtual_network: "{{ vnet_name2 }}"
@@ -82,3 +82,4 @@
       resource_group: "{{ resource_group }}"
       name: "{{ peering_name }}"
       virtual_network: "{{ vnet_name1 }}"
+      state: absent
