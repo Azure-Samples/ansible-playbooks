@@ -26,7 +26,7 @@
     location: eastus
     vnet_name: myVirtualNetwork
     subnet_name: mySubnet
-    cosmosdbaccount_name: myCosmosDbAccountUniqueName{{ rpfx }}
+    cosmosdbaccount_name: cosmos{{ rpfx }}
 
   tasks:
     - name: Create a resource group
