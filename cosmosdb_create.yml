@@ -4,11 +4,12 @@
 # It requires Ansible 2.8. For earlier version of Ansible, run: 
 #   ansible-galaxy install azure.azure_preview_modules" to install the role to get lastest Ansible modules.
 # This samle will:
-# 1. create resource group
-# 2. create virtual network
-# 3. create subnet
-# 4. create CosmosDB account
-# 5. query and print CosmosDB keys
+# 1. Create resource group
+# 2. Create virtual network
+# 3. Create subnet
+# 4. Create CosmosDB account
+# 5. Query and print CosmosDB account keys
+# 6. Delete CosmosDB account
 
 ---
 - hosts: localhost
@@ -57,6 +58,7 @@
         resource_group: "{{ resource_group }}"
         name: "{{ cosmosdbaccount_name }}"
         location: eastus
+        kind: global_document_db
         geo_rep_locations:
           - name: eastus
             failover_priority: 0
@@ -82,3 +84,9 @@
     - name: Display Cosmos DB Acccount facts output
       debug:
         var: output
+
+    - name: Delete instance of Cosmos DB Account
+      azure_rm_cosmosdbaccount:
+        resource_group: "{{ resource_group }}"
+        name: "{{ cosmosdbaccount_name }}"
+        state: absent
