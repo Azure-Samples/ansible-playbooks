@@ -110,9 +110,9 @@
           gateway_rest_username: http-user
           gateway_rest_password: MuABCPassword!!@123 
         storage_accounts:
-          - name: storage{{ rpfx }}.blob.core.windows.net 
+          - name: "{{ storage_account_name }}.blob.core.windows.net"
             is_default: yes
-            container: "cluster{{ rpfx }}"
+            container: "{{ cluster_name }}"
             key: "{{ storage_output['response']['keys'][0]['value'] }}"
         compute_profile_roles:
           - name: headnode
