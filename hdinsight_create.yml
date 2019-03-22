@@ -3,7 +3,7 @@
 # This playbook creates an HD Insight cluster and all the prerequisites.
 # It requires Ansible 2.8. For earlier version of Ansible, run: 
 #   ansible-galaxy install azure.azure_preview_modules" to install the role to get lastest Ansible modules.
-# This samle will:
+# This sample will:
 # 1. create resource group
 # 2. create storage account
 # 3. obtain storage account keys required by the cluster
