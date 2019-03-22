@@ -30,6 +30,7 @@
     vm_name: myLabVm
     artifacts_name: myArtifacts
     github_token: "{{ lookup('env','GITHUB_ACCESS_TOKEN') }}"
+    location: eastus
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -160,18 +161,17 @@
       azure_rm_devtestlabenvironment:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
-        user_name: zim
+        user_name: "@me"
         name: myEnvironment
         location: eastus
-        deployment_template: "{{ output_lab.labs[0].id }}/artifactSources/public environment repo/armTemplates/WebApp"
-      register: output
+        deployment_template: "{{ output_lab.id }}/artifactSources/public environment repo/armTemplates/WebApp"
 
     - name: Create instance of DevTest Lab Image
       azure_rm_devtestlabcustomimage:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
         name: myImage
-        source_vm: "{{ output_vm.virtualmachines[0]['name'] }}"
+        source_vm: "{{ vm_name }}"
         linux_os_state: non_deprovisioned
 
     - name: Delete instance of Lab
@@ -179,8 +179,3 @@
         resource_group: "{{ resource_group }}"
         name: "{{ lab_name }}"
         state: absent
-      register: output
-    - name: Assert the change was correctly reported
-      assert:
-        that:
-          - output.changed
