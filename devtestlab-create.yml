@@ -3,26 +3,25 @@
 # This playbook creates a DevTest Lab instance and shows how to use it.
 # It requires Ansible 2.8. For earlier version of Ansible, run: 
 #   ansible-galaxy install azure.azure_preview_modules" to install the role to get lastest Ansible modules.
-# This samle will:
-# 1. create resource group
-# 2. create DevTest Lab
-# 3. create sample DevTest Lab policy
-# 4. create sample DevTest Lab schedule 
-# 5. create sample DevTest Lab Virtual Network
-# 6. create sample DevTest Lab artifact source
-# 7. create instance of DTL Virtual Machine
-# 8. list all artifact sources
-# 9. get artifacts source facts
-# 10. list ARM Template facts
-# 11. get ARM Template facts
-# 12. create instance of DevTest Lab Environment
-# 13. create instance of DevTest Lab Image
-# 14. delete instance of Lab
+# This sample:
+# 1. Creates resource group
+# 2. Creates DevTest Lab
+# 3. Creates sample DTL Policy
+# 4. Creates sample DTL Schedule 
+# 5. Creates sample DTL Virtual Network
+# 6. Creates sample DLT Artifact Source
+# 7. Creates instance of DTL Virtual Machine
+# 8. List all DTL Artifact Sources
+# 9. Lists ARM Templates in DTL Artifact Source
+# 10. Gets selected ARM Template facts
+# 11. Creates instance of DTL Environment
+# 12. Creates instance of DTL Image
+# 13. Deletes instance of Lab
 
 ---
 - hosts: localhost
-  roles:
-    - Azure.azure_preview_modules
+  #roles:
+  #  - azure.azure_preview_modules
   vars:
     resource_group: "{{ resource_group_name }}"
     lab_name: myLab
@@ -125,15 +124,6 @@
       azure_rm_devtestlabartifactsource_facts:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
-      register: output
-    - debug:
-        var: output
-
-    - name: Get artifacts source facts
-      azure_rm_devtestlabartifactsource_facts:
-        resource_group: "{{ resource_group }}"
-        lab_name: "{{ lab_name }}"
-        name: public repo
       register: output
     - debug:
         var: output
