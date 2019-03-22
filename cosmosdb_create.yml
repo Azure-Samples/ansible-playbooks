@@ -19,14 +19,14 @@
       run_once: yes
 
 - hosts: localhost
-  roles:
-    - Azure.azure_preview_modules
+#  roles:
+#    - Azure.azure_preview_modules
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
     vnet_name: myVirtualNetwork
     subnet_name: mySubnet
-    cosmosdbaccount_name: myCosmosDbAccountUniqueName
+    cosmosdbaccount_name: myCosmosDbAccountUniqueName{{ rpfx }}
 
   tasks:
     - name: Create a resource group
