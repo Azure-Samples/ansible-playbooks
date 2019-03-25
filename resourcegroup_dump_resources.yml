@@ -1,0 +1,51 @@
+# Description
+# ===========
+# This playbook shows how to perform complete dump of resources using azure_resource_facts module.
+# It requires Ansible 2.8. For earlier version of Ansible, run: 
+#   ansible-galaxy install azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+# This sample will:
+# 1. Queries a list of all generic resource information under a resource_group
+# 2. Dumps received list
+# 3. Extract list of resource ids.
+# 4. Prints out list of resource ids
+# 5. Queries details of every resource in the list in a loop.
+# 6. Create single list of resource information dictionaries from the raw loop output.
+# 7. Prints out complete resource list.
+---
+- name: List all resources in resource group
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: "{{ resource_group_name }}"
+  tasks:
+    - name: List all the resources under a resource group
+      azure_rm_resource_facts:
+        resource_group: "{{ resource_group }}"
+        resource_type: resources
+      register: output
+
+    - name: Dump raw list of resouces in the resource group
+      debug:
+        var: output
+
+    - name: Create a list of resource IDs
+      set_fact:
+        resource_ids: "{{ output.response | map(attribute='id') | list }}"
+
+    - name: Dump list of resource IDs
+      debug:
+        var: resource_ids
+
+    - name: Iterate through the resources and query details on each one
+      azure_rm_resource_facts:
+        url: "{{ item }}"
+      register: output
+      with_items: "{{ resource_ids }}"
+
+    - name: Create single list of resources
+      set_fact:
+        resources: "{{ output.results | map(attribute='response') | sum(start=[]) }}"
+
+    - name: Dump final list of resources
+      debug:
+        var: resources
