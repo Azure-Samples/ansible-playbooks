@@ -14,6 +14,8 @@
 ---
 - name: List all resources in resource group
   hosts: localhost
+  #roles:
+  #  - azure.azure_preview_modules
   connection: local
   vars:
     resource_group: "{{ resource_group_name }}"
