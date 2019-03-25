@@ -20,13 +20,12 @@
         rpfx: "{{ resource_group_name | hash('md5') | truncate(7, True, '') }}{{ 1000 | random }}"
       run_once: yes
 
-
 - hosts: localhost
   #roles:
   #  - azure.azure_preview_modules
   vars:
     resource_group: "{{ resource_group_name }}"
-    location: eastus
+    location: eastus2
     vnet_name: myVirtualNetwork
     subnet_name: mySubnet
     cluster_name: mycluster{{ rpfx }}
@@ -40,10 +39,10 @@
 
     - name: Create storage account
       azure_rm_storageaccount:
-          resource_group: "{{ resource_group }}"
-          name: "{{ storage_account_name }}"
-          account_type: Standard_LRS
-          location: eastus2
+        resource_group: "{{ resource_group }}"
+        name: "{{ storage_account_name }}"
+        account_type: Standard_LRS
+        location: "{{ location }}"
 
     - name: Get storage account keys
       azure_rm_resource:
@@ -64,7 +63,7 @@
       azure_rm_hdinsightcluster:
         resource_group: "{{ resource_group }}"
         name: "{{ cluster_name }}"
-        location: eastus2
+        location: "{{ location }}"
         cluster_version: 3.6
         os_type: linux
         tier: standard
@@ -101,7 +100,7 @@
       azure_rm_hdinsightcluster:
         resource_group: "{{ resource_group }}"
         name: "{{ cluster_name }}"
-        location: eastus2
+        location: "{{ location }}"
         cluster_version: 3.6
         os_type: linux
         tier: standard
