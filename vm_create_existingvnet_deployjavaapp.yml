@@ -27,7 +27,7 @@
     admin_username: azureuser
     admin_password: Password@123
 #  roles:
-#    - Azure.azure_preview_modules
+#    - azure.azure_preview_modules
   tasks:
 
     - name: Create a resource group for vnet

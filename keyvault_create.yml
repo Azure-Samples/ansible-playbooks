@@ -2,7 +2,7 @@
 # ===========
 # This playbook create a Key Vault , then add key and secret in it.
 # This playbook requires Ansible version >= 2.5, and azure_preview_modules role
-# You need to run "ansible-galaxy install Azure.azure_preview_modules" to install the role to get lastest Ansible modules.
+# You need to run "ansible-galaxy install azure.azure_preview_modules" to install the role to get lastest Ansible modules.
 
 ---
 - hosts: localhost
@@ -14,14 +14,14 @@
 
 - hosts: localhost
 #  roles:
-#    - Azure.azure_preview_modules
+#    - azure.azure_preview_modules
   vars:
     resource_group: "{{ resource_group_name }}"
     location: eastus
     keyvault_name: keyvault{{ rpfx }}
   
   roles:
-    - Azure.azure_preview_modules
+    - azure.azure_preview_modules
 
   tasks:
     - name: set facts

@@ -6,7 +6,7 @@
   hosts: localhost
   connection: local
   roles:
-    - Azure.azure_preview_modules
+    - azure.azure_preview_modules
   vars:
     vm_name: vmforimage
   tasks:

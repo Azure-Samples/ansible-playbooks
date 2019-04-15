@@ -28,8 +28,8 @@ $ pip install ansible[azure]
 *  [Optional] Install ansible role
 
 ```bash
-$ ansible-galaxy install Azure.azure_preview_modules
-$ pip install -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
+$ ansible-galaxy install azure.azure_preview_modules
+$ pip install -r ~/.ansible/roles/azure.azure_preview_modules/files/requirements-azure.txt
 ```
 
 *  Get the sample playbook

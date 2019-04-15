@@ -21,7 +21,7 @@ This repository contains examples and best practices for building Ansible Playbo
 - Install azure_preview_module role's dependencies packages.
 
   ```sh
-  pip install -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt
+  pip install -r ~/.ansible/roles/azure.azure_preview_modules/files/requirements-azure.txt
   ```
 
 ## How to run
