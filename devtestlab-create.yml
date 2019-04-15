@@ -36,7 +36,7 @@
         name: "{{ resource_group }}"
         location: "{{ location }}"
 
-    - name: Create instance of Lab
+    - name: Create the lab
       azure_rm_devtestlab:
         resource_group: "{{ resource_group }}"
         name: "{{ lab_name }}"
@@ -45,7 +45,7 @@
         premium_data_disks: no
       register: output_lab
 
-    - name: Create instance of DevTest Lab Policy
+    - name: Set the lab policies
       azure_rm_devtestlabpolicy:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -54,7 +54,7 @@
         fact_name: user_owned_lab_vm_count
         threshold: 5
 
-    - name: Create instance of DevTest Lab Schedule
+    - name: Set the lab schedule
       azure_rm_devtestlabschedule:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -63,16 +63,16 @@
         time_zone_id: "UTC+12"
       register: output
 
-    - name: Create instance of DevTest Labs virtual network
+    - name: Create the lab virtual network
       azure_rm_devtestlabvirtualnetwork:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
         name: "{{ vn_name }}"
         location: eastus
-        description: My DevTest Lab
+        description: My lab virtual network
       register: output
 
-    - name: Create instance of DevTest Labs artifacts source
+    - name: Define the lab artifacts source
       azure_rm_devtestlabartifactsource:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -94,7 +94,7 @@
         artifact_source: null
       when: "github_token | length == 0"
 
-    - name: Create instance of DTL Virtual Machine
+    - name: Create a VM within the lab
       azure_rm_devtestlabvirtualmachine:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -120,7 +120,7 @@
         allow_claim: no
         expiration_date: "2029-02-22T01:49:12.117974Z"
 
-    - name: List all artifact sources
+    - name: List the artifact sources
       azure_rm_devtestlabartifactsource_facts:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -128,7 +128,16 @@
     - debug:
         var: output
 
-    - name: List ARM Template facts
+    - name: List the artifact facts
+      azure_rm_devtestlabartifact_facts:
+        resource_group: "{{ resource_group }}"
+        lab_name: "{{ lab_name }}"
+        artifact_source_name: public repo
+      register: output
+    - debug:
+        var: output
+
+    - name: List the Azure Resource Manager template facts
       azure_rm_devtestlabarmtemplate_facts:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -137,7 +146,7 @@
     - debug:
         var: output
 
-    - name: Get ARM Template facts
+    - name: Get Azure Resource Manager template facts
       azure_rm_devtestlabarmtemplate_facts:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -147,7 +156,7 @@
     - debug:
         var: output
 
-    - name: Create instance of DevTest Lab Environment
+    - name: Create the lab environment
       azure_rm_devtestlabenvironment:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -156,7 +165,7 @@
         location: eastus
         deployment_template: "{{ output_lab.id }}/artifactSources/public environment repo/armTemplates/WebApp"
 
-    - name: Create instance of DevTest Lab Image
+    - name: Create the lab image
       azure_rm_devtestlabcustomimage:
         resource_group: "{{ resource_group }}"
         lab_name: "{{ lab_name }}"
@@ -164,7 +173,7 @@
         source_vm: "{{ vm_name }}"
         linux_os_state: non_deprovisioned
 
-    - name: Delete instance of Lab
+    - name: Delete the lab
       azure_rm_devtestlab:
         resource_group: "{{ resource_group }}"
         name: "{{ lab_name }}"
