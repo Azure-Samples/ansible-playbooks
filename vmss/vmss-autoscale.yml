@@ -12,7 +12,7 @@
     name: autoscalerule
   tasks: 
     - name: Get scaleset info
-      azure_rm_virtualmachine_scaleset_facts:
+      azure_rm_virtualmachinescaleset_facts:
         resource_group: "{{ resource_group }}"
         name: "{{ vmss_name }}"
         format: curated

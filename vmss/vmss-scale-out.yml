@@ -11,7 +11,7 @@
     vmss_name: myTestVMSS
   tasks: 
     - name: Get scaleset info
-      azure_rm_virtualmachine_scaleset_facts:
+      azure_rm_virtualmachinescaleset_facts:
         resource_group: "{{ resource_group }}"
         name: "{{ vmss_name }}"
         format: curated
@@ -26,4 +26,4 @@
         body: "{{ output_scaleset.ansible_facts.azure_vmss[0] | combine({'capacity': 3}, recursive=True) }}"
 
     - name: Update something in that VMSS
-      azure_rm_virtualmachine_scaleset: "{{ body }}"
+      azure_rm_virtualmachinescaleset: "{{ body }}"
