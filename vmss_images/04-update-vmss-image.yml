@@ -7,7 +7,7 @@
   hosts: localhost
   connection: local
   roles:
-    - Azure.azure_preview_modules
+    - azure.azure_preview_modules
   vars:
     vmss_name: vmsstest
     image_name: image_vmforimageB
@@ -16,7 +16,7 @@
   tasks:
 
   - name: Update VMSS - second image
-    azure_rm_virtualmachine_scaleset:
+    azure_rm_virtualmachinescaleset:
       resource_group: "{{ resource_group }}"
       name: "{{ vmss_name }}"
       vm_size: Standard_DS1_v2

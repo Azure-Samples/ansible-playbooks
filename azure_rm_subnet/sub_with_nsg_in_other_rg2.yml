@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   roles:
-    - Azure.azure_preview_modules 
+    - azure.azure_preview_modules 
   vars:
     resource_group: "{{ resource_group_name }}"
     resource_group_secondary: "{{ resource_group_name }}2"

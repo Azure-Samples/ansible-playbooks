@@ -5,7 +5,7 @@
 # - An Azure Traffic manager profile.
 # - Add the web site created as an endpoint of the Traffic Manager Profile.
 #
-# This playbook requires Ansible version >=2.7, or you could use role Azure.azure_preview_modules
+# This playbook requires Ansible version >=2.7, or you could use role azure.azure_preview_modules
 # If you're using Ansible >=2.7, just remove the role lines.
 
 - hosts: localhost
@@ -18,7 +18,7 @@
     traffic_manager_endpoint_name: endpoint1
 
   roles:
-    - Azure.azure_preview_modules
+    - azure.azure_preview_modules
 
   tasks:
   - name: Create resource group
