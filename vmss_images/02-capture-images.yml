@@ -5,8 +5,6 @@
 - name: Capture VM Images
   hosts: localhost
   connection: local
-  roles:
-    - azure.azure_preview_modules
   vars:
     vm_name: vmforimage
   tasks:

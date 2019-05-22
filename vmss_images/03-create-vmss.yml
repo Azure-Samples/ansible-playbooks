@@ -5,8 +5,6 @@
 
 ---
 - hosts: localhost
-  roles:
-    - azure.azure_preview_modules
   vars:
     vmss_name: vmsstest
     location: eastus

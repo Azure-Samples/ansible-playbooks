@@ -5,8 +5,6 @@
 - name: Create two VMs (A and B) with HTTPS
   hosts: localhost
   connection: local
-  roles:
-    - azure.azure_preview_modules
   vars:
     vm_name: vmforimage
     admin_username: testuser
