@@ -1,13 +1,11 @@
 # Description
 # ===========
 # This playbook updates image reference in Virtual Machine Scaleset.
-# This sample requires Ansible 2.9
+# This sample requires Ansible 2.8
 
 - name: Update VMSS Image Referece
   hosts: localhost
   connection: local
-  roles:
-    - azure.azure_preview_modules
   vars:
     vmss_name: vmsstest
     image_name: image_vmforimageB
