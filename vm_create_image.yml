@@ -51,13 +51,13 @@
           version: latest
 
     - name: Create VM Extension
-      azure_rm_virtualmachine_extension:
+      azure_rm_virtualmachineextension:
         resource_group: "{{ resource_group }}"
         name: testVMExtension
         virtual_machine_name: "{{ vm_name }}"
         publisher: Microsoft.Azure.Extensions
         virtual_machine_extension_type: CustomScript
-        type_handler_version: 2.0
+        type_handler_version: "2.0"
         auto_upgrade_minor_version: true
         settings: {"commandToExecute": "sudo apt-get -y install apache2"}
 
