@@ -51,13 +51,13 @@
           version: latest
 
     - name: Create VM Extension
-      azure_rm_virtualmachine_extension:
+      azure_rm_virtualmachineextension:
         resource_group: "{{ resource_group }}"
         name: testVMExtension
         virtual_machine_name: "{{ vm_name }}"
         publisher: Microsoft.Azure.Extensions
         virtual_machine_extension_type: CustomScript
-        type_handler_version: 2.0
+        type_handler_version: "2.0"
         auto_upgrade_minor_version: true
         settings: {"commandToExecute": "sudo apt-get -y install apache2"}
 
@@ -67,18 +67,12 @@
         name: "{{ vm_name }}"
         started: no
 
-    - name: Generalize VM using REST API
-      azure_rm_resource:
-        # url: /subscriptions/{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/generalize
-        api_version: '2017-12-01'
-        method: POST
+    - name: Generalize VM using version >= 2.8
+      azure_rm_virtualmachine:
         resource_group: "{{ resource_group }}"
-        provider: compute
-        resource_type: virtualmachines
-        resource_name: "{{ vm_name }}"
-        subresource:
-          - type: generalize
-    
+        name: "{{ vm_name }}"
+        generalized: true
+
     - name: Create an image from a virtual machine
       azure_rm_image:
         resource_group: "{{ resource_group }}"
