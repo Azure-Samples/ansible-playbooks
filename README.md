@@ -1,3 +1,12 @@
+---
+page_type: sample
+languages:
+- yaml
+products:
+- azure
+description: "Examples and best practices for building Ansible Playbooks for Azure"
+---
+
 [![Travis CI](https://travis-ci.org/Azure-Samples/ansible-playbooks.svg?branch=full-ci)](https://travis-ci.org/Azure-Samples/ansible-playbooks)
 
 # Ansible Playbooks for Azure
