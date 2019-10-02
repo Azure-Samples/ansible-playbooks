@@ -1,0 +1,20 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+  - name: Create VMSS using shared image
+    azure_rm_virtualmachinescaleset:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vmss_name }}"
+      vm_size: Standard_DS1_v2
+      admin_username: adminUser
+      admin_password: PassWord01
+      capacity: 2
+      virtual_network_name: "{{ virtual_network_name }}"
+      upgrade_policy: Manual
+      subnet_name: "{{ subnet_name }}"
+      managed_disk_type: Standard_LRS
+      image:
+        id: "/subscriptions/{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Compute/galleries/{{ shared_gallery_name }}/images/{{ shared_image_name }}/versions/{{ shared_image_version }}"

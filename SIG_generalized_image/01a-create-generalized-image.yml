@@ -1,0 +1,18 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+    - name: Generalize VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: "{{ source_vm_name }}"
+        generalized: yes
+
+    - name: Create custom image
+      azure_rm_image:
+        resource_group: "{{ resource_group }}"
+        name: "{{ image_name }}"
+        source: "{{ source_vm_name }}"
+  
