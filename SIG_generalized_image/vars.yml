@@ -1,0 +1,14 @@
+resource_group: mysiggrg
+location: eastus
+virtual_network_name: testVnet
+subnet_name: testSubnet
+ip_name: testPublicIP
+source_vm_name: vmforimagesigg
+network_interface_name: vmforimagesiggnic
+image_name: testimagea
+shared_gallery_name: myGallery
+shared_image_name: myImage
+shared_image_version: 10.1.3
+vm_name: testvm001
+vmss_name: testvmssx
+snapshot_name: mySnapshot

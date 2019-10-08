@@ -1,0 +1,45 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+    - name: Create shared image
+      azure_rm_galleryimage:
+        resource_group: "{{ resource_group }}"
+        gallery_name: "{{ shared_gallery_name }}"
+        name: "{{ shared_image_name }}"
+        location: "{{ location }}"
+        os_type: linux
+        os_state: generalized
+        identifier:
+          publisher: myPublisherName
+          offer: myOfferName
+          sku: mySkuName
+        description: Image Description
+    
+    - name: Create or update a simple gallery Image Version.
+      azure_rm_galleryimageversion:
+        resource_group: "{{ resource_group }}"
+        gallery_name: "{{ shared_gallery_name }}"
+        gallery_image_name: "{{ shared_image_name }}"
+        name: "{{ shared_image_version }}"
+        location: "{{ location }}"
+        publishing_profile:
+          end_of_life_date: "2020-10-01t00:00:00+00:00"
+          exclude_from_latest: yes
+          replica_count: 3
+          storage_account_type: Standard_LRS
+          target_regions:
+            - name: West US
+              regional_replica_count: 1
+            - name: East US
+              regional_replica_count: 2
+              storage_account_type: Standard_ZRS
+          managed_image:
+            name: "{{ image_name }}"
+            resource_group: "{{ resource_group }}"
+      register: output
+
+    - debug:
+        var: output

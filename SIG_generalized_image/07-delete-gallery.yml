@@ -1,0 +1,27 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+  - name: Delete gallery Image Version.
+    azure_rm_galleryimageversion:
+      resource_group: "{{ resource_group }}"
+      gallery_name: "{{ shared_gallery_name }}"
+      gallery_image_name: "{{ shared_image_name }}"
+      name: "{{ shared_image_version }}"
+      state: absent
+    register: result
+
+  - name: Delete gallery image
+    azure_rm_galleryimage:
+      resource_group: "{{ resource_group }}"
+      gallery_name: "{{ shared_gallery_name }}"
+      name: "{{ shared_image_name }}"
+      state: absent
+
+  - name: Delete a simple gallery.
+    azure_rm_gallery:
+      resource_group: "{{ resource_group }}"
+      name: "{{ shared_gallery_name }}"
+      state: absent

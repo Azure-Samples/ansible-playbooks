@@ -1,0 +1,21 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+  - name: Get Shared Image Gallery information
+    azure_rm_gallery_info:
+      resource_group: "{{ resource_group }}"
+      name: "{{ shared_gallery_name }}"
+  - name: Get Shared Image Information
+    azure_rm_galleryimage_info:
+      resource_group: "{{ resource_group }}"
+      gallery_name: "{{ shared_gallery_name }}"
+      name: "{{ shared_image_name }}"
+  - name: Get Gallery Image Version Information
+    azure_rm_galleryimageversion_info:
+      resource_group: "{{ resource_group }}"
+      gallery_name: "{{ shared_gallery_name }}"
+      gallery_image_name: "{{ shared_image_name }}"
+      name: "{{ shared_image_version }}"

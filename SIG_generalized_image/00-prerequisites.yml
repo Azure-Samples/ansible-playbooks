@@ -1,0 +1,51 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+    - name: Create resource group if doesn't exist
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+    
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group }}"
+        name: "{{ virtual_network_name }}"
+        address_prefixes: "10.0.0.0/16"
+
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group }}"
+        name: "{{ subnet_name }}"
+        address_prefix: "10.0.1.0/24"
+        virtual_network: "{{ virtual_network_name }}"
+
+    - name: Create public IP address
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}"
+        allocation_method: Static
+        name: "{{ ip_name }}"
+
+    - name: Create virtual network inteface cards for VM A and B
+      azure_rm_networkinterface:
+        resource_group: "{{ resource_group }}"
+        name: "{{ network_interface_name }}"
+        virtual_network: "{{ virtual_network_name }}"
+        subnet: "{{ subnet_name }}"
+
+    - name: Create VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: "{{ source_vm_name }}"
+        admin_username: testuser
+        admin_password: "Password1234!"
+        vm_size: Standard_B1ms
+        network_interfaces: "{{ network_interface_name }}"
+        image:
+          offer: UbuntuServer
+          publisher: Canonical
+          sku: 16.04-LTS
+          version: latest
+  
