@@ -5,7 +5,7 @@
 ---
 - hosts: localhost
   vars:
-    resource_group: zimspostgresrg
+    resource_group: myTestResourceGroup
   tasks:
 
     - name: Query MySQL Servers in current resource group

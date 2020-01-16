@@ -14,7 +14,7 @@
   #roles:
   #  - Azure.azure_preview_modules
   vars:
-    resource_group: zimspostgresrg
+    resource_group: myTestResourceGroup
     location: eastus
     mysqlserver_name: mysql{{ rpfx }}
     mysqldb_name: sqldbtest
