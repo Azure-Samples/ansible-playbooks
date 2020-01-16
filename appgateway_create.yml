@@ -24,7 +24,7 @@
     location: eastus
     vnet_name: ansiblevnetname
     subnet_name: ansiblesubnetname
-    appgw_name: appgw{{ rpfx }}
+    appgw_name: myAppGW
     azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
   tasks:
     - name: Create a resource group
