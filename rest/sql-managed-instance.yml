@@ -34,6 +34,7 @@
     azure_rm_routetable:
       resource_group: "{{ resource_group }}"
       name: "{{ route_table }}"
+    register: output
 
   - name: Create route
     azure_rm_route:
