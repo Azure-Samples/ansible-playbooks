@@ -3,17 +3,12 @@
 # This playbook creates an Application Gateway. The azure_rm_appgw module is available in v2.7. If you are using Ansible 2.5 or 2.6
 # You need to run "ansible-galaxy install azure.azure_preview_modules" to install the role to get lastest Ansible modules.
 # 1. create resource group
+# 1. create two container instances with httpd running
 # 1. create virtual network
 # 1. create subnet
 # 1. create application gateway
 
 ---
-- hosts: localhost
-  tasks:
-    - name: Prepare random postfix
-      set_fact:
-        rpfx: "{{ 1000 | random }}"
-      run_once: yes
 
 - hosts: localhost
 # If you are using Ansible v2.7. Remove below two lines since azure_rm_appgw module is available in v2.7. 
@@ -21,11 +16,11 @@
     - azure.azure_preview_modules
   vars:
     resource_group: "{{ resource_group_name }}"
-    location: eastus
-    vnet_name: ansiblevnetname
-    subnet_name: ansiblesubnetname
-    appgw_name: appgw{{ rpfx }}
-    azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
+    location: eastus 
+    vnet_name: ansiblevnetname 
+    subnet_name: ansiblesubnetname 
+    appgw_name: zimsappgw 
+
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -66,14 +61,6 @@
               - 80
       register: ci_output_b
 
-    - name: Dump first container instance output
-      debug:
-        var: ci_output_a
-
-    - name: Dump second container instance output
-      debug:
-        var: ci_output_b
-
     - name: Create a virtual network
       azure_rm_virtualnetwork:
         name: "{{ vnet_name }}"
@@ -95,18 +82,18 @@
 
     - name: Create a public IP address
       azure_rm_publicipaddress:
-        resource_group: "{{ resource_group }}"
+        resource_group: "{{ resource_group }}" 
         allocation_method: Dynamic
         name: appgwpublicip
         domain_name_label: "{{ resource_group }}"
       register: pip_output
 
-    - name: Dump Public IP output
+    - name: Dump Public IP output 
       debug:
         var: pip_output
 
     - name: Create instance of Application Gateway
-      azure_rm_appgw:
+      azure_rm_appgateway:
         resource_group: "{{ resource_group }}"
         name: "{{ appgw_name }}"
         sku:
@@ -137,10 +124,10 @@
           - frontend_ip_configuration: sample_gateway_frontend_ip_config
             frontend_port: ag_frontend_port
             name: sample_http_listener
+            protocol: http
         request_routing_rules:
           - rule_type: Basic
             backend_address_pool: test_backend_address_pool
             backend_http_settings: sample_appgateway_http_settings
             http_listener: sample_http_listener
             name: rule1
-      register: output
