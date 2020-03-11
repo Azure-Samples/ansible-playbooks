@@ -1,0 +1,51 @@
+# Description
+# ===========
+# This playbook create a MySQL server and an instance of MySQL Database,
+
+---
+- hosts: localhost
+  vars:
+    resource_group: zimspostgresrg
+  tasks:
+
+    - name: Query MySQL Servers in current resource group
+      azure_rm_mysqlserver_facts:
+        resource_group: "{{ resource_group }}"
+      register: os
+
+    - name: Dump MySQL Server facts
+      debug:
+        var: os
+
+    - name: Query MySQL Databases
+      azure_rm_mysqldatabase_facts:
+        resource_group: "{{ resource_group }}"
+        server_name: "{{ os.servers[0].name }}"
+      register: do
+
+    - name: Dump MySQL Database Facts
+      debug:
+        var: do
+
+    - name: Open firewall to access MySQL Server from outside
+      azure_rm_resource:
+        api_version: '2017-12-01'
+        resource_group: "{{ resource_group }}"
+        provider: dbformysql
+        resource_type: servers
+        resource_name: "{{ os.servers[0].name }}"
+        subresource:
+          - type: firewallrules
+            name: externalaccess
+        body:
+          properties: 
+            startIpAddress: "0.0.0.0"
+            endIpAddress: "255.255.255.255"
+
+    - name: Dump tables
+      shell: mysql --host={{ os.servers[0].fully_qualified_domain_name }} --user={{ os.servers[0].admin_username }}@{{ os.servers[0].name }} --password={{ admin_password }} --verbose {{ item.name }} -e "show tables"
+      with_items: "{{ do.databases }}"
+      register: output
+
+    - debug:
+        var: output
