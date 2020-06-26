@@ -62,3 +62,6 @@
         publisher: Canonical
         sku: 16.04-LTS
         version: latest
+  - name: show floating ip 
+    debug: 
+      var: newserver.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress
