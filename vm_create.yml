@@ -67,3 +67,14 @@
   - name: show floating ip 
     debug: 
       var: newserver.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress
+  - name: Wait for SSH to come up
+    wait_for_connection:
+      delay: 1
+      timeout: 320
+  - name: add new server 
+    add_host: 
+      name: "mastery1" 
+      ansible_ssh_host: "{{ newserver.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress }}"
+      ansible_ssh_user: "fedora"
+      ansible_ssh_pass: "{{ vm_password }}"
+      ansible_become_pass: "{{ vm_password }}"
