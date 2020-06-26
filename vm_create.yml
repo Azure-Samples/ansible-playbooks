@@ -9,6 +9,7 @@
     resource_group: "mastery"
     vm_name: testvm
     location: eastus
+    vm_password: Password123!
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:
