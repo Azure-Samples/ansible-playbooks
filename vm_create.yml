@@ -90,8 +90,8 @@
     raw: "apt install -y python" 
     become: "yes"
 
-  - name: install imagemagick
+  - name: install apache2
     apt:
-      name: "ImageMagick"
+      name: "apache2"
     become: "yes"
     changed_when: true
