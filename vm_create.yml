@@ -87,7 +87,7 @@
 
   tasks:
   - name: install python 
-    raw: "apt install -y python python2-dnf" 
+    raw: "apt install -y python" 
     become: "yes"
 
   - name: install imagemagick
