@@ -102,22 +102,11 @@
   gather_facts: false
   become: yes
   tasks:
-  - name: Disable SELinux
-    selinux:
-      state: disabled
-  - name: copy 2 maven.sh
-    get_url:
-      url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/maven.sh
-      dest: /etc/profile.d/maven.sh
   - name: Unarchive a file that needs to be downloaded (added in 2.0)
     unarchive:
       src: https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
       dest: /usr/local/bin/
       remote_src: yes
-  - name: copy 2 gcloud repo
-    get_url:
-      url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo
-      dest: /etc/yum.repos.d/
   - name: /etc/yum.repos.d/jenkins.repo 
     get_url:
       url: http://pkg.jenkins.io/redhat-stable/jenkins.repo
@@ -129,9 +118,6 @@
   - name: install git openjdk and jenkins
     package:
       name:
-        - httpd
-        - firewalld
-        - google-cloud-sdk
         - java-1.8.0-openjdk
         - git
         - jenkins
@@ -141,7 +127,7 @@
       url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/.bash_profile
       dest: ~/
   - name: source .bash_profile of JAVA_HOME and M2_HOME
-    shell: source ~/.bash_profile
+    action: shell source ~/.bash_profile
   - name: start jenkins
     service:
       name: jenkins
