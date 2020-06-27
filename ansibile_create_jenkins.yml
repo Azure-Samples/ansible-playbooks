@@ -17,8 +17,8 @@
     nsg_rules:
       - {"name": "AllowSSH", "protocol": "Tcp", "destination_port_range": "22", "access": "Allow", "priority": 100, "direction": "Inbound"}
       - {"name": "AllowFTP", "protocol": "Tcp", "destination_port_range": "21", "access": "Allow", "priority": 101, "direction": "Inbound"}
-      - {"name": "AllowHTTP80", "protocol": "Tcp", "destination_port_range": "80", "access": "Allow", "priority": 102, "direction": "Inbound"}
-      - {"name": "AllowHTTP8080", "protocol": "Tcp", "destination_port_range": "8080", "access": "Allow", "priority": 103, "direction": "Inbound"}    
+      - {"name": "AllowHTTP80", "protocol": "Tcp", "destination_port_range": "80", "access": "Allow", "priority": 107, "direction": "Inbound"}
+      - {"name": "AllowHTTP8080", "protocol": "Tcp", "destination_port_range": "8080", "access": "Allow", "priority": 108, "direction": "Inbound"}    
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:
