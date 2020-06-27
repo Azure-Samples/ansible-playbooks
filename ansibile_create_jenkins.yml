@@ -136,3 +136,8 @@
         - git
         - jenkins
       state: latest
+  - name: start jenkins
+    service:
+      name: jenkins
+      enabled: true
+      state: started
