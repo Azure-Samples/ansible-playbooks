@@ -2,7 +2,10 @@
 # ===========
 # This playbook create an Azure VM with public IP, and open 22 port for SSH
 
-- name: Create Azure VM
+# Play One
+# ===========
+# Create Azure VM
+- name: Play One -- Create Azure VM
   hosts: localhost
   connection: local
   vars:
@@ -90,7 +93,10 @@
       ansible_ssh_pass: "{{ vm_password }}"
       ansible_become_pass: "{{ vm_password }}"
       
-- name: configure server
+# Play Two
+# ===========
+# Configure Azure VM
+- name: Configure Azure VM -- Play Two
   hosts: mastery1
   gather_facts: false
   tasks:
@@ -121,7 +127,10 @@
       state: enabled
       immediate: yes
 
-- name: test webserver access
+# Play Three
+# ===========
+# Test Webserver Access
+- name: Test Webserver Access -- Play Three
   hosts: localhost
   become: no
   tasks:
