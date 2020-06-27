@@ -1,0 +1,35 @@
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and open 22 port for SSH
+
+# Play One
+# ===========
+# Create Azure VM
+- name: Play One -- Create Azure VM
+  hosts: localhost
+  vars:
+    resource_group_name: mastery3
+    vm_name: testvm
+    location: japaneast
+    vm_user: azureuser
+    deployment_name: myDeployment
+  connection: local
+  tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}"
+      location: "{{ location }}"
+  - name: Create Azure deployment in Resource Group(Just Created Above)
+    azure_rm_deployment:
+      state: present
+      resource_group_name: "{{ resource_group_name }}"
+      name: "{{ deployment_name }}"
+      location: "{{ location }}"
+      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.json'
+      parameters:
+        vmName:
+          value: myFirstDeployment
+        adminUsername:
+          value: chenkiegcp2
+        adminPublicKey:
+          value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
