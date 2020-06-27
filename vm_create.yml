@@ -32,6 +32,17 @@
       resource_group: "{{ resource_group }}"
       allocation_method: Static
       name: "{{ vm_name }}"
+  - name: Create Network Security Group that allows HTTP
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 80
+          access: Allow
+          priority: 1001
+          direction: Inbound
   - name: Create Network Security Group that allows SSH
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
@@ -41,7 +52,7 @@
           protocol: Tcp
           destination_port_range: 22
           access: Allow
-          priority: 1001
+          priority: 1002
           direction: Inbound
   - name: Create virtual network inteface card
     azure_rm_networkinterface:
