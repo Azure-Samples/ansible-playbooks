@@ -95,12 +95,21 @@
   gather_facts: false
 
   tasks:
-  - name: install python 
-    raw: "yum install -y python" 
-    become: "yes"
-
-  - name: install httpd
+  - name: install package
     package:
-      name: "httpd"
-    become: "yes"
-    changed_when: true
+      name: httpd
+      state: present
+  - name: create an index.html
+    copy:
+      content: 'welcome to this webserver'
+      dest: /var/www/html/index.html
+  - name: start the service
+    service: 
+      name: httpd
+      state: started
+      enabled: true
+  - name: open firewall
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
