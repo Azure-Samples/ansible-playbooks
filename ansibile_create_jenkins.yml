@@ -125,8 +125,10 @@
     get_url:
       url: http://pkg.jenkins.io/redhat-stable/jenkins.repo
       dest: /etc/yum.repos.d/jenkins.repo
-  - name: rpm key
-    action: shell rpm --import http://pkg.jenkins.io/redhat-stable/jenkins.io.key
+  - name: Example action to import a key from a url
+    rpm_key:
+      state: present
+      key: http://pkg.jenkins.io/redhat-stable/jenkins.io.key
   - name: install git openjdk and jenkins
     package:
       name:
