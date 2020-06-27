@@ -1,0 +1,14 @@
+- name: Create Azure Resource Group deployment
+  azure_rm_deployment:
+    state: present
+    resource_group_name: myResourceGroup
+    name: myDeployment
+    location: Japan East
+    template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
+    parameters:
+      siteName:
+        value: myWebApp
+      hostingPlanName:
+        value: myHostingPlan
+      sku:
+        value: Standard
