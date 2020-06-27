@@ -110,7 +110,7 @@
       url: https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
       dest: /opt/
   - name: untar maven 
-    action: shell tar xzf apache-maven-3.6.3-bin.tar.gz && ln -s apache-maven-3.6.3 maven &&  source /etc/profile.d/maven.sh
+    action: shell cd /opt/ && tar xzf apache-maven-3.6.3-bin.tar.gz && ln -s apache-maven-3.6.3 maven &&  source /etc/profile.d/maven.sh
   - name: copy 2 gcloud repo
     get_url:
       url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo
