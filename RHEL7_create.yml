@@ -41,9 +41,9 @@
           protocol: Tcp
           destination_port_range: "{{ item }}"
           loop: 
-            - 80
-            - 22
-            - 110
+            - "80"
+            - "22"
+            - "110"
           access: Allow
           priority: 1001
           direction: Inbound
