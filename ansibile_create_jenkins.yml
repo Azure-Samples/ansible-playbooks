@@ -115,12 +115,11 @@
       dest: /usr/local/bin/
       remote_src: yes
   - name: source maven 
-    action: shell source /etc/profile.d/maven.sh
+    shell: source /etc/profile.d/maven.sh
   - name: copy 2 gcloud repo
     get_url:
       url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo
       dest: /etc/yum.repos.d/
- #   action: shell wget https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo && cp google-cloud-sdk.repo /etc/yum.repos.d/
   - name: /etc/yum.repos.d/jenkins.repo 
     get_url:
       url: http://pkg.jenkins.io/redhat-stable/jenkins.repo
