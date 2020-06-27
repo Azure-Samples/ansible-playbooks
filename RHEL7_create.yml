@@ -99,6 +99,7 @@
 - name: Configure Azure VM -- Play Two
   hosts: mastery1
   gather_facts: false
+  become: yes
   tasks:
   - name: install httpd and firewalld
     package:
