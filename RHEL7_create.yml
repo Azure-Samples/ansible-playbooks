@@ -9,7 +9,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: "mastery"
+    resource_group: mastery2
     vm_name: testvm
     location: japaneast
     vm_user: azureuser
