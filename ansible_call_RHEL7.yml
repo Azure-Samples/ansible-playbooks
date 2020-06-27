@@ -28,7 +28,7 @@
       template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/chenjian/101-vm-simple-rhel-unmanaged/azuredeploy.json'
       parameters:
         vmName:
-          value: myFirstDeployment
+          value: "{{ vm_name }}"
         adminUsername:
           value: chenkiegcp2
         adminPasswordOrKey:
