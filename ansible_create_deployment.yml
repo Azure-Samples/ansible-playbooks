@@ -1,0 +1,234 @@
+# Destroy a template deployment
+- name: Destroy Azure Deploy
+  azure_rm_deployment:
+    state: absent
+    subscription_id: 50821cca-944d-404e-ad6c-9457e16ebee9
+    resource_group_name: dev-ops-cle
+
+# Create or update a template deployment based on uris using parameter and template links
+- name: Create Azure Deploy
+  azure_rm_deployment:
+    state: present
+    resource_group_name: dev-ops-cle
+    template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json'
+    parameters_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.parameters.json'
+
+# Create or update a template deployment based on a uri to the template and parameters specified inline.
+# This deploys a VM with SSH support for a given public key, then stores the result in 'azure_vms'. The result is then
+# used to create a new host group. This host group is then used to wait for each instance to respond to the public IP SSH.
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Destroy Azure Deploy
+      azure_rm_deployment:
+        state: absent
+        subscription_id: 50821cca-944d-404e-ad6c-9457e16ebee9
+        resource_group_name: dev-ops-cle
+
+    - name: Create Azure Deploy
+      azure_rm_deployment:
+        state: present
+        subscription_id: 50821cca-944d-404e-ad6c-9457e16ebee9
+        resource_group_name: dev-ops-cle
+        parameters:
+          newStorageAccountName:
+            value: devopsclestorage1
+          adminUsername:
+            value: devopscle
+          dnsNameForPublicIP:
+            value: devopscleazure
+          location:
+            value: West US
+          vmSize:
+            value: Standard_A2
+          vmName:
+            value: ansibleSshVm
+          sshKeyData:
+            value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
+        template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
+      register: azure
+
+    - name: Add new instance to host group
+      add_host:
+        hostname: "{{ item['ips'][0].public_ip }}"
+        groupname: azure_vms
+      with_items: "{{ azure.deployment.instances }}"
+
+    - hosts: azure_vms
+      user: devopscle
+      tasks:
+        - name: Wait for SSH to come up
+          wait_for:
+            port: 22
+            timeout: 2000
+            state: started
+        - name: echo the hostname of the vm
+          shell: hostname
+
+# Deploy an Azure WebApp running a hello world'ish node app
+- name: Create Azure WebApp Deployment at http://devopscleweb.azurewebsites.net/hello.js
+  azure_rm_deployment:
+    state: present
+    subscription_id: cbbdaed0-fea9-4693-bf0c-d446ac93c030
+    resource_group_name: dev-ops-cle-webapp
+    parameters:
+      repoURL:
+        value: 'https://github.com/devigned/az-roadshow-oss.git'
+      siteName:
+        value: devopscleweb
+      hostingPlanName:
+        value: someplan
+      siteLocation:
+        value: westus
+      sku:
+        value: Standard
+    template_link: 'https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-web-app-github-deploy/azuredeploy.json'
+
+# Create or update a template deployment based on an inline template and parameters
+- name: Create Azure Deploy
+  azure_rm_deployment:
+    state: present
+    subscription_id: 50821cca-944d-404e-ad6c-9457e16ebee9
+    resource_group_name: dev-ops-cle
+
+    template:
+      $schema: "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#"
+      contentVersion: "1.0.0.0"
+      parameters:
+        newStorageAccountName:
+          type: "string"
+          metadata:
+            description: "Unique DNS Name for the Storage Account where the Virtual Machine's disks will be placed."
+        adminUsername:
+          type: "string"
+          metadata:
+            description: "User name for the Virtual Machine."
+        adminPassword:
+          type: "securestring"
+          metadata:
+            description: "Password for the Virtual Machine."
+        dnsNameForPublicIP:
+          type: "string"
+          metadata:
+            description: "Unique DNS Name for the Public IP used to access the Virtual Machine."
+        ubuntuOSVersion:
+          type: "string"
+          defaultValue: "14.04.2-LTS"
+          allowedValues:
+            - "12.04.5-LTS"
+            - "14.04.2-LTS"
+            - "15.04"
+          metadata:
+            description: >
+                         The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version.
+                         Allowed values: 12.04.5-LTS, 14.04.2-LTS, 15.04."
+      variables:
+        location: "West US"
+        imagePublisher: "Canonical"
+        imageOffer: "UbuntuServer"
+        OSDiskName: "osdiskforlinuxsimple"
+        nicName: "myVMNic"
+        addressPrefix: "192.0.2.0/24"
+        subnetName: "Subnet"
+        subnetPrefix: "10.0.0.0/24"
+        storageAccountType: "Standard_LRS"
+        publicIPAddressName: "myPublicIP"
+        publicIPAddressType: "Dynamic"
+        vmStorageAccountContainerName: "vhds"
+        vmName: "MyUbuntuVM"
+        vmSize: "Standard_D1"
+        virtualNetworkName: "MyVNET"
+        vnetID: "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]"
+        subnetRef: "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]"
+      resources:
+        - type: "Microsoft.Storage/storageAccounts"
+          name: "[parameters('newStorageAccountName')]"
+          apiVersion: "2015-05-01-preview"
+          location: "[variables('location')]"
+          properties:
+            accountType: "[variables('storageAccountType')]"
+        - apiVersion: "2015-05-01-preview"
+          type: "Microsoft.Network/publicIPAddresses"
+          name: "[variables('publicIPAddressName')]"
+          location: "[variables('location')]"
+          properties:
+            publicIPAllocationMethod: "[variables('publicIPAddressType')]"
+            dnsSettings:
+              domainNameLabel: "[parameters('dnsNameForPublicIP')]"
+        - type: "Microsoft.Network/virtualNetworks"
+          apiVersion: "2015-05-01-preview"
+          name: "[variables('virtualNetworkName')]"
+          location: "[variables('location')]"
+          properties:
+            addressSpace:
+              addressPrefixes:
+                - "[variables('addressPrefix')]"
+            subnets:
+              -
+                name: "[variables('subnetName')]"
+                properties:
+                  addressPrefix: "[variables('subnetPrefix')]"
+        - type: "Microsoft.Network/networkInterfaces"
+          apiVersion: "2015-05-01-preview"
+          name: "[variables('nicName')]"
+          location: "[variables('location')]"
+          dependsOn:
+            - "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
+            - "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+          properties:
+            ipConfigurations:
+              -
+                name: "ipconfig1"
+                properties:
+                  privateIPAllocationMethod: "Dynamic"
+                  publicIPAddress:
+                    id: "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                  subnet:
+                    id: "[variables('subnetRef')]"
+        - type: "Microsoft.Compute/virtualMachines"
+          apiVersion: "2015-06-15"
+          name: "[variables('vmName')]"
+          location: "[variables('location')]"
+          dependsOn:
+            - "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]"
+            - "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+          properties:
+            hardwareProfile:
+              vmSize: "[variables('vmSize')]"
+            osProfile:
+              computername: "[variables('vmName')]"
+              adminUsername: "[parameters('adminUsername')]"
+              adminPassword: "[parameters('adminPassword')]"
+            storageProfile:
+              imageReference:
+                publisher: "[variables('imagePublisher')]"
+                offer: "[variables('imageOffer')]"
+                sku: "[parameters('ubuntuOSVersion')]"
+                version: "latest"
+              osDisk:
+                name: "osdisk"
+                vhd:
+                  uri: >
+                       [concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',
+                       variables('OSDiskName'),'.vhd')]
+                caching: "ReadWrite"
+                createOption: "FromImage"
+            networkProfile:
+              networkInterfaces:
+                -
+                  id: "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+            diagnosticsProfile:
+              bootDiagnostics:
+                enabled: "true"
+                storageUri: "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net')]"
+    parameters:
+      newStorageAccountName:
+        value: devopsclestorage
+      adminUsername:
+        value: devopscle
+      adminPassword:
+        value: Password1!
+      dnsNameForPublicIP:
+        value: devopscleazure
