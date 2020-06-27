@@ -93,7 +93,6 @@
 - name: configure server
   hosts: mastery1
   gather_facts: false
-
   tasks:
   - name: install package
     package:
