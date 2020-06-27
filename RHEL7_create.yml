@@ -14,15 +14,14 @@
     location: japaneast
     vm_user: azureuser
     vm_password: Password123!
-    mytext: |
-[google-cloud-sdk]
-name=Google Cloud SDK
-baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    mytext: "[google-cloud-sdk]\n
+name=Google Cloud SDK\n
+baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64\n
+enabled=1\n
+gpgcheck=1\n
+repo_gpgcheck=1\n
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg\n
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg"
     nsg_rules:
       - {"name": "AllowSSH", "protocol": "Tcp", "destination_port_range": "22", "access": "Allow", "priority": 100, "direction": "Inbound"}
       - {"name": "AllowFTP", "protocol": "Tcp", "destination_port_range": "21", "access": "Allow", "priority": 101, "direction": "Inbound"}
