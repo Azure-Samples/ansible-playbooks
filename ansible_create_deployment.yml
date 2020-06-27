@@ -5,7 +5,6 @@
 ---
 - hosts: localhost
   connection: local
-  gather_facts: no
   tasks:
     - name: Destroy Azure Deploy
       azure_rm_deployment:
