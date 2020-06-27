@@ -101,16 +101,6 @@
   gather_facts: false
   become: yes
   tasks:
-  - name: install httpd and firewalld
-    package:
-      name:
-        - httpd
-        - firewalld
-      state: latest
-  - name: install welcome page
-    copy:
-      content: "hello world"
-      dest: /var/www/html/index.html
   - name: copy gcloud repo
     copy:
       content: "[google-cloud-sdk]
@@ -121,7 +111,18 @@ gpgcheck=1
 repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
        https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg"
-      dest: /etc/yum.repos.d/google-cloud-sdk.repo      
+      dest: /etc/yum.repos.d/google-cloud-sdk.repo
+  - name: install httpd and firewalld
+    package:
+      name:
+        - httpd
+        - firewalld
+        - google-cloud-sdk
+      state: latest
+  - name: install welcome page
+    copy:
+      content: "hello world"
+      dest: /var/www/html/index.html     
   - name: start web services
     service:
       name: httpd
