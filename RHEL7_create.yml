@@ -102,7 +102,10 @@
   become: yes
   tasks:
   - name: copy 2 gcloud repo
-    action: shell wget https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo && cp google-cloud-sdk.repo /etc/yum.repos.d/
+    get_url:
+      url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo
+      dest: /etc/yum.repos.d/
+ #   action: shell wget https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo && cp google-cloud-sdk.repo /etc/yum.repos.d/
   - name: install httpd and firewalld
     package:
       name:
