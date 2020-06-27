@@ -8,7 +8,7 @@
   vars:
     resource_group: "mastery"
     vm_name: testvm
-    location: eastus
+    location: japaneast
     vm_user: azureuser
     vm_password: Password123!
   tasks:
