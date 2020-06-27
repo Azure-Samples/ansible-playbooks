@@ -36,17 +36,21 @@
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
       name: "{{ vm_name }}"
+      purge_default_rules: no
+      purge_rules: no
       rules:
-        - name: SSHHttp
-          protocol: Tcp
-          destination_port_range: "{{ item }}"
-          loop: 
-            - "80"
-            - "22"
-            - "110"
-          access: Allow
-          priority: 1001
-          direction: Inbound
+        - name: "{{ item.name }}"
+          protocol: "{{ item.protocol }}"
+          destination_port_range: "{{ item.destination_port_range }}"
+          access: "{{ item.access }}"
+          priority: "{{ item.priority }}"
+          direction: "{{ item.direction }}"
+      tags:
+        env: production
+    with_items:
+      - {"name": "AllowSSH", "protocol": "Tcp", "destination_port_range": "22", "access": "Allow", "priority": 100, "direction": "Inbound"}
+      - {"name": "AllowFTP", "protocol": "Tcp", "destination_port_range": "21", "access": "Allow", "priority": 101, "direction": "Inbound"}
+      - {"name": "AllowHTTP", "protocol": "Tcp", "destination_port_range": "80", "access": "Allow", "priority": 102, "direction": "Inbound"}
   - name: Create virtual network inteface card
     azure_rm_networkinterface:
       resource_group: "{{ resource_group }}"
