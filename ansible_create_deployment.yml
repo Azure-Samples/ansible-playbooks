@@ -6,10 +6,10 @@
 - hosts: localhost
   connection: local
   tasks:
-  - name: Destroy Azure Deploy
-    azure_rm_deployment:
-      state: absent
-      resource_group_name: dev-ops-cle
+#   - name: Destroy Azure Deploy
+#     azure_rm_deployment:
+#       state: absent
+#       resource_group_name: dev-ops-cle
 
   - name: Create Azure Deploy
     azure_rm_deployment:
