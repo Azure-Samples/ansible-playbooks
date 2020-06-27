@@ -94,21 +94,39 @@
   hosts: mastery1
   gather_facts: false
   tasks:
-  - name: install package
-    package:
-      name: httpd
-      state: present
-  - name: create an index.html
+  - name: install httpd and firewalld
+    yum:
+      name:
+        - httpd
+        - firewalld
+      state: latest
+  - name: install welcome page
     copy:
-      content: 'welcome to this webserver'
+      content: "hello world"
       dest: /var/www/html/index.html
-  - name: start the service
-    service: 
+  - name: start web services
+    service:
       name: httpd
-      state: started
       enabled: true
-  - name: open firewall
+      state: started
+  - name: start firewalld services
+    service:
+      name: firewalld
+      enabled: true
+      state: started
+  - name: open firewalld
     firewalld:
       service: http
-      permanent: yes
+      permanent: true
       state: enabled
+      immediate: yes
+
+- name: test webserver access
+  hosts: localhost
+  become: no
+  tasks:
+    - name: connect to the web server
+      uri:
+        url: http://ansible1.example.com
+        return_content: yes
+        status_code: 200
