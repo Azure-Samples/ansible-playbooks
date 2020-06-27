@@ -9,7 +9,7 @@
   hosts: localhost
   connection: local
   vars:
-    resource_group: mastery6
+    resource_group: mastery7
     vm_name: testvm
     location: japaneast
     vm_user: chenkiegcp2
