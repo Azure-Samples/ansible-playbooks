@@ -138,6 +138,12 @@
         - git
         - jenkins
       state: latest
+  - name: JAVA_HOME and M2_HOME
+    get_url:
+      url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/.bash_profile
+      dest: ~/
+  - name: source .bash_profile of JAVA_HOME and M2_HOME
+    shell: source ~/.bash_profile
   - name: start jenkins
     service:
       name: jenkins
