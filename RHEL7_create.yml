@@ -11,6 +11,10 @@
     location: japaneast
     vm_user: azureuser
     vm_password: Password123!
+    nsg_rules:
+      - {"name": "AllowSSH", "protocol": "Tcp", "destination_port_range": "22", "access": "Allow", "priority": 100, "direction": "Inbound"}
+      - {"name": "AllowFTP", "protocol": "Tcp", "destination_port_range": "21", "access": "Allow", "priority": 101, "direction": "Inbound"}
+      - {"name": "AllowHTTP", "protocol": "Tcp", "destination_port_range": "80", "access": "Allow", "priority": 102, "direction": "Inbound"}    
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:
@@ -47,10 +51,7 @@
           direction: "{{ item.direction }}"
       tags:
         env: production
-    loop:
-      - {"name": "AllowSSH", "protocol": "Tcp", "destination_port_range": "22", "access": "Allow", "priority": 100, "direction": "Inbound"}
-      - {"name": "AllowFTP", "protocol": "Tcp", "destination_port_range": "21", "access": "Allow", "priority": 101, "direction": "Inbound"}
-      - {"name": "AllowHTTP", "protocol": "Tcp", "destination_port_range": "80", "access": "Allow", "priority": 102, "direction": "Inbound"}
+    loop: "{{ nsg_rules }}"
   - name: Create virtual network inteface card
     azure_rm_networkinterface:
       resource_group: "{{ resource_group }}"
