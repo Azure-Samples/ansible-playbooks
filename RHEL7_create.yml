@@ -111,7 +111,7 @@
   - name: Unarchive a file that needs to be downloaded (added in 2.0)
     unarchive:
       src: https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
-      dest: /opt/maven/
+      dest: /usr/local/bin/
       remote_src: yes
   - name: source maven 
     action: shell source /etc/profile.d/maven.sh
