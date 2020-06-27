@@ -6,40 +6,38 @@
 - hosts: localhost
   connection: local
   tasks:
-    - name: Destroy Azure Deploy
-      azure_rm_deployment:
-        state: absent
-        subscription_id: 50821cca-944d-404e-ad6c-9457e16ebee9
-        resource_group_name: dev-ops-cle
+  - name: Destroy Azure Deploy
+    azure_rm_deployment:
+      state: absent
+      resource_group_name: dev-ops-cle
 
-    - name: Create Azure Deploy
-      azure_rm_deployment:
-        state: present
-        subscription_id: 50821cca-944d-404e-ad6c-9457e16ebee9
-        resource_group_name: dev-ops-cle
-        parameters:
-          newStorageAccountName:
-            value: devopsclestorage1
-          adminUsername:
-            value: devopscle
-          dnsNameForPublicIP:
-            value: devopscleazure
-          location:
-            value: Japan East
-          vmSize:
-            value: Standard_A2
-          vmName:
-            value: ansibleSshVm
-          sshKeyData:
-            value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
-        template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
-      register: azure
+  - name: Create Azure Deploy
+    azure_rm_deployment:
+      state: present
+      resource_group_name: dev-ops-cle
+      parameters:
+        newStorageAccountName:
+          value: devopsclestorage1
+        adminUsername:
+          value: devopscle
+        dnsNameForPublicIP:
+          value: devopscleazure
+        location:
+          value: Japan East
+        vmSize:
+          value: Standard_A2
+        vmName:
+          value: ansibleSshVm
+        sshKeyData:
+          value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
+      template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
+    register: azure
 
-    - name: Add new instance to host group
-      add_host:
-        hostname: "{{ item['ips'][0].public_ip }}"
-        groupname: azure_vms
-      with_items: "{{ azure.deployment.instances }}"
+  - name: Add new instance to host group
+    add_host:
+      hostname: "{{ item['ips'][0].public_ip }}"
+      groupname: azure_vms
+    with_items: "{{ azure.deployment.instances }}"
 
 - hosts: azure_vms
   user: devopscle
