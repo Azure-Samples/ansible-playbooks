@@ -11,6 +11,10 @@
     location: japaneast
     vm_user: azureuser
     vm_password: Password123!
+    ports:
+      - 80
+      - 22
+      - 110
   tasks:
   - name: Create a resource group
     azure_rm_resourcegroup:
@@ -37,18 +41,13 @@
       resource_group: "{{ resource_group }}"
       name: "{{ vm_name }}"
       rules:
-        - name: SSH
-          protocol: Tcp
-          destination_port_range: 22
-          access: Allow
-          priority: 1001
-          direction: Inbound
-        - name: HTTP
-          protocol: Tcp
-          destination_port_range: 80
-          access: Allow
-          priority: 1002
-          direction: Inbound         
+        name: SSHHttp
+        protocol: Tcp
+        destination_port_range: "{{ item }}"
+        access: Allow
+        priority: 1001
+        direction: Inbound
+      loop: "{{ ports }}"
   - name: Create virtual network inteface card
     azure_rm_networkinterface:
       resource_group: "{{ resource_group }}"
