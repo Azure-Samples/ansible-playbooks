@@ -99,21 +99,10 @@
 - name: Configure Azure VM -- Play Two
   hosts: mastery1
   gather_facts: false
-  vars:
-    mytext: "[google-cloud-sdk]\n
-name=Google Cloud SDK\n
-baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64\n
-enabled=1\n
-gpgcheck=1\n
-repo_gpgcheck=1\n
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg\n
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg"  
   become: yes
   tasks:
-  - name: copy gcloud repo
-    copy:
-      content: "{{ mytext }}"
-      dest: /etc/yum.repos.d/google-cloud-sdk.repo
+  - name: copy 2 gcloud repo
+    action: shell wget https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo && cp google-cloud-sdk.repo /etc/yum.repos.d/
   - name: install httpd and firewalld
     package:
       name:
