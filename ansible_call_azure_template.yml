@@ -1,12 +1,30 @@
-- hosts: localhost
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and open 22 port for SSH
+
+# Play One
+# ===========
+# Create Azure VM
+- name: Play One -- Create Azure VM
+  hosts: localhost
+  vars:
+    resource_group_name: mastery2
+    vm_name: testvm
+    location: japaneast
+    vm_user: azureuser
+    deployment_name: myDeployment
   connection: local
   tasks:
-  - name: Create Azure Resource Group deployment
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}"
+      location: "{{ location }}"
+  - name: Create Azure deployment in Resource Group(Just Created Above)
     azure_rm_deployment:
       state: present
-      resource_group_name: yhu-ansible-test
-      name: myDeployment
-      location: Japan East
+      resource_group_name: "{{ resource_group_name }}"
+      name: "{{ deployment_name }}"
+      location: "{{ location }}"
       template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
       parameters:
         projectName:
