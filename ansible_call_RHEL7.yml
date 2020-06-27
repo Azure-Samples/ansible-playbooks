@@ -9,7 +9,7 @@
   hosts: localhost
   vars:
     resource_group_name: mastery4
-    vm_name: testvm
+    vm_name: mastery4
     location: japaneast
     vm_user: azureuser
     deployment_name: myDeployment
