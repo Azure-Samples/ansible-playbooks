@@ -141,3 +141,20 @@
       name: jenkins
       enabled: true
       state: started
+  - name: start firewalld services
+    service:
+      name: firewalld
+      enabled: true
+      state: started
+  - name: open firewalld 80
+    firewalld:
+      service: http
+      permanent: true
+      state: enabled
+      immediate: yes
+  - name: open firewalld 8080
+    firewalld:
+      port: 8080/tcp
+      permanent: true
+      state: enabled
+      immediate: yes
