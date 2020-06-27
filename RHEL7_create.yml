@@ -112,6 +112,7 @@
         - httpd
         - firewalld
         - google-cloud-sdk
+        - java-8-openjdk
       state: latest
   - name: install welcome page
     copy:
