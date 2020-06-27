@@ -10,7 +10,7 @@
       template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
       parameters:
         projectName:
-          value: myWebApp
+          value: myFirstDeployment
         adminUsername:
           value: chenkiegcp2
         adminPublicKey:
