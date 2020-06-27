@@ -1,0 +1,138 @@
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and open 22 port for SSH
+
+# Play One
+# ===========
+# Create Azure VM
+- name: Play One -- Create Azure VM
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: mastery2
+    vm_name: testvm
+    location: japaneast
+    vm_user: azureuser
+    vm_password: Password123!
+    nsg_rules:
+      - {"name": "AllowSSH", "protocol": "Tcp", "destination_port_range": "22", "access": "Allow", "priority": 100, "direction": "Inbound"}
+      - {"name": "AllowFTP", "protocol": "Tcp", "destination_port_range": "21", "access": "Allow", "priority": 101, "direction": "Inbound"}
+      - {"name": "AllowHTTP", "protocol": "Tcp", "destination_port_range": "80", "access": "Allow", "priority": 102, "direction": "Inbound"}    
+  tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      address_prefixes: "10.0.0.0/16"
+  - name: Add subnet
+    azure_rm_subnet:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      address_prefix: "10.0.1.0/24"
+      virtual_network: "{{ vm_name }}"
+  - name: Create public IP address
+    azure_rm_publicipaddress:
+      resource_group: "{{ resource_group }}"
+      allocation_method: Static
+      name: "{{ vm_name }}"
+  - name: Create Network Security Group that allows HTTP ans SSH
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      purge_default_rules: no
+      purge_rules: no
+      rules:
+        - name: "{{ item.name }}"
+          protocol: "{{ item.protocol }}"
+          destination_port_range: "{{ item.destination_port_range }}"
+          access: "{{ item.access }}"
+          priority: "{{ item.priority }}"
+          direction: "{{ item.direction }}"
+      tags:
+        env: production
+    loop: "{{ nsg_rules }}"
+  - name: Create virtual network inteface card
+    azure_rm_networkinterface:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      virtual_network: "{{ vm_name }}"
+      subnet: "{{ vm_name }}"
+      public_ip_name: "{{ vm_name }}"
+      security_group: "{{ vm_name }}"
+  - name: Create VM
+    azure_rm_virtualmachine:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      vm_size: Standard_DS1_v2
+      admin_username: "{{ vm_user }}"
+      admin_password: "{{ vm_password }}"
+      network_interfaces: "{{ vm_name }}"
+      image:
+        offer: RHEL
+        publisher: RedHat
+        sku: 7.8
+        version: latest
+    register: newserver
+    changed_when: true
+  - name: show floating ip 
+    debug: 
+      var: newserver.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress
+  - name: Wait for SSH to come up
+    wait_for_connection:
+      delay: 1
+      timeout: 320
+  - name: add new server 
+    add_host: 
+      name: "mastery1" 
+      ansible_ssh_host: "{{ newserver.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress }}"
+      ansible_ssh_user: "{{ vm_user }}"
+      ansible_ssh_pass: "{{ vm_password }}"
+      ansible_become_pass: "{{ vm_password }}"
+      
+# Play Two
+# ===========
+# Configure Azure VM
+- name: Configure Azure VM -- Play Two
+  hosts: mastery1
+  gather_facts: false
+  become: yes
+  tasks:
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+  - name: copy 2 maven.sh
+    get_url:
+      url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/maven.sh
+      dest: /etc/profile.d/maven.sh
+  - name: Unarchive a file that needs to be downloaded (added in 2.0)
+    unarchive:
+      src: https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+      dest: /usr/local/bin/
+      remote_src: yes
+  - name: source maven 
+    action: shell source /etc/profile.d/maven.sh
+  - name: copy 2 gcloud repo
+    get_url:
+      url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo
+      dest: /etc/yum.repos.d/
+ #   action: shell wget https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/google-cloud-sdk.repo && cp google-cloud-sdk.repo /etc/yum.repos.d/
+  - name: /etc/yum.repos.d/jenkins.repo 
+    get_url:
+      url: http://pkg.jenkins.io/redhat-stable/jenkins.repo
+      dest: /etc/yum.repos.d/jenkins.repo
+  - name: rpm key
+    action: shell rpm --import http://pkg.jenkins.io/redhat-stable/jenkins.io.key
+  - name: install git openjdk and jenkins
+    package:
+      name:
+        - httpd
+        - firewalld
+        - google-cloud-sdk
+        - java-1.8.0-openjdk
+        - git
+        - jenkins
+      state: latest
