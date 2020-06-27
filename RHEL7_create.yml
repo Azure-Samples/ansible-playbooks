@@ -132,11 +132,11 @@
 # ===========
 # Test Webserver Access
 - name: Test Webserver Access -- Play Three -- To Be Done
-  hosts: localhost
+  hosts: mastery1
   become: no
   tasks:
     - name: connect to the web server
       uri:
-        url: http://ansible1.example.com
+        url: http://localhost
         return_content: yes
         status_code: 200
