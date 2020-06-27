@@ -101,7 +101,7 @@
   gather_facts: false
   tasks:
   - name: install httpd and firewalld
-    yum:
+    package:
       name:
         - httpd
         - firewalld
