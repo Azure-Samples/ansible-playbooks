@@ -101,6 +101,9 @@
   gather_facts: false
   become: yes
   tasks:
+  - name: Disable SELinux
+    selinux:
+      state: disabled
   - name: copy 2 maven.sh
     get_url:
       url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/maven.sh
