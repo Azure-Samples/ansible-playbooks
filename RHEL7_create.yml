@@ -11,7 +11,7 @@
     location: japaneast
     vm_user: azureuser
     vm_password: Password123!
-    ports:
+    nsg_ports:
       - 80
       - 22
       - 110
@@ -47,7 +47,7 @@
         access: Allow
         priority: 1001
         direction: Inbound
-      loop: "{{ ports }}"
+      loop: "{{ nsg_ports }}"
   - name: Create virtual network inteface card
     azure_rm_networkinterface:
       resource_group: "{{ resource_group }}"
