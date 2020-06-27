@@ -47,7 +47,7 @@
           direction: "{{ item.direction }}"
       tags:
         env: production
-    with_items:
+    loop:
       - {"name": "AllowSSH", "protocol": "Tcp", "destination_port_range": "22", "access": "Allow", "priority": 100, "direction": "Inbound"}
       - {"name": "AllowFTP", "protocol": "Tcp", "destination_port_range": "21", "access": "Allow", "priority": 101, "direction": "Inbound"}
       - {"name": "AllowHTTP", "protocol": "Tcp", "destination_port_range": "80", "access": "Allow", "priority": 102, "direction": "Inbound"}
