@@ -123,6 +123,7 @@
         - firewalld
         - google-cloud-sdk
         - java-1.8.0-openjdk
+        - git
       state: latest
   - name: install welcome page
     copy:
