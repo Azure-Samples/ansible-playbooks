@@ -28,7 +28,7 @@
     deployment_name: "myDeployment-{{ dpVersion }}"
   connection: local
   tasks:
-  - name: Create Azure deployment in Resource Group(Just Created Above)
+  - name: Create Azure deployment in Resource Group(No Need to Created Above)
     azure_rm_deployment:
       state: present
       resource_group_name: "{{ resource_group_name }}"
