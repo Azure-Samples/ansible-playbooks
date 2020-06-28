@@ -46,7 +46,7 @@
 # Configure Azure VM
 - name: Configure Azure VM -- Play Two
   hosts: azure_vms
-  user: "{{ vm_user }}"
+  user: chenkiegcp2
   gather_facts: false
   become: yes
   tasks:
@@ -112,7 +112,7 @@
 # Get Jenkins Info
 - name: Get Jenkins Info -- Play Three
   hosts: azure_vms
-  user: "{{ vm_user }}"
+  user: chenkiegcp2
   gather_facts: false
   become: yes
   tasks:
