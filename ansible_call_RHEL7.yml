@@ -104,8 +104,12 @@
       permanent: true
       state: enabled
       immediate: yes
+  # Example that prints return information from the previous task
   - name: Get Jenkins Password
-    debug:
-      msg:
-      - "Provisioning based on YOUR_KEY which is: {{ cat /var/lib/jenkins/secrets/initialAdminPassword }}"
+    shell: /usr/bin/uptime
+    register: result
+
+  - debug:
+      var: result
+      verbosity: 2
     
