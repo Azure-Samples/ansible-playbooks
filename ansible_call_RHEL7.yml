@@ -8,8 +8,8 @@
 - name: Play One -- Create Azure VM
   hosts: localhost
   vars:
-    resource_group_name: "{{ version }}"
-    vm_name: "{{ version }}"
+    resource_group_name: "yhu-ansible-test-{{ version }}"
+    vm_name: "yhu-ansible-test-vm-{{ version }}"
     location: japaneast
     vm_user: azureuser
     deployment_name: myDeployment
@@ -40,6 +40,7 @@
       hostname: "{{ item['ips'][0].public_ip }}"
       groupname: azure_vms
     loop: "{{ azure.deployment.instances }}"
+    
 # Play Two
 # ===========
 # Configure Azure VM
@@ -104,7 +105,22 @@
       permanent: true
       state: enabled
       immediate: yes
-  # Example that prints return information from the previous task
+      
+# Example that prints return information from the previous task
+# Play Three
+# ===========
+# Get Jenkins Info
+- name: Get Jenkins Info -- Play Three
+  hosts: azure_vms
+  user: chenkiegcp2
+  gather_facts: false
+  become: yes
+  tasks:
+  - name: Wait for SSH to come up
+    wait_for:
+      port: 8080
+      timeout: 2000
+      state: started  
   - name: Get Jenkins Password
     shell: cat /var/lib/jenkins/secrets/initialAdminPassword
     register: result
