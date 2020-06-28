@@ -106,7 +106,7 @@
       immediate: yes
   # Example that prints return information from the previous task
   - name: Get Jenkins Password
-    shell: /usr/bin/uptime
+    shell: cat /var/lib/jenkins/secrets/initialAdminPassword
     register: result
 
   - debug:
