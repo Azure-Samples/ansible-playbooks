@@ -25,7 +25,7 @@
     vm_name: "yhu-ansible-test-vm-{{ version }}"
     location: japaneast
     vm_user: chenkiegcp2
-    deployment_name: myDeployment
+    deployment_name: "myDeployment-{{ dpVersion }}"
   connection: local
   tasks:
   - name: Create Azure deployment in Resource Group(Just Created Above)
