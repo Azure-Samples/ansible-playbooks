@@ -109,5 +109,5 @@
     shell: cat /var/lib/jenkins/secrets/initialAdminPassword
     register: result
   - debug:
-      msg: "{{ result.stdout }}"
+      msg: "initialAdminPassword of jenkins is: {{ result.stdout }}"
     
