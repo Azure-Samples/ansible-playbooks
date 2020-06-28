@@ -8,8 +8,8 @@
 - name: Play One -- Create Azure VM
   hosts: localhost
   vars:
-    resource_group_name: "{{ yhu-ansible-test3 }}"
-    vm_name: "{{ yhu-ansible-test3 }}"
+    resource_group_name: "{{ version }}"
+    vm_name: "{{ version }}"
     location: japaneast
     vm_user: azureuser
     deployment_name: myDeployment
