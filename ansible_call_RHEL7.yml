@@ -7,7 +7,7 @@
 - name: Play Zero -- Create Azure Resource Group
   hosts: localhost
   vars:
-    resource_group_name: "yhu-ansible-test-{{ version }}"
+    resource_group_name: "yhu-csi-test-{{ version }}"
     location: japaneast
   connection: local
   tasks:
