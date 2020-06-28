@@ -110,6 +110,5 @@
     register: result
 
   - debug:
-      var: result
-      verbosity: 2
+      msg: {{ result }}
     
