@@ -22,7 +22,7 @@
   hosts: localhost
   vars:
     resource_group_name: "yhu-csi-test-{{ rgVersion }}"
-    vm_name: "yhu-csi-test-vm-{{ rgVersion }}"
+    vm_name: "yhu-csi-test-vm-{{ dpVersion }}"
     location: japaneast
     vm_user: chenkiegcp2
     deployment_name: "myDeployment-{{ dpVersion }}"
