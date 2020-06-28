@@ -4,17 +4,17 @@
 # Play Zero
 # ===========
 # Create Azure Resource Group
-- name: Play Zero -- Create Azure Resource Group
-  hosts: localhost
-  vars:
-    resource_group_name: "yhu-csi-test-{{ rgVersion }}"
-    location: japaneast
-  connection: local
-  tasks:
-  - name: Create a resource group
-    azure_rm_resourcegroup:
-      name: "{{ resource_group_name }}"
-      location: "{{ location }}"
+# - name: Play Zero -- Create Azure Resource Group
+#   hosts: localhost
+#   vars:
+#     resource_group_name: "yhu-csi-test-{{ rgVersion }}"
+#     location: japaneast
+#   connection: local
+#   tasks:
+#   - name: Create a resource group
+#     azure_rm_resourcegroup:
+#       name: "{{ resource_group_name }}"
+#       location: "{{ location }}"
 # Play One
 # ===========
 # Create Azure VM
