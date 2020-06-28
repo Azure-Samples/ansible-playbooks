@@ -21,7 +21,7 @@
 - name: Play One -- Create Azure VM
   hosts: localhost
   vars:
-    resource_group_name: "yhu-ansible-test-{{ rgVersion }}"
+    resource_group_name: "yhu-csi-test-{{ rgVersion }}"
     vm_name: "yhu-csi-test-vm-{{ rgVersion }}"
     location: japaneast
     vm_user: chenkiegcp2
