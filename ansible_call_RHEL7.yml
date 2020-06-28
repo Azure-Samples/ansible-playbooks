@@ -1,10 +1,10 @@
 # Description
 # ===========
-# This playbook create an Azure VM with public IP, and open 22 port for SSH
+# This playbook create an Azure VM with public IP, and open 8080 port for Jenkins
 # Play Zero
 # ===========
 # Create Azure Resource Group
-- name: Play One -- Create Azure Resource Group
+- name: Play Zero -- Create Azure Resource Group
   hosts: localhost
   vars:
     resource_group_name: "yhu-ansible-test-{{ version }}"
