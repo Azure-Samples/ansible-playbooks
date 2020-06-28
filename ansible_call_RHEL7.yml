@@ -108,7 +108,6 @@
   - name: Get Jenkins Password
     shell: cat /var/lib/jenkins/secrets/initialAdminPassword
     register: result
-
   - debug:
       msg: "{{ result }}"
     
