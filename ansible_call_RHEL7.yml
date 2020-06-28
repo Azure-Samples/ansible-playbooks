@@ -7,7 +7,7 @@
 - name: Play Zero -- Create Azure Resource Group
   hosts: localhost
   vars:
-    resource_group_name: "yhu-csi-test-{{ version }}"
+    resource_group_name: "yhu-csi-test-{{ rgVersion }}"
     location: japaneast
   connection: local
   tasks:
@@ -21,8 +21,8 @@
 - name: Play One -- Create Azure VM
   hosts: localhost
   vars:
-    resource_group_name: "yhu-ansible-test-{{ version }}"
-    vm_name: "yhu-ansible-test-vm-{{ version }}"
+    resource_group_name: "yhu-ansible-test-{{ rgVersion }}"
+    vm_name: "yhu-ansible-test-vm-{{ rgVersion }}"
     location: japaneast
     vm_user: chenkiegcp2
     deployment_name: "myDeployment-{{ dpVersion }}"
