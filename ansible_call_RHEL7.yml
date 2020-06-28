@@ -1,7 +1,20 @@
 # Description
 # ===========
 # This playbook create an Azure VM with public IP, and open 22 port for SSH
-
+# Play Zero
+# ===========
+# Create Azure Resource Group
+- name: Play One -- Create Azure Resource Group
+  hosts: localhost
+  vars:
+    resource_group_name: "yhu-ansible-test-{{ version }}"
+    location: japaneast
+  connection: local
+  tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}"
+      location: "{{ location }}"
 # Play One
 # ===========
 # Create Azure VM
@@ -15,10 +28,6 @@
     deployment_name: myDeployment
   connection: local
   tasks:
-  - name: Create a resource group
-    azure_rm_resourcegroup:
-      name: "{{ resource_group_name }}"
-      location: "{{ location }}"
   - name: Create Azure deployment in Resource Group(Just Created Above)
     azure_rm_deployment:
       state: present
