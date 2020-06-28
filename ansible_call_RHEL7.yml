@@ -104,3 +104,8 @@
       permanent: true
       state: enabled
       immediate: yes
+  - name: Get Jenkins Password
+    debug:
+      msg:
+      - "Provisioning based on YOUR_KEY which is: {{ cat /var/lib/jenkins/secrets/initialAdminPassword }}"
+    
