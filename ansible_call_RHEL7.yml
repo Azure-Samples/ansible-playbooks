@@ -8,7 +8,7 @@
 - name: Play One -- Create Azure VM
   hosts: localhost
   vars:
-    resource_group_name: mastery5
+    resource_group_name: mastery6
     vm_name: mastery5
     location: japaneast
     vm_user: azureuser
