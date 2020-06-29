@@ -7,6 +7,7 @@
     vm_user: chenkiegcp2
     deployment_name: "myDeployment-{{ dpVersion }}"
   connection: local
+  gather_facts: false
   tasks:
   - name: Create Azure deployment in Resource Group(No Need to Created Above)
     azure_rm_deployment:
@@ -58,6 +59,7 @@
 - name: Install Ansible -- Play Three
   hosts: azure_vms
   user: chenkiegcp2
+  gather_facts: false
   tasks:
   - name: pip install ansbile
     shell: pip3 install ansible --user
