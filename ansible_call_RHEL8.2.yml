@@ -47,9 +47,7 @@
     become_method: "sudo"
 
   - name: Set up authorized keys for the ansible user
-    authorized_key: user=ansible key="{{item}}"
-    with_file:
-      - /home/chenkiegcp2/.ssh/id_rsa.pub
+    authorized_key: user=ansible key="{{ authorized_key }}"
   - name: echo the hostname of the vm
     shell: hostname
   - name: install python3
@@ -63,7 +61,7 @@
 # Install Ansible
 - name: Install Ansible -- Play Three
   hosts: azure_vms
-  user: chenkiegcp2
+  user: ansible
   gather_facts: false
   tasks:
   - name: pip install ansbile
