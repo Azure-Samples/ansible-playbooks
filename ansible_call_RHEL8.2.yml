@@ -6,6 +6,7 @@
     location: japaneast
     vm_user: chenkiegcp2
     deployment_name: "myDeployment-{{ dpVersion }}"
+    authorized_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
   connection: local
   gather_facts: false
   tasks:
@@ -22,7 +23,7 @@
         adminUsername:
           value: "{{ vm_user }}"
         adminPasswordOrKey:
-          value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
+          value: "{{ authorized_key }}"
     register: azure
 
   - name: Add new instance to host group
@@ -30,17 +31,8 @@
       hostname: "{{ item['ips'][0].public_ip }}"
       groupname: azure_vms
     loop: "{{ azure.deployment.instances }}"
-    
-# Play Two
-# ===========
-# Configure Azure VM
-- name: Configure Azure VM -- Play Two
-  hosts: azure_vms
-  user: chenkiegcp2
-  gather_facts: false
-  become: yes
-  tasks:
-  - name: Wait for SSH to come up
+
+- name: Wait for SSH to come up
     wait_for:
       port: 22
       timeout: 2000
@@ -54,7 +46,7 @@
     become: yes
     become_method: "sudo"
 
-  - name: Set up authorized keys for the deployer user
+  - name: Set up authorized keys for the ansible user
     authorized_key: user=ansible key="{{item}}"
     with_file:
       - /home/chenkiegcp2/.ssh/id_rsa.pub
