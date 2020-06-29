@@ -64,7 +64,7 @@
   - name: pip install ansbile
     action: shell pip3 install ansible --user
     register: result
-  - name: Wait for SSH to come up
+  - name: Wait for ansible to come up
     wait_for:
       path: ~/.local/bin/ansible
   - debug:
