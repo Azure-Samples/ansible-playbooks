@@ -46,4 +46,14 @@
       state: started
   - name: echo the hostname of the vm
     shell: hostname
-    
+  - name: install python3
+    package:
+      name:
+        - python3
+        - python3-pip
+      state: latest
+  - name: pip install ansbile
+    shell: pip3 install ansible --user
+    register: result
+  - debug:
+      msg: " {{ result.stdout }}"
