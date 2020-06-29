@@ -52,6 +52,13 @@
         - python3
         - python3-pip
       state: latest
+# Play Three
+# ===========
+# Install Ansible
+- name: Install Ansible -- Play Three
+  hosts: azure_vms
+  user: chenkiegcp2
+  tasks:
   - name: pip install ansbile
     shell: pip3 install ansible --user
     register: result
