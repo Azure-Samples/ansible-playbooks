@@ -45,6 +45,19 @@
       port: 22
       timeout: 2000
       state: started
+  - group: name=sudo state=present
+
+  - name: Add ansible user and add it to sudo
+    user: name=ansible
+          state=present
+          createhome=yes
+    become: yes
+    become_method: "sudo"
+
+  - name: Set up authorized keys for the deployer user
+    authorized_key: user=ansible key="{{item}}"
+    with_file:
+      - /home/chenkiegcp2/.ssh/id_rsa.pub
   - name: echo the hostname of the vm
     shell: hostname
   - name: install python3
