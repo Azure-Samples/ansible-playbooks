@@ -34,7 +34,7 @@
       resource_group_name: "{{ resource_group_name }}"
       name: "{{ deployment_name }}"
       location: "{{ location }}"
-      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/chenjian1/101-vm-simple-rhel-unmanaged/azuredeploy.json'
+      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/chenjian-RHEL8/101-vm-simple-rhel-unmanaged/azuredeploy.json'
       parameters:
         vmName:
           value: "{{ vm_name }}"
@@ -66,73 +66,4 @@
       state: started
   - name: echo the hostname of the vm
     shell: hostname
-  - name: Unarchive a file that needs to be downloaded (added in 2.0)
-    unarchive:
-      src: https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
-      dest: /usr/local/bin/
-      remote_src: yes
-  - name: /etc/yum.repos.d/jenkins.repo 
-    get_url:
-      url: http://pkg.jenkins.io/redhat-stable/jenkins.repo
-      dest: /etc/yum.repos.d/jenkins.repo
-  - name: Example action to import a key from a url
-    rpm_key:
-      state: present
-      key: http://pkg.jenkins.io/redhat-stable/jenkins.io.key
-  - name: install git openjdk and jenkins
-    package:
-      name:
-        - java-1.8.0-openjdk
-        - git
-        - jenkins
-      state: latest
-  - name: JAVA_HOME and M2_HOME
-    get_url:
-      url: https://raw.githubusercontent.com/NKStupid/Tools/master/create-ansible-lab/.bash_profile
-      dest: ~/
-  - name: source .bash_profile of JAVA_HOME and M2_HOME
-    action: shell source ~/.bash_profile
-  - name: start jenkins
-    service:
-      name: jenkins
-      enabled: true
-      state: started
-  - name: start firewalld services
-    service:
-      name: firewalld
-      enabled: true
-      state: started
-  - name: open firewalld 80
-    firewalld:
-      service: http
-      permanent: true
-      state: enabled
-      immediate: yes
-  - name: open firewalld 8080
-    firewalld:
-      port: 8080/tcp
-      permanent: true
-      state: enabled
-      immediate: yes
-      
-# Example that prints return information from the previous task
-# Play Three
-# ===========
-# Get Jenkins Info
-- name: Get Jenkins Info -- Play Three
-  hosts: azure_vms
-  user: chenkiegcp2
-  gather_facts: false
-  become: yes
-  tasks:
-  - name: Wait for TCP 8080 to come up
-    wait_for:
-      port: 8080
-      timeout: 2000
-      state: started  
-  - name: Get Jenkins Password
-    shell: cat /var/lib/jenkins/secrets/initialAdminPassword
-    register: result
-  - debug:
-      msg: "initialAdminPassword of jenkins is: {{ result.stdout }}"
     
