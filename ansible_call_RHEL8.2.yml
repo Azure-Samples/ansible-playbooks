@@ -62,7 +62,7 @@
   gather_facts: false
   tasks:
   - name: pip install ansbile
-    shell: pip3 install ansible --user
+    action: shell pip3 install ansible --user
     register: result
   - debug:
       msg: " {{ result.stdout }}"
