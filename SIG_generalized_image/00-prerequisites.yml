@@ -34,6 +34,9 @@
         name: "{{ network_interface_name }}"
         virtual_network: "{{ virtual_network_name }}"
         subnet: "{{ subnet_name }}"
+        ip_configurations:
+          - name: default
+            primary: yes
 
     - name: Create VM
       azure_rm_virtualmachine:
