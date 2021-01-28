@@ -25,7 +25,7 @@
       set_fact:
         vmss_image: "{{ output_scaleset.vmss[0].image }}"
 
-    - name: Create VMSS
+    - name: Change VMSS capacity
       no_log: true
       azure_rm_virtualmachinescaleset:
         resource_group: "{{ resource_group }}"
