@@ -4,7 +4,7 @@
 # It also requires following env variables to be defined:
 # - VMSS_ADMIN_USERNAME
 # - VMSS_ADMIN_PASSWORD
-# This sample requires Ansible 2.6 
+# This sample requires Ansible 2.9
 
 ---
 - hosts: localhost
@@ -50,25 +50,37 @@
 
     - name: Create a load balancer
       azure_rm_loadbalancer:
+        resource_group: "{{ resource_group }}"
         name: "{{ vmss_name }}lb"
         location: "{{ location }}"
-        resource_group: "{{ resource_group }}"
-        public_ip: "{{ vmss_name }}"
-        probe_protocol: Tcp
-        probe_port: 8080
-        probe_interval: 10
-        probe_fail_count: 3
-        protocol: Tcp
-        load_distribution: Default
-        frontend_port: 80
-        backend_port: 8080
-        idle_timeout: 4
-        natpool_frontend_port_start: 50000
-        natpool_frontend_port_end: 50040
-        natpool_backend_port: 22
-        natpool_protocol: Tcp
+        frontend_ip_configurations:
+          - name: "{{ vmss_name }}front-config"
+            public_ip_address: "{{ vmss_name }}"
+        backend_address_pools:
+          - name: "{{ vmss_name }}backend-pool"
+        probes:
+          - name: "{{ vmss_name }}prob0"
+            port: 8080
+            interval: 10
+            fail_count: 3
+        inbound_nat_pools:
+          - name: "{{ vmss_name }}nat-pool"
+            frontend_ip_configuration_name: "{{ vmss_name }}front-config"
+            protocol: Tcp
+            frontend_port_range_start: 50000
+            frontend_port_range_end: 50040
+            backend_port: 22
+        load_balancing_rules:
+          - name: "{{ vmss_name }}lb-rules"
+            frontend_ip_configuration: "{{ vmss_name }}front-config"
+            backend_address_pool: "{{ vmss_name }}backend-pool"
+            frontend_port: 80
+            backend_port: 8080
+            load_distribution: Default
+            probe: "{{ vmss_name }}prob0"
 
     - name: Create VMSS
+      no_log: true
       azure_rm_virtualmachinescaleset:
         resource_group: "{{ resource_group }}"
         name: "{{ vmss_name }}"
