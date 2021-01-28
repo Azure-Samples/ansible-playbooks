@@ -21,7 +21,7 @@
         format: curated
       register: output_scaleset
 
-    - name: set image fact
+    - name: Set image fact
       set_fact:
         vmss_image: "{{ output_scaleset.vmss[0].image }}"
 
