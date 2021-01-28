@@ -2,28 +2,33 @@
 # ===========
 # Use this playbook to scale up VMSS -- update number of VMs from 2 to 3.
 # Use vmss-create playbook to create VMSS first
-# This sample requires Ansible 2.6 
+# This sample requires Ansible 2.9
 
 ---
 - hosts: localhost
+  gather_facts: false
+  
   vars:
-    resource_group: "{{ resource_group_name }}"
+    resource_group: myTestRG
     vmss_name: myTestVMSS
-  tasks: 
+  
+  tasks:
+
     - name: Get scaleset info
-      azure_rm_virtualmachinescaleset_facts:
+      azure_rm_virtualmachine_scaleset_facts:
         resource_group: "{{ resource_group }}"
         name: "{{ vmss_name }}"
         format: curated
       register: output_scaleset
 
-    - name: Dump scaleset info
-      debug:
-        var: output_scaleset
-
-    - name: Modify scaleset (Change capacity to 3)
+    - name: Set image fact
       set_fact:
-        body: "{{ output_scaleset.ansible_facts.azure_vmss[0] | combine({'capacity': 3}, recursive=True) }}"
+        vmss_image: "{{ output_scaleset.vmss[0].image }}"
 
-    - name: Update something in that VMSS
-      azure_rm_virtualmachinescaleset: "{{ body }}"
+    - name: Change VMSS capacity
+      no_log: true
+      azure_rm_virtualmachinescaleset:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name }}"
+        capacity: 3
+        image: "{{ vmss_image }}"
