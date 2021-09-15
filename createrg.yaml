@@ -1,0 +1,7 @@
+- name: Create a resource group
+  azure_rm_resourcegroup:
+    name: myResourceGroup
+    location: westus
+    tags:
+        testing: testing
+        delete: never
